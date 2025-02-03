@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -13,6 +14,12 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+
+Route::get('/invoice', [InvoiceController::class, 'invoice']);
+Route::get('/getCountries', [InvoiceController::class, 'getCountries'])->name('getCountries');
+Route::get('/getStates', [InvoiceController::class, 'getStates'])->name('getStates');
+Route::post('/submitInvoice', [InvoiceController::class, 'submitInvoice'])->name('submitInvoice');
+
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
