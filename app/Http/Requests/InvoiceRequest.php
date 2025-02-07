@@ -21,35 +21,41 @@ class InvoiceRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'full_name' => 'required|max:255',
-            'tin_no' => 'required',
-            'id_no' => 'required',
-            'sst_no' => 'required',
-            'email' => 'required|email|max:255',
-            'contact' => 'required|regex:/^\+?[0-9]{10,15}$/',
-            'addressLine1' => 'required',
-            'city' => 'required',
-            'postcode' => 'required|digits:5',
-            'state' => 'required',
-            'country' => 'required',
-            'id_type'=> 'required',
+        $type = $this->input('type');
 
-        ];
-        // return [
-        //     'full_name.required' => 'A title is required',
-        //     'tin_no.required' => 'A message is required',
-        //     'id_no.required' => 'A message is required',
-        //     'sst_no.required' => 'A message is required',
-        //     'email.required' => 'A message is required',
-        //     'contact.required' => 'A message is required',
-        //     'addressLine1.required' => 'A message is required',
-        //     'city.required' => 'A message is required',
-        //     'postcode.required' => 'A message is required',
-        //     'state.required' => 'A message is required',
-        //     'country.required' => 'A message is required',
-        //     'id_type.required' => 'A message is required',
-        // ];
+        if ($type === 'Personal') {
+            return [
+                'full_name' => 'required|max:255',
+                'tin_no' => 'required',
+                'id_no' => 'required',
+                'sst_no' => 'required',
+                'email' => 'required|email|max:255',
+                'contact' => 'required|regex:/^\+?[0-9]{10,15}$/',
+                'addressLine1' => 'required',
+                'city' => 'required',
+                'postcode' => 'required|digits:5',
+                'state' => 'required',
+                'country' => 'required',
+                'id_type'=> 'required',
+                'type' => 'required|in:Personal,Business', 
+            ];
+        } else {
+            return [
+                'full_name' => 'required|max:255',
+                'tin_no' => 'required',
+                'sst_no' => 'required',
+                'email' => 'required|email|max:255',
+                'contact' => 'required|regex:/^\+?[0-9]{10,15}$/',
+                'addressLine1' => 'required',
+                'city' => 'required',
+                'postcode' => 'required|digits:5',
+                'state' => 'required',
+                'country' => 'required',
+                'business_registration'=> 'required',
+                'type' => 'required|in:Personal,Business', 
+            ]; 
+        }
+
     }
 
     

@@ -32,6 +32,7 @@ class Invoice extends Model
         'state',
         'country',
         'status',
+        'business_registration',
     ];
 
     // Casting fields to specific data types (if needed)

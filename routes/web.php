@@ -15,11 +15,11 @@ Route::get('/', function () {
     ]);
 });
 
+Route::get('/invoice/{id}', [InvoiceController::class, 'invoice']);
 Route::get('/invoice', [InvoiceController::class, 'invoice']);
 Route::get('/getCountries', [InvoiceController::class, 'getCountries'])->name('getCountries');
 Route::get('/getStates', [InvoiceController::class, 'getStates'])->name('getStates');
 Route::post('/submitInvoice', [InvoiceController::class, 'submitInvoice'])->name('submitInvoice');
-
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
