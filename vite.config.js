@@ -10,6 +10,12 @@ export default defineConfig({
         }),
         react(),
     ],
+    server: {
+        cors: true, // Allow all origins
+        hmr: {
+          protocol: "ws", // Explicitly use WebSocket
+        }
+      }
 });
 
 

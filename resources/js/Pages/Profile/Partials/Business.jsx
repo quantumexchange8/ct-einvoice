@@ -4,6 +4,7 @@ import TextInput from "@/Components/TextInput";
 import { Dropdown } from 'primereact/dropdown';
 import InputError from "@/Components/InputError";
 
+
 export default function Business({ data, setData, errors,processing, getStates, getCountries}) {
    
 
@@ -202,31 +203,31 @@ export default function Business({ data, setData, errors,processing, getStates, 
                      <InputError message={errors.postcode} className="mt-2"/>
                 </div>
               </div>
-              <div className="w-full flex gap-1">
-                <div className="w-full text-vulcan-900 text-xs font-medium flex-col items-start">
-                  <div className="flex items-center gap-1">
-                    <InputLabel value="State" />
-                    <span className="text-error-800">*</span>
+             <div className="w-full flex gap-1">
+                  <div className="w-full text-vulcan-900 text-xs font-medium flex-col items-start">
+                    <div className="flex items-center gap-1">
+                      <InputLabel value="State" />
+                      <span className="text-error-800">*</span>
+                    </div>
+                    <div className="card flex justify-content-center py-3 px-4 w-full text-sm items-center self-stretch rounded-sm border bg-white border-vulcan-200 text-vulcan-950">
+                      <Dropdown
+                        value={data.state}
+                        onChange={(e) => setData('state', e.target.value)}
+                        options={getStates}
+                        optionLabel="state"
+                        placeholder="Select"
+                        className="w-full"
+                        panelClassName="bg-white text-black border border-vulcan-900"
+                      />
+                    </div>
+                    {}
+                    {errors.state && (
+                      <p className="text-error-700 text-sm font-medium mt-2">
+                        {errors.state}
+                      </p>
+                    )}
                   </div>
-                  <div className="card flex justify-content-center py-3 px-4 w-full text-sm items-center self-stretch rounded-sm border bg-white border-vulcan-200 text-vulcan-950">
-                    <Dropdown
-                      value={data.state}
-                      onChange={(e) => setData('state', e.target.value)}
-                      options={getStates}
-                      optionLabel="state"
-                      placeholder="Select"
-                      className="w-full"
-                      panelClassName="bg-white text-black border border-vulcan-900"
-                    />
-                  </div>
-                  {}
-                  {errors.state && (
-                    <p className="text-error-700 text-sm font-medium mt-2">
-                      {errors.state}
-                    </p>
-                  )}
                 </div>
-              </div>
               <div className="w-full flex gap-1">
                   <div className="w-full text-vulcan-900 text-xs font-medium flex-col items-start">
                     Country

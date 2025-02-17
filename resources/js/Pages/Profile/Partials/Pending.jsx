@@ -1,17 +1,26 @@
 import React from "react";
-import { Button } from "primereact/button";  // Import PrimeReact Button
+import { Button } from "primereact/button";
 import { Link } from "@inertiajs/react";
 import GuestLayout from "@/Layouts/GuestLayout";
 
 export default function Pending({ invoice }) {
-
+    const handleDownload = () => {
+        if (invoice?.download_url) {
+            const link = document.createElement("a");
+            link.href = invoice.download_url; // The URL where the invoice is hosted
+            link.download = `invoice_${invoice.invoice_no}.pdf`; // Set default download filename
+            link.click();
+        } else {
+            alert("Download link is unavailable.");
+        }
+    };
 
     return (
         <GuestLayout class>
  <div className="flex flex-col w-full items-start justify-center self-stretch pb-[75px] bg-white"> 
     <div className="flex flex-col w-full p-5 gap-8 bg-white">
         <div className="flex w-full flex-col justify-center items-start gap-6 ">
-            <div className="flex p-4 items-center self-stretch border rounded-sm bg-warning-50 ">
+            <div className="flex w-full p-4 items-center self-stretch border rounded-sm bg-warning-50 ">
                 <div className="flex shrink-0">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" className="mr-2">
                         <rect width="20" height="20" rx="10" fill="#E79B19"/>
@@ -26,7 +35,7 @@ export default function Pending({ invoice }) {
                         </span>
                 </div>
             </div>
-            <div className="flex items-start gap-4 self-stretch">
+            <div className="flex w-full items-start gap-4 self-stretch">
                 <div className="text-vulcan-900 font-bold leading-[26px] not-italic text-xl">{invoice.invoice_no}
                     <div className="flex items-start gap-2">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -175,10 +184,11 @@ export default function Pending({ invoice }) {
            ) : null}
         </div>
             <div className="flex justify-center items-center w-full self-stretch ">
-            <Button 
+            <Button onClick={handleDownload}
                     className=" w-full py-3 px-4 font-manrope text-sm not-italic font-medium leading-5 
                             text-vulcan-500 border rounded-sm border-vulcan-200 bg-white 
                             p-button p-button-outlined flex items-center justify-center gap-1"
+                            
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
                         <path d="M2.10156 8.00249V13.4H12.9016V8" stroke="#85888E" strokeLinecap="square"/>

@@ -34,6 +34,7 @@ export default {
                     
                 },
                 error: {
+                    300: '#FF96A3',
                     800: '#ae061b',
                     700: '#d4011c',
                 },

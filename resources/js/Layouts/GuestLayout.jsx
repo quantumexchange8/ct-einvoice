@@ -8,7 +8,7 @@ export default function GuestLayout({ children }) {
             <Topbar />
 
             <div className='w-full flex justify-center pt-5 bg-gray-100'>
-                <div className='max-w-[800px] w-full flex'>
+                <div className='max-w-[800px] w-full flex '>
                     {children}
                 </div>
             </div>
