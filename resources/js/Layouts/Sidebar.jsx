@@ -42,6 +42,7 @@ export default function Sidebar() {
                                 Dashboard
                             </div>
                             </button>
+                            <a href="/invoice-listing">
                             <button>
                             <div className="flex w-full items-center gap-3 px-3 py-2 text-gray-900 font-manrope text-sm font-normal leading-5">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -54,6 +55,35 @@ export default function Sidebar() {
                                 Invoice Listing
                             </div>
                             </button>
+                            </a>
+                            <a href="/merchant">
+                            <button>
+                            <div className="flex w-full items-center gap-3 px-3 py-2 text-gray-900 font-manrope text-sm font-normal leading-5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M14.6663 4.66634L7.99967 1.33301L1.33301 4.66634V11.333L7.99967 14.6663L14.6663 11.333V4.66634Z" stroke="#161B26" strokeLinejoin="round" />
+                                <path d="M1.33301 4.6665L7.99967 7.99984" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M8 14.6667V8" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M14.6667 4.6665L8 7.99984" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M11.3337 3L4.66699 6.33333" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                Merchant
+                            </div>
+                            </button>
+                            </a>
+                            <a href="/configuration">
+                            <button>
+                            <div className="flex w-full items-center gap-3 px-3 py-2 text-gray-900 font-manrope text-sm font-normal leading-5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M14.6663 4.66634L7.99967 1.33301L1.33301 4.66634V11.333L7.99967 14.6663L14.6663 11.333V4.66634Z" stroke="#161B26" strokeLinejoin="round" />
+                                <path d="M1.33301 4.6665L7.99967 7.99984" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M8 14.6667V8" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M14.6667 4.6665L8 7.99984" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
+                                <path d="M11.3337 3L4.66699 6.33333" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                                Configuration
+                            </div>
+                            </button>
+                            </a>
                         </div>
                     </div>
                     <div className="flex w-full flex-col absolute inset-x-0 bottom-0">
