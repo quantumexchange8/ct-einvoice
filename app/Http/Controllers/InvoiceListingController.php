@@ -25,4 +25,5 @@ class InvoiceListingController extends Controller
             'invoices' => $invoices
         ]);
     }
+    
 }

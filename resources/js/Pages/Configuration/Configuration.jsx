@@ -25,7 +25,7 @@ export default function Configuration() {
         image: "",
     });
 
-    const [imageFile, setImageFile] = useState(null); // Store actual file
+    const [imageFile, setImageFile] = useState(null); 
     const toast = useRef(null);
 
     const handleChange = (e, key) => {
@@ -34,7 +34,7 @@ export default function Configuration() {
 
     const onUpload = (event) => {
         const file = event.files[0];
-        setImageFile(file); // Store actual file
+        setImageFile(file);
     };
 
     const handleSave = async () => {
@@ -45,7 +45,7 @@ export default function Configuration() {
             });
 
             if (imageFile) {
-                formData.append("image", imageFile); // Append actual file
+                formData.append("image", imageFile);
             }
 
             const response = await axios.post("/updateConfiguration", formData, {
@@ -79,6 +79,7 @@ export default function Configuration() {
             });
         }
     };
+    
 
     return (
         <AuthenticatedLayout>
@@ -98,9 +99,13 @@ export default function Configuration() {
                             Save Changes
                         </button>
                     </div>
-                    <div className="flex w-full items-center gap-4">
+                    <div className="flex w-full justify-between items-center gap-4">
                         {imageFile && (
-                            <img src={URL.createObjectURL(imageFile)} alt="Uploaded" className="flex w-full max-w-[208px] max-h-[80px]" />
+                            <img 
+                                src={URL.createObjectURL(imageFile)} 
+                                alt="Uploaded" 
+                                className="flex w-full max-w-[208px] max-h-[80px] " 
+                            />
                         )}
                         <FileUpload
                             mode="basic"
@@ -109,7 +114,16 @@ export default function Configuration() {
                             customUpload
                             uploadHandler={onUpload}
                         />
+                        <button className="ml-auto"> {/* Pushes the button to the right */}
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                <path d="M4.4082 3.65058L4.86259 1H10.7696L11.224 3.65058" stroke="#161B26" strokeLinejoin="round"/>
+                                <path d="M1 3.65234H14.6316" stroke="#161B26" strokeLinecap="round"/>
+                                <path fillRule="evenodd" clipRule="evenodd" d="M12.7395 3.65234L11.9822 15.3906H3.65184L2.89453 3.65234H12.7395Z" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round"/>
+                                <path d="M5.92188 12.3594H9.70842" stroke="#161B26" strokeLinecap="round"/>
+                            </svg>
+                        </button>
                     </div>
+
 
                     <div className="grid grid-cols-2 gap-4">
                         {Object.entries({

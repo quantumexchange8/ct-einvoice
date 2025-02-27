@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 .p-button {
-    background-color: #f0f1f1;
+    background-color: hwb(0 100% 0%);
 }

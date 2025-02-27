@@ -40,12 +40,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/updateMerchantStatus/{id}', [MerchantController::class, 'updateStatus']);
     Route::put('/updateMerchant/{id}', [MerchantController::class, 'updateMerchant']);
     Route::delete('/deleteMerchant/{id}', [MerchantController::class, 'deleteMerchant']);
-    
+    Route::post('/logout', [ProfileController::class, 'logout'])->name('logout');
+
     Route::get('/configuration/{id}', [ConfigurationController::class, 'configuration']);
     Route::get('/configuration', [ConfigurationController::class, 'Configuration'])->name('configuration');
     Route::get('/getConfiguration', [ConfigurationController::class, 'getConfiguration'])->name('getConfiguration');
     Route::post('/updateConfiguration', [ConfigurationController::class, 'updateConfiguration'])->name('updateConfiguration');
-
+    Route::get('/getCompanyData', [ConfigurationController::class, 'getCompanyData']);
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

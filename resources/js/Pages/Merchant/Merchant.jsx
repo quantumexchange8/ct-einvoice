@@ -22,6 +22,11 @@ export default function Merchant() {
     const [editDialogVisible, setEditDialogVisible] = useState(false);
     const [selectedMerchant, setSelectedMerchant] = useState(null);
     const [deleteConfirmVisible, setDeleteConfirmVisible] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
+    const [showDetails, setShowDetails] = useState(false);
+    const [openActionMenu, setOpenActionMenu] = useState(null);  // Track which row has menu open
+    const [selectedDetails, setSelectedDetails] = useState(null); // Track selected merchant details modal
+        
     useEffect(() => {
         fetchMerchant();
     }, []);
@@ -77,10 +82,12 @@ export default function Merchant() {
         
         return (
             <>
-                <div className={`${rowData.status === 'active' ? 'border border-gray-300 bg-yellow-100 ' : ' border border-gray-300 bg-green-100' } ' flex items-center gap-2 py-1 px-2 ' `}>
+               <div className="flex justify-start">
+               <div className={`${rowData.status === 'active' ? 'border border-gray-300 bg-yellow-100 ' : ' border border-gray-300 bg-green-100' } ' flex items-center gap-2 py-1 px-2 ' `}>
                     <div className={`${rowData.status === 'active' ? 'w-1.5 h-1.5 rounded-full bg-yellow-500' : 'w-1.5 h-1.5 rounded-full bg-green-500'}`}></div>
                     <div className="uppercase">{rowData.status}</div>
                 </div>
+               </div>
             </>
         );
     };
@@ -91,40 +98,55 @@ export default function Merchant() {
     
         const handleStatusChange = async () => {
             const newStatus = rowData.status === "active" ? "inactive" : "active";
-            
             await updateStatus(rowData.id, newStatus);
             setIsOpen(false);
+            className="bg-white";
+
+            
         };
     
         return (
-            <div className="flex w-full p-2 items-center gap-3 relative">
+            <div className="relative">
                 {/* Toggle Dropdown */}
                 <button 
                     onClick={() => setIsOpen(!isOpen)} 
-                    className="p-2 bg-gray-200 rounded-md hover:bg-gray-300"
+                    className="p-2 rounded-md "
                 >
                     <DotVerticleIcon />
                 </button>
     
                 {/* Dropdown Menu */}
                 {isOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-50">
-                        <button onClick={() => handleEditMerchant(rowData)} 
-                        className="px-4 py-2 w-full text-left hover:bg-gray-100">
-                            Edit Merchant
-                        </button>
+                    <div className="absolute right-0 top-full mt-1 w-48 bg-white shadow-lg rounded-md border border-gray-200 z-50">
+                        {/* Edit Button */}
                         <button 
+                            onClick={() => handleEditMerchant(rowData)} 
+                            className="px-4 py-2 w-full text-left hover:bg-gray-100"
+                        >
+                            Edit Client
+                        </button>
+    
+                        {/* Status Toggle Button */}
+                       <div className="flex flex-col">
+                       <button 
                             onClick={handleStatusChange} 
-                            className="px-4 py-2 w-full text-left hover:bg-gray-100"
+                            className={`px-4 py-2 text-left hover:bg-gray-100 ${
+                                rowData.status === "active" ? "text-red-600" : "text-green-600"
+                            }`}
                         >
-                            {rowData.status === "active" ? "Deactivate" : "Reactivate"}
+                            {rowData.status === "active" ? "Deactivate Client" : "Reactivate Client"}
                         </button>
-                        <button 
+                       </div>
+    
+                        {/* View Details Button */}
+                      <div className="flex flex-col">
+                      <button 
                             onClick={() => setShowDetails(true)} 
-                            className="px-4 py-2 w-full text-left hover:bg-gray-100"
+                            className="px-4 py-2 text-left static hover:bg-gray-100"
                         >
-                            {rowData.status === "active" ? "View Deactivate Details" : "View Reactivate Details"}
+                            View Details
                         </button>
+                      </div>
                     </div>
                 )}
     
@@ -134,13 +156,14 @@ export default function Merchant() {
         );
     };
     
+    
     const DetailsModal = ({ rowData, onClose }) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
             <div className="bg-white rounded-lg shadow-lg w-96 p-6">
-                <h2 className="text-xl font-bold mb-4">
+                <span className="text-xl font-bold mb-4">
                     {rowData.status === "inactive" ? "Deactivation Details" : "Reactivation Details"}
-                </h2>
+                </span>
 
                 <span className="flex flex-col">Merchant ID: {rowData.merchant_uid}</span>
                 <span className="flex flex-col">Name: {rowData.name}</span>
@@ -283,23 +306,23 @@ export default function Merchant() {
                             </div>
                         </div>
                     </div>
-                    <div>
+                    <div className="flex flex-col">
                         {
                             filteredMerchants.length > 0 ? ( 
                                 <>
                             <DataTable
                                 value={filteredMerchants.slice(first, first + rows)}
-                                className="font-manrope text-[10px] not-italic text-vulcan-800 font-bold leading-[16px]"
+                                className=" font-manrope text-[10px] not-italic text-vulcan-800 font-bold leading-[16px]"
                                 paginator
                                 rows={5}
                             >
-                                <Column field="name" header="NAME" />
-                                <Column field="merchant_uid" header="MERCHANT UID" />
-                                <Column field="staging_url" header="STAGING URL" />
-                                <Column field="live_url" header="LIVE URL" />
-                                <Column field="appID" header="APP ID" />
-                                <Column field="status" header="STATUS" body={statusBodyTemplate} />
-                                <Column header="Action" body={actionBodyTemplate} />
+                                <Column field="name" header="NAME" className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                <Column field="merchant_uid" header="MERCHANT UID" className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                <Column field="staging_url" header="STAGING URL" className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                <Column field="live_url" header="LIVE URL" className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                <Column field="appID" header="APP ID" className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                <Column field="status" header="STATUS" body={statusBodyTemplate} className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                <Column header="Action" body={actionBodyTemplate} className="font-manrope text-sm not-italic bg-white text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
                             </DataTable>
                                 </>
                             ) : (

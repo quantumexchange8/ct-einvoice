@@ -6,10 +6,9 @@ import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import axios from "axios";
 import { format } from "date-fns";
-import { Tab, TabGroup, TabList, TabPanels, TabPanel } from "@headlessui/react";
+import { Tab, TabGroup, TabList } from "@headlessui/react";
 import { Checkbox } from "primereact/checkbox";
 import {Dialog } from '@headlessui/react'
-import { Paginator } from 'primereact/paginator';
 import { CreateInvoiceIcon, DotVerticleIcon, ExportIcon, PreviewIcon, ShareIcon, VoidIcon } from "@/Components/Outline";
 
 export default function InvoiceListing() {
@@ -47,7 +46,7 @@ export default function InvoiceListing() {
 
     const fetchData = async () => {
         try {
-            const response = await axios.get("/getInvoiceListing"); // Call Laravel API
+            const response = await axios.get("/getInvoiceListing"); 
             setConfigurations(response.data.configurations);
             setInvoices(response.data.invoices);
         } catch (error) {
@@ -55,11 +54,9 @@ export default function InvoiceListing() {
         }
     };
     
-    // Filter invoices whenever search, date, or status changes
     useEffect(() => {
         let filtered = invoices;
 
-        // Search filter
         if (searchTerm.trim()) {
             filtered = filtered.filter(
                 (invoice) =>
@@ -68,7 +65,10 @@ export default function InvoiceListing() {
             );
         }
 
-        // Date range filter
+        // Status filter
+        if (selectedStatus !== "all") {
+            filtered = filtered.filter((invoice) => invoice.status.toLowerCase() === selectedStatus);
+        }
         if (selectedDate && selectedDate.length === 2 && selectedDate[0] && selectedDate[1]) {
             const start = new Date(selectedDate[0]);
             const end = new Date(selectedDate[1]);
@@ -78,18 +78,10 @@ export default function InvoiceListing() {
                 return invoiceDate >= start && invoiceDate <= end;
             });
         }
-
-        // Status filter
-        if (selectedStatus !== "all") {
-            filtered = filtered.filter((invoice) => invoice.status.toLowerCase() === selectedStatus);
-        }
-
         setFilteredInvoices(filtered);
     }, [selectedStatus, searchTerm, selectedDate, invoices]);
 
     const statusBodyTemplate = (rowData) => {
-        let statusClasses = "bg-gray-100 text-gray-900 border-gray-300"; // Default styles
-        let dotColor = "bg-gray-500"; // Default dot color
         // console.log(rowData)
         return (
             <>
@@ -121,13 +113,11 @@ export default function InvoiceListing() {
   const [first, setFirst] = useState(0);
   const [rows, setRows] = useState(10);
 
-
     const onPageChange = (event) => {
         setFirst(event.first);
         setRows(event.rows);
     };
 
-  // Handle tab changes
     const handleTabChange = (index) => {
         const statuses = ["all", "pending", "paid"];
         setSelectedStatus(statuses[index]);
@@ -161,46 +151,39 @@ export default function InvoiceListing() {
         setIsPreviewOpen(true);
     };
 
-   
- 
   const dropdownStyles = {
     container: " w-full",
     button: "p-2 hover:bg-gray-200 rounded focus:outline-none",
     dropdown: "absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-50 overflow-hidden",
-    dropdownItem: "flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
+    dropdownItem: "w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
 };
 
 const actionBodyTemplate = (rowData) => {
     const [isOpen, setIsOpen] = useState(false);
 
     return (
-        <div className="flex w-full p-2 items-center gap-3 self-stretch relative">
-        <div className={dropdownStyles.container}>
-            <button onClick={() => setIsOpen(!isOpen)} className={dropdownStyles.button}>
-                <DotVerticleIcon />
-            </button>
-            {isOpen && (
-                <div className={dropdownStyles.dropdown}>
-                   
-                    <button className={dropdownStyles.dropdownItem} >
-                        <ShareIcon />
-                        Share
-                    </button>
+        <div className="flex w-full p-2 items-center gap-3 bg-white self-stretch relative">
+            <div className={dropdownStyles.container}>
+                <button onClick={() => setIsOpen(!isOpen)} className={dropdownStyles.button}>
+                    <DotVerticleIcon />
+                </button>
+                {isOpen && (
+                    <div className={dropdownStyles.dropdown}>
                     
-                   
-               
-                  <button onClick={() => handlePreview(rowData)} className={dropdownStyles.dropdownItem}>
-                    <PreviewIcon /> Preview
-                    </button>
-                  </div>
+                        <button className={dropdownStyles.dropdownItem} >
+                            <ShareIcon />
+                            Share
+                        </button>
                 
-            )}
-
-        </div>
+                    <button onClick={() => handlePreview(rowData)} className={dropdownStyles.dropdownItem}>
+                        <PreviewIcon /> Preview
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
-
 
     return (
         <AuthenticatedLayout>
@@ -228,30 +211,29 @@ const actionBodyTemplate = (rowData) => {
                         </div>
                     </div>
                     <div className="flex w-full">
-            {/* Tabs for Invoice Status */}
-            <TabGroup selectedIndex={["all", "pending", "paid"].indexOf(selectedStatus)} onChange={handleTabChange}>
-                <TabList className="flex gap-[2px] p-[3px] items-center justify-center bg-vulcan-100 rounded-sm">
-                    {["All", "Pending", "Paid"].map((label, index) => (
-                        <Tab
-                            key={index}
-                            className={({ selected }) =>
-                                `flex px-3 py-[5px] text-xs rounded-sm ${
-                                    selected
-                                        ? "bg-white font-bold text-black border-none shadow-sm" // No border on selected tab
-                                        : "text-vulcan-950 font-normal hover:bg-gray-200"
-                                }`
-                            }
-                        >
-                            {label}
-                        </Tab>
-                    ))}
-                </TabList>
-            </TabGroup>
-        </div>
-                   
+                        {/* Tabs for Invoice Status */}
+                        <TabGroup selectedIndex={["all", "pending", "paid"].indexOf(selectedStatus)} onChange={handleTabChange}>
+                            <TabList className="flex gap-[2px] p-[3px] items-center justify-center bg-vulcan-100 rounded-sm">
+                                {["All", "Pending", "Paid"].map((label, index) => (
+                                    <Tab
+                                        key={index}
+                                        className={({ selected }) =>
+                                            `flex px-3 py-[5px] text-xs rounded-sm ${
+                                                selected
+                                                    ? "bg-white font-bold text-black border-none shadow-sm" // No border on selected tab
+                                                    : "text-vulcan-950 font-normal hover:bg-gray-200"
+                                            }`
+                                        }
+                                    >
+                                        {label}
+                                    </Tab>
+                                ))}
+                            </TabList>
+                        </TabGroup>
+                    </div>
                     <div className="flex w-full items-center gap-4">
                         <div className="flex items-center justify-between w-full">
-                            <div className="flex items-center">
+                            <div className="flex items-center gap-2">
                                 <div className="flex max-w-[270px] p-[3px] items-center bg-vulcan-50 gap-2">
                                     <i className="pi pi-search text-vulcan-500"></i>
                                     <InputText
@@ -261,24 +243,27 @@ const actionBodyTemplate = (rowData) => {
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
                                 </div>
-                                <div className="relative gap-3 w-full max-w-[212px] flex items-center px-3 py-2 text-xs ">
-                                    <Calendar
-                                        value={selectedDate}
-                                        onChange={(e) => setSelectedDate(e.value)}
-                                        placeholder="Select Date"
-                                        dateFormat="dd/mm/yy"
-                                        selectionMode="range"
-                                        className="max-w-[212px] gap-3 border-none font-manrope outline-none text-xs font-medium"
-                                    />
-                                    {selectedDate && selectedDate.length > 0 && (
-                                        <button
+                               <div className="flex gap-2">
+                                <div className="relative gap-3 max-w-[600px] flex items-center px-3 py-2 text-[5px]">
+                                        <Calendar
+                                            value={selectedDate}
+                                            onChange={(e) => setSelectedDate(e.value)}
+                                            placeholder="Select Date"
+                                            dateFormat="dd/mm/yy"
+                                            selectionMode="range"
+                                            className=" border-none font-manrope outline-none text-[5px] font-medium"
+                                        />
+                                        {selectedDate && selectedDate.length > 0 && (
+                                            <button
                                             onClick={() => setSelectedDate(null)}
-                                            className="absolute right-5 text-gray-500 font-manrope text-xs hover:text-red-500"
-                                        >
+                                            className="flex right-5 text-gray-500 font-manrope text-[5px] hover:text-red-500" 
+                                         >
                                             <i className="pi pi-times"></i>
                                         </button>
-                                    )}
-                                </div>
+                                        )}
+                                    </div>
+                               </div>
+
                             </div>
                             <div className="flex items-center gap-3">
                                 <button className="flex items-center px-3 py-2 gap-2 border rounded-sm border-vulcan-50 bg-white font-manrope text-error-300 text-xs leading-[18px] not-italic font-medium">
@@ -320,7 +305,7 @@ const actionBodyTemplate = (rowData) => {
                                         <Column field="tin_no" header="TIN No." className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
                                         <Column field="type" header="Type" className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
                                         <Column field="status" header="Status" body={statusBodyTemplate} className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
-                                        <Column header="Action" body={actionBodyTemplate} className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                        <Column header="Action" body={actionBodyTemplate} className="font-manrope bg-white text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
                                     </DataTable>
                                     {/* <Paginator
                                         first={first}
@@ -352,15 +337,20 @@ const actionBodyTemplate = (rowData) => {
                             <div className="mt-4">
                                 <div className="flex justify-between">
                                     {configurations ? (
-                                    <div className="">
-                                        <h2 className="flex flex-col text-vulcan-950 font-manrope font-bold leading-4 text-[10px] not-italic">{configurations.companyName}</h2>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic"> {configurations.address1}</span>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic"> {configurations.address2}</span>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic"> {configurations.poscode} {configurations.area} ,{configurations.state}</span>
-                                        <br/>
+                                    <div className="flex flex-col gap-5">
+                                        <div className="gap-1">
+                                            <span className="flex flex-col text-[10px] text-vulcan-950 font-manrope font-bold leading-4 not-italic">{configurations.companyName}</span>
+                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic"> {configurations.address1}</span>
+                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic"> {configurations.address2}</span>
+                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic"> {configurations.poscode} {configurations.area} ,{configurations.state}</span>
+                                        </div>
+                                       
+                                       <div>
                                         <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Reg.No : {configurations.registration}</span>
                                         <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Contact : {configurations.phone}</span>
                                         <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Email : {configurations.email}</span>
+                                       </div>
+                                        
                                         
                                     </div>
                                     ) : (

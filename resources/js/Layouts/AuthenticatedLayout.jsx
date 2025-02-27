@@ -1,24 +1,20 @@
 import { useState } from "react";
-import { Button } from "primereact/button";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
-const AuthenticatedLayout = ({ header, children }) => {
-  const [visible, setVisible] = useState(false);
+const AuthenticatedLayout = ({ children }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   return (
-<div className="min-h-screen">
-  
-  <Sidebar />
-  <div className="min-h-screen flex flex-col md:ml-60">
-    <Navbar />
+    <div className="min-h-screen flex">
+      {/* Sidebar: Show only when isSidebarOpen is true */}
+      {isSidebarOpen && <Sidebar />}
 
-    <main>{children}</main>
-  </div>
-  
-</div>
-    
-   
+      <div className={`flex flex-col w-full bg-white transition-all duration-300 ${isSidebarOpen ? "ml-[233px]" : "ml-0"}`}>
+        <Navbar toggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+        <main className="p-4">{children}</main>
+      </div>
+    </div>
   );
 };
 
