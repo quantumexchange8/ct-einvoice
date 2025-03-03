@@ -184,7 +184,7 @@ const submit = (e) => {
         }
     })
   }
-
+ 
 
 
   return (
@@ -213,8 +213,8 @@ const submit = (e) => {
                 <TextInput 
                   id="invoice_no"
                   name="invoice_no"
-                  value={data.name}
-                  onChange={(e) => setData('name', e.target.value)}
+                  value={data.invoice_no}
+                  onChange={(e) => setData('invoice_no', e.target.value)}
                   type="text"
                   placeholder="CTINV00001"
                   className="placeholder:flex py-3 px-4 items-center w-full border-vulcan-25 rounded-sm bg-vulcan-50 border text-vulcan-400"
@@ -341,18 +341,22 @@ const submit = (e) => {
                 </div>
 
                 {message && <div className="text-red-600 text-sm font-medium">{message}</div>}
+                <div className="bg-gray-900 text-vulcan-950">
+                  <Button
+                      onClick={submit}
+                      disabled={processing || !enabled || userInput !== captchaText}
 
-                <Button
-                    onClick={submit}
-                    disabled={processing || !enabled || userInput !== captchaText}
-                    className={`text-vulcan-25 font-manrope text-sm font-medium leading-5 w-full py-3 px-4 flex flex-col justify-center items-center ${
-                      processing || !enabled || userInput !== captchaText
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-vulcan-700"
-                    }`}
-                  >
-                  Submit
-                </Button>
+                      className={`text-vulcan-25 font-manrope text-sm font-medium leading-5 w-full py-3 px-4 flex flex-col justify-center items-center ${
+                        processing || !enabled || userInput !== captchaText
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-vulcan-900"
+                      }`}
+                    
+                    >
+                    Submit
+                  </Button>
+                </div>
+                
             </div>    
           </div>
         </div>

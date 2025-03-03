@@ -95,25 +95,43 @@ export default function Configuration() {
                                 Active and inactive clients will all be shown in this list.
                             </div>
                         </div>
-                        <button className="px-4 py-2 border border-gray-300 rounded-sm text-sm" onClick={handleSave}>
+                        <button className="px-4 py-2 border shadow-sm border-gray-300 rounded-sm text-sm" onClick={handleSave}>
                             Save Changes
                         </button>
                     </div>
                     <div className="flex w-full justify-between items-center gap-4">
-                        {imageFile && (
-                            <img 
-                                src={URL.createObjectURL(imageFile)} 
-                                alt="Uploaded" 
-                                className="flex w-full max-w-[208px] max-h-[80px] " 
-                            />
-                        )}
-                        <FileUpload
-                            mode="basic"
-                            chooseLabel={<div className="flex items-center gap-2 text-gray-600">Upload Photo</div>}
-                            auto
-                            customUpload
-                            uploadHandler={onUpload}
-                        />
+                     
+                            {imageFile && (
+                                <img 
+                                    src={URL.createObjectURL(imageFile)} 
+                                    alt="Uploaded" 
+                                    className="flex w-full max-w-[208px] max-h-[80px] " 
+                                />
+                            )}
+                             <div className="flex border border-vulcan-950 rounded-md">
+                                <FileUpload
+                                    mode="basic"
+                                    chooseLabel={
+                                    <div className="flex items-center gap-2 text-gray-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                        <path
+                                            d="M14 10V10.8C14 11.9201 14 12.4802 13.782 12.908C13.5903 13.2843 13.2843 13.5903 12.908 13.782C12.4802 14 11.9201 14 10.8 14H5.2C4.07989 14 3.51984 14 3.09202 13.782C2.71569 13.5903 2.40973 13.2843 2.21799 12.908C2 12.4802 2 11.9201 2 10.8V10M11.3333 5.33333L8 2M8 2L4.66667 5.33333M8 2V10"
+                                            stroke="#61646C"
+                                            strokeWidth="1.2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                        />
+                                        </svg>
+                                        <span>Upload Photo</span>
+                                    </div>
+                                    }
+                                    auto
+                                    customUpload
+                                    uploadHandler={onUpload}
+                                    className="w-full"
+                                />
+                            </div>
+
                         <button className="ml-auto"> {/* Pushes the button to the right */}
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <path d="M4.4082 3.65058L4.86259 1H10.7696L11.224 3.65058" stroke="#161B26" strokeLinejoin="round"/>
@@ -123,8 +141,6 @@ export default function Configuration() {
                             </svg>
                         </button>
                     </div>
-
-
                     <div className="grid grid-cols-2 gap-4">
                         {Object.entries({
                             invoicePrefix: "Invoice Prefix",
@@ -145,7 +161,6 @@ export default function Configuration() {
                         ))}
                     </div>
                 </div>
-
                 <div className="flex w-full p-4 flex-col gap-6 self-stretch border rounded-sm border-vulcan-200 bg-white">
                     <div className="flex items-center justify-between w-full">
                         <div>
@@ -154,7 +169,7 @@ export default function Configuration() {
                             </div>
                             <div className="text-xs text-vulcan-900">Essential company information for your e-Invoice.</div>
                         </div>
-                        <button className="px-4 py-2 border border-gray-300 rounded-sm text-sm" onClick={handleSave}>
+                        <button className="px-4 py-2 border shadow-sm border-gray-300 rounded-sm text-sm" onClick={handleSave}>
                             Save Changes
                         </button>
                     </div>
@@ -173,7 +188,6 @@ export default function Configuration() {
                             </div>
                         ))}
                     </div>
-
                 </div>
             </div>
         </AuthenticatedLayout>

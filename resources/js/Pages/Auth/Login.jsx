@@ -86,7 +86,7 @@ export default function Login({ status, canResetPassword }) {
                             </div>
 
 
-                            <div className="w-full flex items-center justify-between">
+                            {/* <div className="w-full flex items-center justify-between">
                                 <label className="flex items-center gap-2">
                                     <Checkbox
                                         name="remember"
@@ -104,7 +104,7 @@ export default function Login({ status, canResetPassword }) {
                                         Forgot Password?
                                     </Link>
                                 )}
-                            </div>
+                            </div> */}
                         </div>
 
                         <PrimaryButton className="w-full justify-center" disabled={processing}>

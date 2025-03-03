@@ -67,7 +67,6 @@ export default function ForgotPassword({ status }) {
                             />
 
                             <InputError message={errors.email} className="mt-2" />
-
                         </div>
                             <div className="flex ">
                                 <PrimaryButton className="flex w-full items-center justify-center text-vulcan-25 font-manrope text-sm not-italic font-medium leading-5" disabled={processing}>
