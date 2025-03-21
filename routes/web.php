@@ -1,12 +1,10 @@
 <?php
 
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceListingController;
 use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
