@@ -4,11 +4,12 @@ import Topbar from './Topbar';
 
 export default function GuestLayout({ children }) {
     return (
-        <div className="">
+        <div>
+
             <Topbar />
 
-            <div className='w-full flex justify-center pt-5 bg-gray-100'>
-                <div className='max-w-[800px] w-full flex '>
+            <div className='w-full flex justify-center bg-gray-100 pt-5'>
+                <div className='max-w-[800px] w-full flex flex-col'>
                     {children}
                 </div>
             </div>

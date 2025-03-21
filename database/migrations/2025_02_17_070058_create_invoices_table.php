@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('merchant_id');
             $table->string('invoice_no');
             $table->string('amount'); 
             $table->date('date'); 

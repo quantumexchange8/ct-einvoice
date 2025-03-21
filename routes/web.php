@@ -10,20 +10,16 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
+Route::get('/', [InvoiceController::class, 'einvoice'])->name('einvoice');
 
-Route::get('/invoice/{id}', [InvoiceController::class, 'invoice']);
-Route::get('/invoice', [InvoiceController::class, 'invoice']);
+Route::get('/invoice', [InvoiceController::class, 'invoice'])->name('invoice');
+// Route::get('/invoice', [InvoiceController::class, 'invoice']);
 Route::get('/getCountries', [InvoiceController::class, 'getCountries'])->name('getCountries');
 Route::get('/getStates', [InvoiceController::class, 'getStates'])->name('getStates');
 Route::post('/submitInvoice', [InvoiceController::class, 'submitInvoice'])->name('submitInvoice');
+
+// get invoicing from crm
+Route::post('/store-invoice', [InvoiceController::class, 'storeInvoice'])->name('store-invoice');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

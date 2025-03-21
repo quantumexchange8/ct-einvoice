@@ -1,7 +1,6 @@
 import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import GuestLayout from "@/Layouts/GuestLayout";
-import { Button } from "primereact/button";
 import React, { useRef, useState, useEffect } from "react";
 import { Dropdown } from 'primereact/dropdown';
 import axios from "axios";
@@ -11,8 +10,10 @@ import { Checkbox } from '@headlessui/react';
 import { CheckIcon } from '@heroicons/react/16/solid';
 import Personal from "./Partials/Personal";
 import Business from "./Partials/Business";
+import { formatDateDMY } from "@/Composables";
+import Button from "@/Components/Button";
 
-export default function Invoice() {
+export default function Invoice({invoice_no, merchant_id, date_issued, amount }) {
 
   const [checked, setChecked] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(null);
@@ -65,6 +66,10 @@ useEffect(() => {
 }, []);
 
 const { data, setData, post, processing, errors, reset, progress } = useForm({
+  invoice_no: invoice_no,
+  merchant_id: merchant_id,
+  date_issued: date_issued,
+  amount: amount,
   full_name: '',
   tin_no: '',
   id_no: '',
@@ -194,7 +199,7 @@ const submit = (e) => {
         <div className="py-8 px-5 md:p-10 w-full flex flex-col justify-center items-start gap-5 border border-vulcan-100 bg-white">
 
           <div className="flex flex-col gap-1">
-            <div className="text-vulcan-900 font-bold text-xl">
+            <div className="text-vulcan-900 font-bold text-xl font-Lora">
               Invoice/Receipt  <span className="text-vulcan-500">detail</span>
             </div>
             <div className="text-vulcan-900 text-xs">
@@ -216,6 +221,7 @@ const submit = (e) => {
                   value={data.invoice_no}
                   onChange={(e) => setData('invoice_no', e.target.value)}
                   type="text"
+                  disabled={true}
                   placeholder="CTINV00001"
                   className="placeholder:flex py-3 px-4 items-center w-full border-vulcan-25 rounded-sm bg-vulcan-50 border text-vulcan-400"
                 />
@@ -234,6 +240,7 @@ const submit = (e) => {
                       onChange={(e) => setData('amount', e.target.value)}
                       type="text"
                       placeholder="1,500.00"
+                      disabled={true}
                       className="placeholder:flex py-3 px-4 items-center w-full border-vulcan-25 rounded-sm bg-vulcan-50 border text-vulcan-400"
                     />
               </div>
@@ -248,17 +255,19 @@ const submit = (e) => {
                     <TextInput 
                       id="date"
                       name="date"
+                      value={formatDateDMY(data.date_issued)}
                       type="text"
                       placeholder=" 10/01/2024"
+                      disabled={true}
                       className="placeholder:flex py-3 px-4 items-center w-full border-vulcan-25 rounded-sm bg-vulcan-50 border text-vulcan-400"
                     />
-                    <span className="w-[16px] h-[16px] bg-vulcan-100 ml-auto ">
+                    {/* <span className="w-[16px] h-[16px] bg-vulcan-100 ml-auto ">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
                         <rect width="16" height="16" rx="8" fill="#F0F1F1"/>
                         <path d="M10.0006 6.00244L6.00391 9.99911" stroke="#CECFD2" strokeLinecap="square"/>
                         <path d="M10 10.0008L6 6" stroke="#CECFD2" strokeLinecap="square"/>
                       </svg>
-                    </span>
+                    </span> */}
                   </div>
               </div>
             </div>
@@ -268,7 +277,7 @@ const submit = (e) => {
         <div className="p-[20px] w-full flex flex-col justify-center items-start gap-8 border border-vulcan-100 bg-white">
           <div className="flex flex-col justify-center items-start gap-6">
             <div className="flex flex-col gap-1">
-             <div className="text-vulcan-900 font-bold text-xl shrink-0 ">
+             <div className="text-vulcan-900 font-bold text-xl font-Lora">
                 Request e-Invoice  <span className="text-vulcan-500">now</span>
               </div>
               <div className="text-vulcan-900 text-xs font-normal">
@@ -329,7 +338,7 @@ const submit = (e) => {
 
                 <div className="flex w-full flex-col gap-4">{}
                   <canvas ref={canvasRef} className="w-[268px] h-[116px] border border-gray-300"></canvas>
-                  <div> {}
+                  <div>
                     <input
                       type="text"
                       value={userInput}
@@ -339,22 +348,17 @@ const submit = (e) => {
                     />
                   </div>
                 </div>
-
                 {message && <div className="text-red-600 text-sm font-medium">{message}</div>}
-                <div className="bg-gray-900 text-vulcan-950">
+                <div className="w-full">
                   <Button
                       onClick={submit}
+                      size="md"
+                      className="w-full flex justify-center"
                       disabled={processing || !enabled || userInput !== captchaText}
-
-                      className={`text-vulcan-25 font-manrope text-sm font-medium leading-5 w-full py-3 px-4 flex flex-col justify-center items-center ${
-                        processing || !enabled || userInput !== captchaText
-                          ? "bg-gray-400 cursor-not-allowed"
-                          : "bg-vulcan-900"
-                      }`}
-                    
-                    >
+                  >
                     Submit
                   </Button>
+                  
                 </div>
                 
             </div>    
