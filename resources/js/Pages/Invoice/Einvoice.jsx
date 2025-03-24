@@ -15,6 +15,8 @@ import { Calendar } from "primereact/calendar";
 import { ClearInputIcon } from "@/Components/Outline";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import Checkbox from "@/Components/Checkbox";
+import { InputNumber } from "primereact/inputnumber";
+import toast from "react-hot-toast";
 
 export default function Einvoice() {
 
@@ -176,12 +178,13 @@ export default function Einvoice() {
                 setIsLoading(false);
                 setUserInput("");
                 setMessage("");
-                // toast.success('Item added successfully.', {
-                //     title: 'Item added successfully.',
-                //     description: 'This item has been added to your item listing.',
-                //     duration: 3000,
-                //     variant: 'variant1',
-                // });
+
+                toast.success('Requested e-invoice successfully', {
+                    title: 'Requested e-invoice successfully',
+                    duration: 3000,
+                    variant: 'variant3',
+                });
+
             }
         })
     }
@@ -195,60 +198,59 @@ export default function Einvoice() {
                         <div className="text-vulcan-900 text-xl font-bold font-Lora">Invoice/Receipt <span className="text-vulcan-500">detail</span></div>
                         <div className="text-vulcan-900 text-xs">Below are your invoice or receipt detail in summary.</div>
                     </div>
-                    <div className="grid grid-cols-2 grid-rows-2 gap-4 w-full">
-                            <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-1">
-                                    <InputLabel htmlFor="receipt_no" value="Invoice/Receipt No." className="text-vulcan-500" />
-                                    <span className="text-error-800 text-xs ">*</span>
-                                </div>
-                                
-                                <TextInput 
-                                    id="receipt_no"
-                                    type="text"
-                                    name="receipt_no"
-                                    value={data.receipt_no}
-                                    className="w-full box-border h-11"
-                                    autoComplete="username"
-                                    isFocused={true}
-                                    onChange={(e) => setData('receipt_no', e.target.value)}
-                                />
+                    <div className="flex flex-col md:grid md:grid-cols-2 md:grid-rows-2 gap-3 md:gap-4 w-full">
+                        <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1">
+                                <InputLabel htmlFor="receipt_no" value="Invoice/Receipt No." className="text-vulcan-500" />
+                                <span className="text-error-800 text-xs ">*</span>
                             </div>
-                            <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-1">
-                                    <InputLabel htmlFor="amount" value="Total Amount" className="text-vulcan-500" />
-                                    <span className="text-error-800 text-xs ">*</span>
-                                </div>
-                                <TextInput 
-                                    id="amount"
-                                    type="number"
-                                    name="amount"
-                                    value={data.amount}
-                                    className="w-full box-border h-11"
-                                    autoComplete="amount"
-                                    isFocused={true}
-                                    onChange={(e) => setData('amount', e.target.value)}
-                                />
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-1">
-                                    <InputLabel htmlFor="date_issued" value="Date Issued" className="text-vulcan-500" />
-                                    <span className="text-error-800 text-xs ">*</span>
-                                </div>
-                                <div className="relative">
-                                    <Calendar 
-                                        value={data.date_issued} 
-                                        onChange={(e) => setData('date_issued', e.value)} 
-                                        className="w-full box-border h-11"
-                                    />
-                                    {
-                                        data.date_issued && (
-                                            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={clearDate}><ClearInputIcon /></span>
-                                        )
-                                    }
-                                </div>
-                            </div>
-                            <div></div>
+                            
+                            <TextInput 
+                                id="invoice_no"
+                                type="text"
+                                name="invoice_no"
+                                value={data.invoice_no}
+                                className="w-full box-border h-11"
+                                autoComplete="username"
+                                isFocused={true}
+                                onChange={(e) => setData('invoice_no', e.target.value)}
+                            />
                         </div>
+                        <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1">
+                                <InputLabel htmlFor="amount" value="Total Amount" className="text-vulcan-500" />
+                                <span className="text-error-800 text-xs ">*</span>
+                            </div>
+                            <InputNumber 
+                                inputId="amount" 
+                                value={data.amount || 0} 
+                                onValueChange={(e) => setData('amount', e.target.value)} 
+                                mode="currency" 
+                                className="w-full box-border h-11 border border-vulcan-200 rounded-[2px] hover:border-2 focus:border-vulcan-700 outline-none focus:outline-none focus:ring-0 text-vulcan-950 disabled:bg-vulcan-25 disabled:border-vulcan-50 disabled:text-vulcan-400"
+                                currency="MYR" 
+                                locale="en-MY" 
+                            />
+                        </div>
+                        <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1">
+                                <InputLabel htmlFor="date_issued" value="Date Issued" className="text-vulcan-500" />
+                                <span className="text-error-800 text-xs ">*</span>
+                            </div>
+                            <div className="relative">
+                                <Calendar 
+                                    value={data.date_issued} 
+                                    onChange={(e) => setData('date_issued', e.value)} 
+                                    className="w-full box-border h-11"
+                                />
+                                {
+                                    data.date_issued && (
+                                        <span className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer" onClick={clearDate}><ClearInputIcon /></span>
+                                    )
+                                }
+                            </div>
+                        </div>
+                        <div></div>
+                    </div>
                 </div>
                 
                 <div className="p-[20px] w-full flex flex-col justify-center items-start gap-8 border border-vulcan-100 bg-white">

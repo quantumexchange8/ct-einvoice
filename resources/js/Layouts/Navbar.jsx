@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "primereact/button";
 import axios from "axios"; 
+import { BreadcumbIcon, LangIcon, LogoutIcon } from "@/Components/Outline";
 export default function Navbar({ toggleSidebar }) {
   const handleSignOut = async () => {
     try {
@@ -14,13 +15,17 @@ export default function Navbar({ toggleSidebar }) {
   };
 
   return (
-    <nav className="flex w-full p-4 justify-between items-center bg-white">
-      <div className="flex items-center gap-3">
-        <Button icon="pi pi-bars" className="p-button-text p-2 bg-white" onClick={toggleSidebar} />
+    <nav className="flex w-full p-4 justify-between items-center bg-white border-b border-vulcan-100">
+      <div className="flex items-center py-2.5 px-2 cursor-pointer hover:bg-vulcan-100 rounded-lg" onClick={toggleSidebar} >
+        <BreadcumbIcon className='text-[#333333]' />
       </div>
-      <div className="flex items-center gap-2">
-        <Button icon="pi pi-globe" className="p-button-text p-2" />
-        <Button icon="pi pi-sign-out" className="p-button-text p-2 bg-white" onClick={handleSignOut} />
+      <div className="flex items-center gap-2 ">
+        <div className="py-2.5 px-2 cursor-pointer hover:bg-vulcan-100 rounded-lg">
+          <LangIcon />
+        </div>
+        <div className="py-2.5 px-2 cursor-pointer hover:bg-vulcan-100 rounded-lg" onClick={handleSignOut}>
+          <LogoutIcon />
+        </div>
       </div>
     </nav>
   );

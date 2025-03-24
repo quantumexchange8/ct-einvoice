@@ -237,7 +237,6 @@ export default function Business({ data, setData, errors,processing, getStates, 
                   <InputError message={errors.Country} className="mt-2"/>
               </div>
             </div>
-           
         </div>
     )
 }

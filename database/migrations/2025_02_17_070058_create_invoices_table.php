@@ -34,6 +34,7 @@ return new class extends Migration
             $table->integer('postcode'); 
             $table->string('state');
             $table->string('country');
+            $table->string('status');
             $table->timestamps();
         });
     }

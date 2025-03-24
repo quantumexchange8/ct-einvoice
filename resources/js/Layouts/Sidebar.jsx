@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios"; 
+import { ConfigurationIcon, DashboardIcon, InvoiceIcon, MerchantIcon } from "@/Components/Outline";
 export default function Sidebar() {
   const handleLogout = async () => {
     try {
@@ -28,39 +29,18 @@ export default function Sidebar() {
                   </span>
                 </div>
               </div>
-              <div className="flex px-3 py-2 justify-center items-center gap-2 self-stretch border rounded-sm border-gray-300 bg-gray-100">
-                <button>
-                  <div className="flex flex-shrink-0 gap-2 text-gray-700 text-xs font-manrope font-medium leading-[18px]">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
-                      <path d="M7 1.3999V12.5999" stroke="#161B26" strokeLinecap="square" />
-                      <path d="M1.3999 7H12.5999" stroke="#161B26" strokeLinecap="square" />
-                    </svg>
-                    Create Order
-                  </div>
-                </button>
-              </div>
             </div>
             <div className="flex w-full flex-col gap-2">
                 <button>
                     <div className="flex w-full items-center gap-3 px-3 py-2 text-gray-900 font-manrope text-sm font-normal leading-5">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 16 15" fill="none">
-                        <path d="M1 7.3643L7.99991 1.36621L14.9998 7.3643" stroke="#161B26" strokeLinecap="square" />
-                        <path d="M2.50195 6.51855V14.2311H13.5013V6.51855" stroke="#161B26" strokeLinecap="square" />
-                        <path d="M8 8.28857V10.6587" stroke="#161B26" strokeLinecap="square" />
-                        </svg>
+                        <DashboardIcon />
                         Dashboard
                     </div>
                 </button>
               <a href="/invoice-listing">
                 <button>
                   <div className="flex w-full items-center gap-3 px-3 py-2 text-gray-900 font-manrope text-sm font-normal leading-5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M14.6663 4.66634L7.99967 1.33301L1.33301 4.66634V11.333L7.99967 14.6663L14.6663 11.333V4.66634Z" stroke="#161B26" strokeLinejoin="round" />
-                      <path d="M1.33301 4.6665L7.99967 7.99984" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M8 14.6667V8" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M14.6667 4.6665L8 7.99984" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M11.3337 3L4.66699 6.33333" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                    <InvoiceIcon />
                     Invoice Listing
                   </div>
                 </button>
@@ -68,13 +48,7 @@ export default function Sidebar() {
               <a href="/merchant">
                 <button>
                   <div className="flex w-full items-center gap-3 px-3 py-2 text-gray-900 font-manrope text-sm font-normal leading-5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M14.6663 4.66634L7.99967 1.33301L1.33301 4.66634V11.333L7.99967 14.6663L14.6663 11.333V4.66634Z" stroke="#161B26" strokeLinejoin="round" />
-                      <path d="M1.33301 4.6665L7.99967 7.99984" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M8 14.6667V8" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M14.6667 4.6665L8 7.99984" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M11.3337 3L4.66699 6.33333" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                    <MerchantIcon />
                     Merchant
                   </div>
                 </button>
@@ -82,13 +56,7 @@ export default function Sidebar() {
               <a href="/configuration">
                 <button>
                   <div className="flex w-full items-center gap-3 px-3 py-2 text-gray-900 font-manrope text-sm font-normal leading-5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                      <path d="M14.6663 4.66634L7.99967 1.33301L1.33301 4.66634V11.333L7.99967 14.6663L14.6663 11.333V4.66634Z" stroke="#161B26" strokeLinejoin="round" />
-                      <path d="M1.33301 4.6665L7.99967 7.99984" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M8 14.6667V8" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M14.6667 4.6665L8 7.99984" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                      <path d="M11.3337 3L4.66699 6.33333" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                    <ConfigurationIcon />
                     Configuration
                   </div>
                 </button>

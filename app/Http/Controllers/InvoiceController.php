@@ -10,6 +10,7 @@ use App\Models\State;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 class InvoiceController extends Controller
 {
@@ -45,12 +46,14 @@ class InvoiceController extends Controller
 
             // Existing invoice
             if ($ExistInvoice) {
+                Log::debug('page', ['ExistInvoice' => $ExistInvoice]);
                 return Inertia::render('Profile/Partials/Pending', [
                     'invoice' => $ExistInvoice
                 ]);
             }
 
             if (!$ExistInvoice) {
+                Log::debug('page', 'invoice');
                 return Inertia::render('Profile/Invoice', [
                     'invoice_no' => $invoice_no,
                     'merchant_id' => $merchant_id,
@@ -82,16 +85,14 @@ class InvoiceController extends Controller
     public function submitInvoice(InvoiceRequest $request)
     {
 
-        // dd($request->all());
-
         if ($request->type === 'Personal') {
             $invoice = Invoice::create([
-                'invoice_no' => 'INV-001',
-                'amount' => '100',
-                'date' => '2025-01-27 05:38:03',
+                'invoice_no' => $request->invoice_no,
+                'amount' => $request->amount,
+                'date' => Carbon::parse($request->date_issued)->format('Y-m-d H:i:s'),
                 'type' => $request->type,
                 'company_url' => 'https://ct-einvoice.com',
-                'business_registration' => $request->business_registration,
+                'business_registration' => $request->business_registration ?? null,
                 'full_name' => $request->full_name,
                 'tin_no' => $request->tin_no,
                 'id_no' => $request->id_no,
@@ -99,40 +100,36 @@ class InvoiceController extends Controller
                 'email' => $request->email,
                 'contact' => $request->contact,
                 'addressLine1' => $request->addressLine1,
-                'addressLine2' => $request->addressLine2,
-                'addressLine3' => $request->addressLine3,
+                'addressLine2' => $request->addressLine2 ?? null,
+                'addressLine3' => $request->addressLine3 ?? null,
                 'city' => $request->city,
                 'postcode' => $request->postcode,
-                'state' => $request->state['state'],
-                'country' => $request->country,
+                'state' => $request->state['State'],
+                'country' => $request->country['country'],
                 'status' => 'pending',
                 'id_type' => $request->id_type['name'],
-                'business_registration' => $request->business_registration,
-        
             ]);
         } else {
             $invoice = Invoice::create([
-                'invoice_no' => 'INV-001',
-                'amount' => '100',
-                'date' => '2025-01-27 05:38:03',
+                'invoice_no' => $request->invoice_no,
+                'amount' => $request->amount,
+                'date' => Carbon::parse($request->date_issued)->format('Y-m-d H:i:s'),
                 'type' => $request->type,
                 'company_url' => 'https://ct-einvoice.com',
-                'business_registration' => $request->business_registration,
+                'business_registration' => $request->business_registration ?? null,
                 'full_name' => $request->full_name,
                 'tin_no' => $request->tin_no,
                 'sst_no' => $request->sst_no,
                 'email' => $request->email,
                 'contact' => $request->contact,
                 'addressLine1' => $request->addressLine1,
-                'addressLine2' => $request->addressLine2,
-                'addressLine3' => $request->addressLine3,
+                'addressLine2' => $request->addressLine2 ?? null,
+                'addressLine3' => $request->addressLine3 ?? null,
                 'city' => $request->city,
                 'postcode' => $request->postcode,
-                'state' => $request->state['state'],
-                'country' => $request->country,
+                'state' => $request->state['State'],
+                'country' => $request->country['country'],
                 'status' => 'pending',
-                'business_registration' => $request->business_registration,
-        
             ]);
         }
    

@@ -26,7 +26,7 @@ export default function Personal({ data, setData, errors, getStates, getCountrie
               To facilitate the issuance of e-invoices, it is essential for us to gather comprehensive information in line with the guidelines set forth by the Inland Revenue Board of Malaysia (IRBM). We want to assure you that we dedicated to safeguarding your personal information and upholding your privacy.
             </div>
             
-            <div className="w-full grid grid-cols-2 grid-rows-7 items-start gap-4">
+            <div className="w-full flex flex-col md:grid md:grid-cols-2 md:grid-rows-7 items-start gap-3 md:gap-4">
               <div className="w-full flex flex-col gap-1 ">
                   <div className="flex items-center gap-1 text-vulcan-900 text-xs font-medium">
                     <InputLabel value="Full Name" />
@@ -224,7 +224,7 @@ export default function Personal({ data, setData, errors, getStates, getCountrie
                   value={data.state}
                   onChange={(e) => setData('state', e.target.value)}
                   options={getStates}
-                  optionLabel="state"
+                  optionLabel="State"
                   placeholder="Select"
                   className="w-full box-border h-11"
                   panelClassName="bg-white text-black border border-vulcan-900"

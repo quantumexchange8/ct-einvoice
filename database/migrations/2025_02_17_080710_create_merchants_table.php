@@ -15,12 +15,29 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('merchant_uid');
-            $table->string('staging_url');
-            $table->string('live_url');
+            $table->string('registration_name');
+            $table->string('irbm_client_id');
+            $table->string('irbm_client_key');
+            $table->string('tin_no');
+            $table->string('brn_no');
+            $table->string('sst_no')->nullable();
+            $table->string('ttx_no')->nullable();
+            $table->unsignedBigInteger('msic_code');
+            $table->string('classification_code');
+            $table->string('classification_desc');
+            $table->string('address1');
+            $table->string('address2')->nullable();
+            $table->string('address3')->nullable();
+            $table->string('city');
+            $table->string('state_code');
+            $table->integer('contact');
+            $table->string('email');
+            $table->string('staging_url')->nullable();
+            $table->string('live_url')->nullable();
             $table->string('appID');
             $table->string('role');
             $table->string('status');
-            
+            $table->softDeletes();
             $table->timestamps();
         });
     }
