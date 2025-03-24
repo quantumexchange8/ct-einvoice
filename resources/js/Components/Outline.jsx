@@ -63,6 +63,16 @@ const PreviewIcon = () => {
     )
 }
 
+const ClearInputIcon = () => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <rect width="16" height="16" rx="8" fill="#F0F1F1"/>
+            <path d="M10.0006 6.00244L6.00391 9.99911" stroke="#CECFD2" stroke-linecap="square"/>
+            <path d="M10 10.0008L6 6" stroke="#CECFD2" stroke-linecap="square"/>
+        </svg>
+    )
+}
+
 
 export {
     DotVerticleIcon,
@@ -71,5 +81,5 @@ export {
     ExportIcon,
     CreateInvoiceIcon,
     VoidIcon,
-    
+    ClearInputIcon,
 }

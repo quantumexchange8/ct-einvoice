@@ -1,14 +1,16 @@
 import '../css/app.css';
 import './bootstrap';
-import { PrimeReactProvider, PrimeReactContext } from 'primereact/api';
+
+import { PrimeReactProvider } from 'primereact/api';
 import { createInertiaApp } from '@inertiajs/react';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { createRoot } from 'react-dom/client';
-import "primereact/resources/themes/lara-light-blue/theme.css"; // Or any other theme
+
+import "primereact/resources/themes/lara-light-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Einvoice';
 
 createInertiaApp({
     title: (title) => `${title} - ${appName}`,

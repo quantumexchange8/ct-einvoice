@@ -12,6 +12,7 @@ import Personal from "./Partials/Personal";
 import Business from "./Partials/Business";
 import { formatDateDMY } from "@/Composables";
 import Button from "@/Components/Button";
+import { ClearInputIcon } from "@/Components/Outline";
 
 export default function Invoice({invoice_no, merchant_id, date_issued, amount }) {
 
@@ -39,13 +40,7 @@ export default function Invoice({invoice_no, merchant_id, date_issued, amount })
   };
 
   const [enabled, setEnabled] = useState(false)
-  // useEffect(() => {
-  //   fetchCountry();
-  //   const malaysia = getCountries.find(country => country.country === 'Malaysia');
-  //   if (malaysia) {
-  //     setSelectedCountry(malaysia);
-  //   }
-  // }, [getCountries]);
+
 
   const fetchState = async () => {
     try {
@@ -223,7 +218,7 @@ const submit = (e) => {
                   type="text"
                   disabled={true}
                   placeholder="CTINV00001"
-                  className="placeholder:flex py-3 px-4 items-center w-full border-vulcan-25 rounded-sm bg-vulcan-50 border text-vulcan-400"
+                  className="w-full box-border h-11"
                 />
               </div>
             </div>
@@ -241,33 +236,23 @@ const submit = (e) => {
                       type="text"
                       placeholder="1,500.00"
                       disabled={true}
-                      className="placeholder:flex py-3 px-4 items-center w-full border-vulcan-25 rounded-sm bg-vulcan-50 border text-vulcan-400"
+                      className="w-full box-border h-11"
                     />
               </div>
             </div>
             <div className="w-full flex gap-1">
               <div  className="w-full text-vulcan-500 font-man text-xs font-medium flex-col items-start">
                   <div className="flex items-center gap-1">
-                      <InputLabel value=" Date Issued" />
+                      <InputLabel value="Date Issued" />
                       <span className="text-error-800 gap-1">*</span>
                   </div>
-                  <div className="relative w-full">
-                    <TextInput 
-                      id="date"
-                      name="date"
-                      value={formatDateDMY(data.date_issued)}
-                      type="text"
-                      placeholder=" 10/01/2024"
-                      disabled={true}
-                      className="placeholder:flex py-3 px-4 items-center w-full border-vulcan-25 rounded-sm bg-vulcan-50 border text-vulcan-400"
+                  <div className="relative">
+                    <Calendar 
+                      value={data.date_issued} 
+                      onChange={(e) => setData('date_issued', e.value)} 
+                      className="w-full box-border h-11"
                     />
-                    {/* <span className="w-[16px] h-[16px] bg-vulcan-100 ml-auto ">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                        <rect width="16" height="16" rx="8" fill="#F0F1F1"/>
-                        <path d="M10.0006 6.00244L6.00391 9.99911" stroke="#CECFD2" strokeLinecap="square"/>
-                        <path d="M10 10.0008L6 6" stroke="#CECFD2" strokeLinecap="square"/>
-                      </svg>
-                    </span> */}
+                    <span className="absolute right-1"><ClearInputIcon /></span>
                   </div>
               </div>
             </div>
