@@ -27,8 +27,8 @@ class InvoiceController extends Controller
         $invoice_no = $request->query('invoice_no');
         $merchant_id = $request->query('merchant_id');
         $amount = $request->query('amount');
-        $eCode = '87bba23fb1b22b305291b47e10f8fa85';
-        $date_issued = Carbon::now();
+        $eCode = $request->query('eCode');
+        $date_issued = Carbon::now()->format('d-m-Y');
         $payoutConfig = PayoutConfig::where('merchant_id', $merchant_id)->first();
 
         if (empty($request->all())) {
@@ -46,14 +46,14 @@ class InvoiceController extends Controller
 
             // Existing invoice
             if ($ExistInvoice) {
-                Log::debug('page', ['ExistInvoice' => $ExistInvoice]);
+                
                 return Inertia::render('Profile/Partials/Pending', [
                     'invoice' => $ExistInvoice
                 ]);
             }
 
             if (!$ExistInvoice) {
-                Log::debug('page', 'invoice');
+
                 return Inertia::render('Profile/Invoice', [
                     'invoice_no' => $invoice_no,
                     'merchant_id' => $merchant_id,

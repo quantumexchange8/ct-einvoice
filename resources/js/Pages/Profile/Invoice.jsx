@@ -13,6 +13,7 @@ import Business from "./Partials/Business";
 import { formatDateDMY } from "@/Composables";
 import Button from "@/Components/Button";
 import { ClearInputIcon } from "@/Components/Outline";
+import { Calendar } from "primereact/calendar";
 
 export default function Invoice({invoice_no, merchant_id, date_issued, amount }) {
 
@@ -63,7 +64,7 @@ useEffect(() => {
 const { data, setData, post, processing, errors, reset, progress } = useForm({
   invoice_no: invoice_no,
   merchant_id: merchant_id,
-  date_issued: date_issued,
+  date_issued: new Date(),
   amount: amount,
   full_name: '',
   tin_no: '',
@@ -151,6 +152,9 @@ useEffect(() => {
     }
   };
 
+  const clearDate = () => {
+    setData('date_issued', null);
+  }
   
   // Form submission
 const submit = (e) => {
@@ -248,11 +252,17 @@ const submit = (e) => {
                   </div>
                   <div className="relative">
                     <Calendar 
+                      dateFormat="dd/mm/yy"
                       value={data.date_issued} 
                       onChange={(e) => setData('date_issued', e.value)} 
                       className="w-full box-border h-11"
+                      disabled
                     />
-                    <span className="absolute right-1"><ClearInputIcon /></span>
+                    {
+                        data.date_issued && (
+                            <span className="absolute right-3 top-1/2 transform -translate-y-1/2 " ><ClearInputIcon /></span>
+                        )
+                    }
                   </div>
               </div>
             </div>

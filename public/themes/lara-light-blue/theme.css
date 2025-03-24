@@ -778,9 +778,10 @@
 .p-dropdown .p-dropdown-trigger {
   background: #FFFFFF;
   color: #6c757d;
-  width: 20px;
+  /* width: 20px; */
   border-top-right-radius: 12px;
   border-bottom-right-radius: 12px;
+  padding: 0px 8px;
 }
 .p-dropdown .p-dropdown-clear-icon {
   color: #6c757d;
