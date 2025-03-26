@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\InvoiceRequest;
 use App\Models\Country;
 use App\Models\Invoice;
+use App\Models\Merchant;
 use App\Models\PayoutConfig;
 use App\Models\State;
 use Carbon\Carbon;
@@ -28,7 +29,7 @@ class InvoiceController extends Controller
         $merchant_id = $request->query('merchant_id');
         $amount = $request->query('amount');
         $eCode = $request->query('eCode');
-        $date_issued = Carbon::now()->format('d-m-Y');
+        $date_issued = Carbon::now()->format('Y-m-d');
         $payoutConfig = PayoutConfig::where('merchant_id', $merchant_id)->first();
 
         if (empty($request->all())) {
@@ -53,6 +54,24 @@ class InvoiceController extends Controller
             }
 
             if (!$ExistInvoice) {
+
+                $merchant = Merchant::find($merchant_id);
+
+                // $invoice = Invoice::create([
+                //     'merchant_id' => $merchant_id,
+                //     'invoice_no' => $invoice_no,
+                //     'amount' => $amount,
+                //     'date' => $date_issued,
+                //     'company_url' => request()->headers->get('referer'),
+
+                //     'merchant_id' => $merchant_id,
+                //     'merchant_id' => $merchant_id,
+                //     'merchant_id' => $merchant_id,
+                //     'merchant_id' => $merchant_id,
+                //     'merchant_id' => $merchant_id,
+                //     'merchant_id' => $merchant_id,
+                //     'merchant_id' => $merchant_id,
+                // ]);
 
                 return Inertia::render('Profile/Invoice', [
                     'invoice_no' => $invoice_no,

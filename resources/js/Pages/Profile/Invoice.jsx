@@ -14,6 +14,9 @@ import { formatDateDMY } from "@/Composables";
 import Button from "@/Components/Button";
 import { ClearInputIcon } from "@/Components/Outline";
 import { Calendar } from "primereact/calendar";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
+import { InputNumber } from "primereact/inputnumber";
+import toast from "react-hot-toast";
 
 export default function Invoice({invoice_no, merchant_id, date_issued, amount }) {
 
@@ -29,6 +32,7 @@ export default function Invoice({invoice_no, merchant_id, date_issued, amount })
   const [getStates, setGetStates] = useState([]);
   const [selectedid_type, setSelectedid_type] = useState(null);
   const [activeTab, setActiveTab] = useState("Personal");
+
   const fetchCountry = async () => {
     try {
         const response = await axios.get('/getCountries');
@@ -59,6 +63,7 @@ export default function Invoice({invoice_no, merchant_id, date_issued, amount })
 
 useEffect(() => {
   fetchState();
+  fetchCountry();
 }, []);
 
 const { data, setData, post, processing, errors, reset, progress } = useForm({
@@ -81,12 +86,10 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
   country: 'Malaysia',
   id_type:'',
   business_registration: '',
-  type: activeTab
+  type: 'Personal',
 });
 
-useEffect(() => {
-  setData("type", activeTab);
-}, [activeTab])
+
   // Function to generate a random CAPTCHA string
   const generateCaptchaText = () => {
     const chars = "1234567890"; // You can mix letters if needed
@@ -179,12 +182,12 @@ const submit = (e) => {
             setIsLoading(false);
             setUserInput("");
             setMessage("");
-            // toast.success('Item added successfully.', {
-            //     title: 'Item added successfully.',
-            //     description: 'This item has been added to your item listing.',
-            //     duration: 3000,
-            //     variant: 'variant1',
-            // });
+            
+            toast.success('Requested e-invoice successfully', {
+              title: 'Requested e-invoice successfully',
+              duration: 3000,
+              variant: 'variant3',
+          });
         }
     })
   }
@@ -232,16 +235,15 @@ const submit = (e) => {
                       <InputLabel value="Total Amount" />
                       <span className="text-error-800 gap-1">*</span>
                   </div>
-                    <TextInput 
-                      id="amount"
-                      name="amount"
-                      value={data.amount}
-                      onChange={(e) => setData('amount', e.target.value)}
-                      type="text"
-                      placeholder="1,500.00"
-                      disabled={true}
-                      className="w-full box-border h-11"
-                    />
+                  <InputNumber 
+                      inputId="amount" 
+                      value={data.amount || 0} 
+                      onValueChange={(e) => setData('amount', e.target.value)} 
+                      mode="currency" 
+                      className="w-full box-border h-11 border border-vulcan-200 rounded-[2px] hover:border-2 focus:border-vulcan-700 outline-none focus:outline-none focus:ring-0 text-vulcan-950 disabled:bg-vulcan-25 disabled:border-vulcan-50 disabled:text-vulcan-400"
+                      currency="MYR" 
+                      locale="en-MY" 
+                  />
               </div>
             </div>
             <div className="w-full flex gap-1">
@@ -279,39 +281,32 @@ const submit = (e) => {
                 Please fill in the required personal or business detail.
               </div>
             </div>
-            <div className="flex p-[3px] items-center rounded-md bg-vulcan-100 gap-1">
-              <button
-                className={`flex py-[5px] px-3 justify-center items-center gap-1 rounded-sm ${activeTab === "Personal" ? "bg-white border-r" : "bg-gray-100"}`}
-                onClick={() => setActiveTab("Personal")}
+
+            <div className="w-full">
+              <TabGroup 
+                  className="flex flex-col gap-6"
+                  selectedIndex={data.type === 'Personal' ? 0 : 1}
+                  onChange={(index) => setData('type', index === 0 ? 'Personal' : 'Business')}
               >
-                Personal
-              </button>
-              <button
-                className={`flex py-[5px] px-3 text-vulcan-800 font-normal gap-6 ${activeTab === "Business" ? "bg-white" : "bg-gray-100"}`}
-                onClick={() => setActiveTab("Business")}
-              >
-                Business
-              </button>
+                  <TabList className="flex items-center gap-1 p-[3px] rounded-[2px] bg-vulcan-100 max-w-[159px]">
+                      <Tab className="rounded-[2px] py-[5px] px-3 text-xs text-vulcan-700 focus:outline-none data-[selected]:font-bold data-[selected]:bg-white data-[hover]:bg-white/50 data-[selected]:data-[hover]:bg-white data-[focus]:outline-0 data-[focus]:outline-white">
+                          Personal
+                      </Tab>
+                      <Tab className="rounded-[2px] py-[5px] px-3 text-xs text-vulcan-700 focus:outline-none data-[selected]:font-bold data-[selected]:bg-white data-[hover]:bg-white/50 data-[selected]:data-[hover]:bg-white data-[focus]:outline-0 data-[focus]:outline-white">
+                          Business
+                      </Tab>
+                  </TabList>
+                  <TabPanels className="">
+                      <TabPanel className="">
+                          <Personal data={data} setData={setData} processing={processing} errors={errors} getStates={getStates} getCountries={getCountries} />
+                      </TabPanel>
+                      <TabPanel className="">
+                          <Business data={data} setData={setData} processing={processing} errors={errors} getStates={getStates} getCountries={getCountries} />
+                      </TabPanel>
+                  </TabPanels>
+              </TabGroup>
             </div>
 
-            {
-              activeTab === 'Personal' && (
-                <Personal data={data} setData={setData} processing={processing} errors={errors} getStates={getStates} getCountries={getCountries} />
-              )
-            }
-            {
-              activeTab === 'Business' && (
-                <Business data={data} setData={setData} processing={processing} errors={errors} getStates={getStates} getCountries={getCountries} />
-              )
-            }
-
-            {/* if else {
-              activeTab === 'Personal' ? (
-                <Personal data={data} setData={setData} errors={errors} getStates={getStates} getCountries={getCountries} />
-              ) : (
-                <Business data={data} setData={setData} errors={errors} getStates={getStates} getCountries={getCountries} />
-              )
-            } */}
             <div className="flex items-start gap-6 w-full flex-wrap">
                 <div className="flex items-start gap-4 w-full">
                   <Checkbox

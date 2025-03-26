@@ -280,7 +280,7 @@ export default function Einvoice() {
                                 selectedIndex={data.type === 'Personal' ? 0 : 1}
                                 onChange={(index) => setData('type', index === 0 ? 'Personal' : 'Business')}
                             >
-                                <TabList className="flex items-center gap-1 p-[3px] bg-vulcan-100 max-w-[159px]">
+                                <TabList className="flex items-center gap-1 p-[3px] rounded-[2px] bg-vulcan-100 max-w-[159px]">
                                     <Tab className="rounded-[2px] py-[5px] px-3 text-xs text-vulcan-700 focus:outline-none data-[selected]:font-bold data-[selected]:bg-white data-[hover]:bg-white/50 data-[selected]:data-[hover]:bg-white data-[focus]:outline-0 data-[focus]:outline-white">
                                         Personal
                                     </Tab>

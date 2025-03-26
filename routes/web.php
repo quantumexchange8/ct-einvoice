@@ -5,19 +5,22 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceListingController;
 use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StoreInvoiceController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', [InvoiceController::class, 'einvoice'])->name('einvoice');
 
 Route::get('/invoice', [InvoiceController::class, 'invoice'])->name('invoice');
-// Route::get('/invoice', [InvoiceController::class, 'invoice']);
 Route::get('/getCountries', [InvoiceController::class, 'getCountries'])->name('getCountries');
 Route::get('/getStates', [InvoiceController::class, 'getStates'])->name('getStates');
 Route::post('/submitInvoice', [InvoiceController::class, 'submitInvoice'])->name('submitInvoice');
 
 // get invoicing from crm
 Route::post('/store-invoice', [InvoiceController::class, 'storeInvoice'])->name('store-invoice');
+
+// store invoice from crm
+Route::post('/store-invoice', [StoreInvoiceController::class, 'storeInvoice'])->name('store-invoice');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

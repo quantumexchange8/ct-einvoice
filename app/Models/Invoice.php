@@ -9,6 +9,14 @@ class Invoice extends Model
 {
     use HasFactory;
 
+    // status
+    // 1 = pending default
+    // 2 = void 廢止
+    // 3 = validated 已核实
+    // 3 = submitted 已提交
+    // 4 = consolidated 已整合
+    // 5 = rejected 已拒绝
+
     // Mass assignable fields
     protected $fillable = [
         'invoice_no',
@@ -32,14 +40,8 @@ class Invoice extends Model
         'state',
         'country',
         'status',
+        'invoice_status',
         'business_registration',
-    ];
-
-    // Casting fields to specific data types (if needed)
-    protected $casts = [
-        'date' => 'date',
-        'amount' => 'float',
-        'contact' => 'integer',
-        'postcode' => 'integer',
+        'merchant_id',
     ];
 }
