@@ -41,10 +41,7 @@ export default function Login({ status, canResetPassword }) {
                         <div className="flex flex-col items-center gap-5 w-full">
                             <img src="/assets/image/currenttechlogo.png" alt="logo" />
                             <div className="text-center w-full">
-                                <span className="text-vulcan-900 font-sans text-[32px] font-medium">
-                                    Welcome <span className="text-vulcan-500">Back!</span>
-                                </span>
-                                <span className="block text-sm font-manrope font-normal">Admin portal</span>
+                                <span className="block text-sm font-manrope font-bold">Admin portal</span>
                             </div>
                         </div>
 
@@ -52,7 +49,6 @@ export default function Login({ status, canResetPassword }) {
                             <div className="flex flex-col w-full">
                                 <div className="flex items-center">
                                     <InputLabel htmlFor="email" value="Email" />
-                                    <span className="text-error-700">*</span>
                                 </div>
                                 <TextInput
                                     id="email"
@@ -71,7 +67,6 @@ export default function Login({ status, canResetPassword }) {
                             <div className="flex flex-col w-full">
                                 <div className="flex items-center">
                                     <InputLabel htmlFor="password" value="Password" />
-                                    <span className="text-error-700">*</span>
                                 </div>
                                 <TextInput
                                     id="password"
@@ -84,27 +79,6 @@ export default function Login({ status, canResetPassword }) {
                                 />
                                 <InputError message={errors.password} className="mt-2" />
                             </div>
-
-
-                            {/* <div className="w-full flex items-center justify-between">
-                                <label className="flex items-center gap-2">
-                                    <Checkbox
-                                        name="remember"
-                                        checked={data.remember}
-                                        onChange={(e) => setData('remember', e.target.checked)}
-                                    />
-                                    <span className="font-manrope not-italic font-medium leading-[18px] text-xs text-vulcan-700">Remember Me</span>
-                                </label>
-
-                                {canResetPassword && (
-                                    <Link
-                                        href={route('password.request')}
-                                        className="text-xs text-vulcan-950 font-manrope not-italic font-medium leading-5 underline hover:text-gray-900"
-                                    >
-                                        Forgot Password?
-                                    </Link>
-                                )}
-                            </div> */}
                         </div>
 
                         <PrimaryButton className="w-full justify-center" disabled={processing}>

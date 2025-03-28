@@ -2671,7 +2671,7 @@
   color: #343a40;
   /* border: 1px solid #dee2e6; */
   /* border-width: 1px 0 1px 0; */
-  padding: 1rem 0px;
+  padding: 0rem 0px;
   font-weight: 700;
 }
 .p-datatable .p-datatable-footer {
@@ -2684,7 +2684,7 @@
 }
 .p-datatable .p-datatable-thead > tr > th {
   text-align: left;
-  padding: 10px 12px 10px 12px;
+  padding: 8px;
   font-weight: 700;
   color: #343a40;
   background: #f8f9fa;
@@ -2746,9 +2746,11 @@
   text-align: left;
   border: 1px solid #dee2e6;
   border-width: 0 0 1px 0;
-  padding: 1rem 1rem;
+  padding: 8px;
   font-size: 14px;
   font-weight: 500;
+  color: #161B26;
+  font-family: 'Manrope';
 }
 .p-datatable .p-datatable-tbody > tr > td .p-row-toggler,
 .p-datatable .p-datatable-tbody > tr > td .p-row-editor-init,
@@ -5470,7 +5472,7 @@
 }
 .p-steps .p-steps-item .p-menuitem-link .p-steps-number {
   color: #495057;
-  border: 1px solid #e9ecef;
+  border: 1px solid #94969c;
   background: #ffffff;
   min-width: 2rem;
   height: 2rem;
@@ -5481,7 +5483,8 @@
 }
 .p-steps .p-steps-item .p-menuitem-link .p-steps-title {
   margin-top: 0.5rem;
-  color: #6c757d;
+  color: #85888e;
+  font-family: 'Lora';
 }
 .p-steps .p-steps-item .p-menuitem-link:not(.p-disabled):focus {
   outline: 0 none;
@@ -5489,12 +5492,13 @@
   box-shadow: 0 0 0 0.2rem #BFDBFE;
 }
 .p-steps .p-steps-item.p-highlight .p-steps-number {
-  background: #EFF6FF;
-  color: #3B82F6;
+  background: #333741;
+  color: #fafafa;
 }
 .p-steps .p-steps-item.p-highlight .p-steps-title {
   font-weight: 700;
-  color: #495057;
+  color: #333741;
+  font-family: 'Lora';
 }
 .p-steps .p-steps-item:before {
   content: " ";
@@ -6346,11 +6350,12 @@
 } */
 
 .p-column-title {
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 700;
   line-height: 16px;
-  color: #09090B;
+  color: #1F242F;
   font-family: 'Manrope';
+  text-transform: uppercase;
 }
 
 .delete-menu-item {
@@ -6362,8 +6367,8 @@
 }
 
 .p-paginator {
-  justify-content: center !important;
-  padding: 12px;
+  justify-content: end !important;
+  padding: 16px 8px;
   gap: 8px;
 }
 

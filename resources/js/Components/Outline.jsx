@@ -2,7 +2,7 @@ import React from "react";
 
 const DotVerticleIcon = () => {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" >
             <path d="M12 13C12.5523 13 13 12.5523 13 12C13 11.4477 12.5523 11 12 11C11.4477 11 11 11.4477 11 12C11 12.5523 11.4477 13 12 13Z" fill="#85888E"/>
             <path d="M19 13C19.5523 13 20 12.5523 20 12C20 11.4477 19.5523 11 19 11C18.4477 11 18 11.4477 18 12C18 12.5523 18.4477 13 19 13Z" fill="#85888E"/>
             <path d="M5 13C5.55228 13 6 12.5523 6 12C6 11.4477 5.55228 11 5 11C4.44772 11 4 11.4477 4 12C4 12.5523 4.44772 13 5 13Z" fill="#85888E"/>
@@ -137,25 +137,25 @@ const LogoutIcon = ({ className }) => {
     );
 }
 
-const DashboardIcon = () => {
+const DashboardIcon = ({ className }) => {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 15" fill="none">
-            <path d="M1 7.3643L7.99991 1.36621L14.9998 7.3643" stroke="#161B26" strokeLinecap="square"/>
-            <path d="M2.50195 6.51855V14.2311H13.5013V6.51855" stroke="#161B26" strokeLinecap="square"/>
-            <path d="M8 8.28882V10.659" stroke="#161B26" strokeLinecap="square"/>
+        <svg xmlns="http://www.w3.org/2000/svg" className={className} width="16" height="16" viewBox="0 0 16 15" fill="none">
+            <path d="M1 7.3643L7.99991 1.36621L14.9998 7.3643" stroke="currentColor" strokeLinecap="square"/>
+            <path d="M2.50195 6.51855V14.2311H13.5013V6.51855" stroke="currentColor" strokeLinecap="square"/>
+            <path d="M8 8.28882V10.659" stroke="currentColor" strokeLinecap="square"/>
         </svg>
     )
 }
 
-const MerchantIcon = () => {
+const MerchantIcon = ({ className }) => {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 14 14" fill="none">
-            <path d="M3.75 10.25C4.64746 10.25 5.375 9.52246 5.375 8.625C5.375 7.72754 4.64746 7 3.75 7C2.85254 7 2.125 7.72754 2.125 8.625C2.125 9.52246 2.85254 10.25 3.75 10.25Z" stroke="#161B26" strokeLinecap="square"/>
-            <path d="M10.25 10.25C11.1475 10.25 11.875 9.52246 11.875 8.625C11.875 7.72754 11.1475 7 10.25 7C9.35254 7 8.625 7.72754 8.625 8.625C8.625 9.52246 9.35254 10.25 10.25 10.25Z" stroke="#161B26" strokeLinecap="square"/>
-            <path d="M7 3.75C7.89746 3.75 8.625 3.02246 8.625 2.125C8.625 1.22754 7.89746 0.5 7 0.5C6.10254 0.5 5.375 1.22754 5.375 2.125C5.375 3.02246 6.10254 3.75 7 3.75Z" stroke="#161B26" strokeLinecap="square"/>
-            <path d="M7 13.5C7 11.7051 5.54491 10.25 3.75 10.25C1.95507 10.25 0.5 11.7051 0.5 13.5" stroke="#161B26" strokeLinecap="square"/>
-            <path d="M13.5 13.5C13.5 11.7051 12.0449 10.25 10.25 10.25C8.45509 10.25 7 11.7051 7 13.5" stroke="#161B26" strokeLinecap="square"/>
-            <path d="M10.25 7C10.25 5.20509 8.79491 3.75 7 3.75C5.20509 3.75 3.75 5.20509 3.75 7" stroke="#161B26" strokeLinecap="square"/>
+        <svg xmlns="http://www.w3.org/2000/svg" className={className} width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M3.75 10.25C4.64746 10.25 5.375 9.52246 5.375 8.625C5.375 7.72754 4.64746 7 3.75 7C2.85254 7 2.125 7.72754 2.125 8.625C2.125 9.52246 2.85254 10.25 3.75 10.25Z" stroke="currentColor" strokeLinecap="square"/>
+            <path d="M10.25 10.25C11.1475 10.25 11.875 9.52246 11.875 8.625C11.875 7.72754 11.1475 7 10.25 7C9.35254 7 8.625 7.72754 8.625 8.625C8.625 9.52246 9.35254 10.25 10.25 10.25Z" stroke="currentColor" strokeLinecap="square"/>
+            <path d="M7 3.75C7.89746 3.75 8.625 3.02246 8.625 2.125C8.625 1.22754 7.89746 0.5 7 0.5C6.10254 0.5 5.375 1.22754 5.375 2.125C5.375 3.02246 6.10254 3.75 7 3.75Z" stroke="currentColor" strokeLinecap="square"/>
+            <path d="M7 13.5C7 11.7051 5.54491 10.25 3.75 10.25C1.95507 10.25 0.5 11.7051 0.5 13.5" stroke="currentColor" strokeLinecap="square"/>
+            <path d="M13.5 13.5C13.5 11.7051 12.0449 10.25 10.25 10.25C8.45509 10.25 7 11.7051 7 13.5" stroke="currentColor" strokeLinecap="square"/>
+            <path d="M10.25 7C10.25 5.20509 8.79491 3.75 7 3.75C5.20509 3.75 3.75 5.20509 3.75 7" stroke="currentColor" strokeLinecap="square"/>
         </svg>
     )
 }
@@ -169,15 +169,68 @@ const ConfigurationIcon = () => {
     )
 }
 
-const InvoiceIcon = () => {
+const InvoiceIcon = ({ className }) => {
     return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 14 14" fill="none">
-            <path d="M8.63539 9.76685H4.37988" stroke="#161B26" strokeWidth="1.0044" strokeLinecap="square" strokeLinejoin="round"/>
-            <path d="M7.02464 7.302H4.37988" stroke="#161B26" strokeWidth="1.0044" strokeLinecap="square" strokeLinejoin="round"/>
-            <path fillRule="evenodd" clipRule="evenodd" d="M9.00776 0.947266H1V13.0001H13V4.41212L9.00776 0.947266Z" stroke="#161B26" strokeWidth="1.0044" strokeLinecap="square"/>
-            <path d="M8.63379 1.30859V4.79115H12.6265" stroke="#161B26" strokeWidth="1.0044" strokeLinecap="square"/>
+        <svg xmlns="http://www.w3.org/2000/svg" className={className} width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M11.3109 13.0246C10.3683 13.6412 9.24173 14 8.03125 14C4.71757 14 2.03125 11.3137 2.03125 8C2.03125 4.68628 4.71757 2 8.03125 2C11.345 2 14.0312 4.68628 14.0312 8H2.07125" stroke="currentColor" strokeWidth="1.2" strokeMiterlimit="10"/>
         </svg>
     )
+}
+
+const PayoutConfigIcon = ({ className }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" className={className} width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M15.0505 9H5.5C4.11929 9 3 7.88071 3 6.5C3 5.11929 4.11929 4 5.5 4H15.0505M8.94949 20H18.5C19.8807 20 21 18.8807 21 17.5C21 16.1193 19.8807 15 18.5 15H8.94949M3 17.5C3 19.433 4.567 21 6.5 21C8.433 21 10 19.433 10 17.5C10 15.567 8.433 14 6.5 14C4.567 14 3 15.567 3 17.5ZM21 6.5C21 8.433 19.433 10 17.5 10C15.567 10 14 8.433 14 6.5C14 4.567 15.567 3 17.5 3C19.433 3 21 4.567 21 6.5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    )
+}
+
+const PlusIcon = ({ className }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M7 1.40039V12.6004" stroke="#F5F5F6" strokeLinecap="square"/>
+            <path d="M1.40039 7H12.6004" stroke="#F5F5F6" strokeLinecap="square"/>
+        </svg>
+    )
+}
+
+const DefaultSortIcon = ({color, className, ...rest }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M12.0645 12.2928V3" stroke="#333741" strokeLinecap="square"/>
+            <path d="M9 9.23047C10.575 9.23047 12.0637 10.6175 12.0637 12.2941" stroke="#333741" strokeLinecap="square"/>
+            <path d="M15.1282 9.23047C13.5532 9.23047 12.0645 10.6175 12.0645 12.2941" stroke="#333741" strokeLinecap="square"/>
+
+            <path d="M4.06445 3V12.2928" stroke="#333741" strokeLinecap="square"/>
+            <path d="M1 6.06367C2.57499 6.06367 4.06367 4.67661 4.06367 3" stroke="#333741" strokeLinecap="square"/>
+            <path d="M7.12815 6.06367C5.55314 6.06367 4.06445 4.67661 4.06445 3" stroke="#333741" strokeLinecap="square"/>
+        </svg>
+    );
+}
+const SortAsc = ({color, className, ...rest }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M12.0645 12.2928V3" stroke="#CECFD2" strokeLinecap="square"/>
+            <path d="M9 9.22949C10.575 9.22949 12.0637 10.6166 12.0637 12.2932" stroke="#CECFD2" strokeLinecap="square"/>
+            <path d="M15.1282 9.22949C13.5532 9.22949 12.0645 10.6166 12.0645 12.2932" stroke="#CECFD2" strokeLinecap="square"/>
+            <path d="M4.06445 3V12.2928" stroke="#333741" strokeLinecap="square"/>
+            <path d="M1 6.06367C2.57499 6.06367 4.06367 4.67661 4.06367 3" stroke="#333741" strokeLinecap="square"/>
+            <path d="M7.12815 6.06367C5.55314 6.06367 4.06445 4.67661 4.06445 3" stroke="#333741" strokeLinecap="square"/>
+        </svg>
+    );
+}
+
+const SortDesc = ({color, className, ...rest }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M12.0645 12.2928V3" stroke="#333741" strokeLinecap="square"/>
+            <path d="M9 9.22949C10.575 9.22949 12.0637 10.6166 12.0637 12.2932" stroke="#333741" strokeLinecap="square"/>
+            <path d="M15.1282 9.22949C13.5532 9.22949 12.0645 10.6166 12.0645 12.2932" stroke="#333741" strokeLinecap="square"/>
+            <path d="M4.06445 3V12.2928" stroke="#CECFD2" strokeLinecap="square"/>
+            <path d="M1 6.06367C2.57499 6.06367 4.06367 4.67661 4.06367 3" stroke="#CECFD2" strokeLinecap="square"/>
+            <path d="M7.12815 6.06367C5.55314 6.06367 4.06445 4.67661 4.06445 3" stroke="#CECFD2" strokeLinecap="square"/>
+        </svg>
+    );
 }
 
 export {
@@ -199,4 +252,9 @@ export {
     MerchantIcon,
     ConfigurationIcon,
     InvoiceIcon,
+    PayoutConfigIcon,
+    PlusIcon,
+    DefaultSortIcon,
+    SortAsc,
+    SortDesc,
 }

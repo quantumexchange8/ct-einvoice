@@ -12,10 +12,14 @@ class Invoice extends Model
     // status
     // 1 = pending default
     // 2 = void 廢止
-    // 3 = validated 已核实
-    // 3 = submitted 已提交
-    // 4 = consolidated 已整合
-    // 5 = rejected 已拒绝
+    // 3 = consolidated 已整合
+    // 4 = pending_submit 等待提交
+
+    // invoice_status
+    // Submitted
+    // Valid
+    // Invalid
+    // Cancelled
 
     // Mass assignable fields
     protected $fillable = [

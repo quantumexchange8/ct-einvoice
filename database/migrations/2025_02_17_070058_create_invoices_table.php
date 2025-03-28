@@ -36,6 +36,7 @@ return new class extends Migration
             $table->string('country')->nullable();
             $table->string('status')->nullable();
             $table->string('invoice_status')->nullable();
+            $table->string('invoice_uuid')->nullable();
             $table->timestamps();
         });
     }

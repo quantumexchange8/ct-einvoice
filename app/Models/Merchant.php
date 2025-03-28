@@ -16,7 +16,22 @@ class Merchant extends Model
         'live_url',
         'appID',
         'role',
-       'status',
+        'registration_name',
+        'irbm_client_id',
+        'irbm_client_key',
+        'tin_no',
+        'brn_no',
+        'sst_no',
+        'ttx_no',
+        'msic_id',
+        'classification_id',
+        'address1',
+        'address2',
+        'address3',
+        'city',
+        'state_code',
+        'country_code',
+        'status',
         
     ];
 

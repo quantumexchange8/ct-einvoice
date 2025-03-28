@@ -15,7 +15,7 @@ class InvoiceController extends Controller
 
     protected function checkAPI($request) 
     {
-        $apiKey = $request->header('X-API-KEY');
+        $apiKey = $request->header('CT-API-KEY');
         $merchant = $request->header('MERCHANT-ID');
 
         $merchants = Merchant::find($merchant);
@@ -48,7 +48,7 @@ class InvoiceController extends Controller
         // AFTER ALL CHECKING START VALIDATION
 
         $validator = Validator::make($request->all(), [
-            'transaction_no' => 'required',
+            'invoice_no' => 'required',
             'total_amount' => 'required',
             'date_time' => 'required',
             'status' => 'required',
@@ -64,7 +64,7 @@ class InvoiceController extends Controller
 
         } else {
             
-            $checkInvoiceNo = Invoice::where('merchant_id', $merchants->id)->where('invoice_no', $request->transaction_no)->first();
+            $checkInvoiceNo = Invoice::where('merchant_id', $merchants->id)->where('invoice_no', $request->invoice_no)->first();
 
             if ($checkInvoiceNo) {
                 return response()->json([
@@ -74,7 +74,7 @@ class InvoiceController extends Controller
             }
 
             $invoice = Invoice::create([
-                'invoice_no' => $request->transaction_no,
+                'invoice_no' => $request->invoice_no,
                 'amount' => $request->total_amount,
                 'merchant_id' => $merchants->id,
                 'date' => $request->date_time,
@@ -95,7 +95,7 @@ class InvoiceController extends Controller
         $merchant = $request->header('MERCHANT-ID');
         $merchants = Merchant::find($merchant);
 
-        $checkInvoiceNo = Invoice::where('merchant_id', $merchants->id)->where('invoice_no', $request->transaction_no)->first();
+        $checkInvoiceNo = Invoice::where('merchant_id', $merchants->id)->where('invoice_no', $request->invoice_no)->first();
 
         if ($checkInvoiceNo) {
 
@@ -111,5 +111,41 @@ class InvoiceController extends Controller
                 'message' => 'Invoice not found',
             ], 400);
         }
+    }
+
+    public function updateConsolidateInvoice(Request $request)
+    {
+
+        $this->checkAPI($request);
+
+        $merchant = $request->header('MERCHANT-ID');
+        $merchants = Merchant::find($merchant);
+
+        $validator = Validator::make($request->all(), [
+            'invoices' => 'required|array|min:1',
+            'invoices.*' => 'required|string|distinct'
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        
+        $invoices = $request->invoices;
+
+        foreach ($invoices as $invoice) {
+
+            $findInvoice = Invoice::where('invoice_no', $invoice)->where('merchant_id', $merchants->id)->first();
+
+            $findInvoice->status = 'consolidated';
+            $findInvoice->save();
+        }
+
+        return response()->json([
+            'message' => 'Invoice consolidated',
+        ], 200);
     }
 }

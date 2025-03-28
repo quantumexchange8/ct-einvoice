@@ -97,7 +97,7 @@ const formatDateDMY = (date, includeTime = false) => {
 
         return `${year}/${month}/${day} ${hours}:${minutes} ${ampm}`;
     } else {
-        return `${year}/${month}/${day}`;
+        return `${day}/${month}/${year}`;
     }
 };
 

@@ -22,14 +22,14 @@ return new class extends Migration
             $table->string('brn_no');
             $table->string('sst_no')->nullable();
             $table->string('ttx_no')->nullable();
-            $table->unsignedBigInteger('msic_code');
-            $table->string('classification_code');
-            $table->string('classification_desc');
+            $table->unsignedBigInteger('msic_id');
+            $table->string('classification_id');
             $table->string('address1');
             $table->string('address2')->nullable();
             $table->string('address3')->nullable();
             $table->string('city');
             $table->string('state_code');
+            $table->string('country_code');
             $table->integer('contact');
             $table->string('email');
             $table->string('staging_url')->nullable();
