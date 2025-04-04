@@ -13,5 +13,6 @@ class InvoiceLineItem extends Model
         'item_qty',
         'item_price',
         'classification_id',
+        'subtotal',
     ];
 }

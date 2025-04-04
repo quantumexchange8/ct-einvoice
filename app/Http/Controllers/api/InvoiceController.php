@@ -54,7 +54,7 @@ class InvoiceController extends Controller
             'date_time' => 'required',
             'status' => 'required',
             'items' => 'required|array|min:1', 
-            'items.*.id' => 'required|integer|exists:order_items,id',
+            'items.*.id' => 'required|integer',
             'items.*.item_name' => 'required|string',
             'items.*.qty' => 'required|integer|min:1',
             'items.*.price' => 'required|numeric|min:0.01',
@@ -94,8 +94,9 @@ class InvoiceController extends Controller
                 $createItem = InvoiceLineItem::create([
                     'invoice_id' => $invoice->id,
                     'item_name' => $item['item_name'],
-                    'item_qty' => $item['item_qty'],
-                    'item_price' => $item['item_price'],
+                    'item_qty' => $item['qty'],
+                    'item_price' => $item['price'],
+                    'subtotal' => $item['subtotal'],
                     'classification_id' => $item['classification_id'],
                 ]);
             }
