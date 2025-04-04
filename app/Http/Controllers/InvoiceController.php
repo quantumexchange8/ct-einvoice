@@ -8,13 +8,21 @@ use App\Models\Invoice;
 use App\Models\Merchant;
 use App\Models\PayoutConfig;
 use App\Models\State;
+use App\Models\Token;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
 
 class InvoiceController extends Controller
 {
+    protected $env;
+
+    public function __construct()
+    {
+        $this->env = env('APP_ENV');
+    }
 
     public function einvoice()
     {
@@ -57,22 +65,6 @@ class InvoiceController extends Controller
 
                 $merchant = Merchant::find($merchant_id);
 
-                // $invoice = Invoice::create([
-                //     'merchant_id' => $merchant_id,
-                //     'invoice_no' => $invoice_no,
-                //     'amount' => $amount,
-                //     'date' => $date_issued,
-                //     'company_url' => request()->headers->get('referer'),
-
-                //     'merchant_id' => $merchant_id,
-                //     'merchant_id' => $merchant_id,
-                //     'merchant_id' => $merchant_id,
-                //     'merchant_id' => $merchant_id,
-                //     'merchant_id' => $merchant_id,
-                //     'merchant_id' => $merchant_id,
-                //     'merchant_id' => $merchant_id,
-                // ]);
-
                 return Inertia::render('Profile/Invoice', [
                     'invoice_no' => $invoice_no,
                     'merchant_id' => $merchant_id,
@@ -104,16 +96,18 @@ class InvoiceController extends Controller
     public function submitInvoice(InvoiceRequest $request)
     {
 
+        $invoice = Invoice::where('invoice_no', $request->invoice_no)
+                ->where('merchant_id', $request->merchant_id)
+                ->with(['invoice_lines'])
+                ->first();
+
         if ($request->type === 'Personal') {
-            $invoice = Invoice::create([
-                'invoice_no' => $request->invoice_no,
-                'amount' => $request->amount,
-                'date' => Carbon::parse($request->date_issued)->format('Y-m-d H:i:s'),
+            $invoice->update([
                 'type' => $request->type,
-                'company_url' => 'https://ct-einvoice.com',
                 'business_registration' => $request->business_registration ?? null,
                 'full_name' => $request->full_name,
                 'tin_no' => $request->tin_no,
+                'id_type' => $request->id_type['name'],
                 'id_no' => $request->id_no,
                 'sst_no' => $request->sst_no,
                 'email' => $request->email,
@@ -126,15 +120,10 @@ class InvoiceController extends Controller
                 'state' => $request->state['State'],
                 'country' => $request->country['country'],
                 'status' => 'pending',
-                'id_type' => $request->id_type['name'],
             ]);
         } else {
-            $invoice = Invoice::create([
-                'invoice_no' => $request->invoice_no,
-                'amount' => $request->amount,
-                'date' => Carbon::parse($request->date_issued)->format('Y-m-d H:i:s'),
+            $invoice->update([
                 'type' => $request->type,
-                'company_url' => 'https://ct-einvoice.com',
                 'business_registration' => $request->business_registration ?? null,
                 'full_name' => $request->full_name,
                 'tin_no' => $request->tin_no,
@@ -151,18 +140,142 @@ class InvoiceController extends Controller
                 'status' => 'pending',
             ]);
         }
-   
-        
-        //for updated 
-        // $invoice = Invoice::find($request->id);
 
-        // $invoice->update([
-        // 'full_name' => $request->full_name,
-        //     'tin_no' => $request->tin_no,
-        //     'id_no' => $request->id_no,
-        //     'sst' => $request->sst,
-        //     'full_name' => $request->full_name,
-        // ]);
+        $merchantDetail = Merchant::find($request->merchant_id);
+        $now = Carbon::now();
+        $payout = PayoutConfig::where('merchant_id', $request->merchant_id)->first();
+        $checkToken = Token::where('merchant_id', $request->merchant_id)->latest()->first();
+
+        if (!$checkToken || $now >= $checkToken->expired_at) {
+
+            if ($this->env === 'production') {
+                $access_token_api = 'https://api.myinvois.hasil.gov.my/connect/token';
+            } else {
+                $access_token_api = 'https://preprod-api.myinvois.hasil.gov.my/connect/token';
+            }
+
+            $response = Http::asForm()->post($access_token_api, [
+                'client_id' => $merchantDetail->irbm_client_id, 
+                'client_secret' => $merchantDetail->irbm_client_key,
+                'grant_type' => 'client_credentials',
+                'scope' => 'InvoicingAPI',
+            ]);
+
+            if ($response->successful()) {
+                $newToken = Token::create([
+                    'merchant_id' => $request->merchant_id,
+                    'token' =>  $response['access_token'],
+                    'expired_at' => Carbon::now()->addHour(),
+                ]);
+            } else {
+                $status = $response->status();
+                $error = $response->body();
+
+                Log::debug('response error', [
+                    'status' => $status, 
+                    'error' => $error
+                ]);
+            }
+
+            // invoice line item
+            // $invoiceLines = [];
+            // foreach ($findTransaction->transaction_details as $index => $item) {
+                
+            //     $invoiceLines[] = [
+            //         "ID" => [
+            //             ["_" => (string)($index + 1)] // Line item ID starting from 1
+            //         ],
+            //         "Item" => [
+            //             [
+            //                 "CommodityClassification" => [
+            //                     [
+            //                         "ItemClassificationCode" => [
+            //                             [
+            //                                 "_" => $item->item->classification->code,
+            //                                 "listID" => "CLASS"
+            //                             ]
+            //                         ]
+            //                     ]
+            //                 ],
+            //                 "Description" => [
+            //                     ["_" => $item->item->classification->description]
+            //                 ]
+            //             ]
+            //         ],
+            //         "Price" => [
+            //             [
+            //                 "PriceAmount" => [
+            //                     [
+            //                         "currencyID" => "MYR",
+            //                         "_" => (float) number_format($item->price, 2, '.', ''), // Total Excluding Tax Amount
+            //                     ]
+            //                 ]
+            //             ]
+            //         ],
+            //         "TaxTotal" => [
+            //             [
+            //                 "TaxSubtotal" => [
+            //                     [
+            //                         "TaxCategory" => [
+            //                             [
+            //                                 "ID" => [["_" => "E"]],
+            //                                 "TaxScheme" => [
+            //                                     [
+            //                                         "ID" => [
+            //                                             [
+            //                                                 "_" => "OTH",
+            //                                                 "schemeID" => "UN/ECE 5153",
+            //                                                 "schemeAgencyID" => "6"
+            //                                             ]
+            //                                         ]
+            //                                     ]
+            //                                 ],
+            //                                 "TaxExemptionReason" => [
+            //                                     ["_" => "Exempt New Means of Transport"]
+            //                                 ]
+            //                             ]
+            //                         ],
+            //                         "TaxAmount" => [
+            //                             [
+            //                                 "_" => 0,
+            //                                 "currencyID" => "MYR"
+            //                             ]
+            //                         ],
+            //                         "TaxableAmount" => [
+            //                             [
+            //                                 "_" => (float) number_format($item->price, 2, '.', ''),
+            //                                 "currencyID" => "MYR"
+            //                             ]
+            //                         ]
+            //                     ]
+            //                 ],
+            //                 "TaxAmount" => [
+            //                     [
+            //                         "currencyID" => "MYR",
+            //                         "_" => 0 // Total Excluding Tax Amount
+            //                     ]
+            //                 ]
+            //             ]
+            //         ],
+            //         "ItemPriceExtension" => [
+            //             [
+            //                 "Amount" => [
+            //                     [
+            //                         "currencyID" => "MYR",
+            //                         "_" => 100.00
+            //                     ]
+            //                 ]
+            //             ]
+            //         ],
+            //         "LineExtensionAmount" => [
+            //             [
+            //                 "currencyID" => "MYR",
+            //                 "_" => 1436.50
+            //             ]
+            //         ]
+            //     ];
+            // }
+        }
 
         return redirect()->back();
     }

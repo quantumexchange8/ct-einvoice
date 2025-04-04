@@ -21,9 +21,6 @@ Route::post('/submitInvoice', [InvoiceController::class, 'submitInvoice'])->name
 // get invoicing from crm
 Route::post('/store-invoice', [InvoiceController::class, 'storeInvoice'])->name('store-invoice');
 
-// store invoice from crm
-Route::post('/store-invoice', [StoreInvoiceController::class, 'storeInvoice'])->name('store-invoice');
-
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

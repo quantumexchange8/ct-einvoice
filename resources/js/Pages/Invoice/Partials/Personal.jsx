@@ -61,7 +61,7 @@ export default function Personal({ data, setData, errors, getStates, getCountrie
               </div>
               <div className="w-full flex flex-col gap-1">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                  <InputLabel value="ID Type" />
+                  <InputLabel value="Identification Type" />
                   <span className="text-error-800">*</span>
                 </div>
                 <Dropdown
@@ -77,7 +77,7 @@ export default function Personal({ data, setData, errors, getStates, getCountrie
               </div>
               <div className="w-full flex flex-col gap-1">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                  <InputLabel value="ID Value" />
+                  <InputLabel value="Identification No" />
                   <span className="text-error-800 gap-1">*</span>
                 </div>
                 <TextInput 

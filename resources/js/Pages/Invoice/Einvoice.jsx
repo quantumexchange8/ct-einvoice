@@ -204,7 +204,6 @@ export default function Einvoice() {
                                 <InputLabel htmlFor="receipt_no" value="Invoice/Receipt No." className="text-vulcan-500" />
                                 <span className="text-error-800 text-xs ">*</span>
                             </div>
-                            
                             <TextInput 
                                 id="invoice_no"
                                 type="text"
@@ -214,6 +213,7 @@ export default function Einvoice() {
                                 autoComplete="username"
                                 isFocused={true}
                                 onChange={(e) => setData('invoice_no', e.target.value)}
+                                placeholder="CTINV00001"
                             />
                         </div>
                         <div className="flex flex-col gap-1">
@@ -228,7 +228,7 @@ export default function Einvoice() {
                                 mode="currency" 
                                 className="w-full box-border h-11 border border-vulcan-200 rounded-[2px] hover:border-2 focus:border-vulcan-700 outline-none focus:outline-none focus:ring-0 text-vulcan-950 disabled:bg-vulcan-25 disabled:border-vulcan-50 disabled:text-vulcan-400"
                                 currency="MYR" 
-                                locale="en-MY" 
+                                locale="en-MY"
                             />
                         </div>
                         <div className="flex flex-col gap-1">
@@ -268,7 +268,6 @@ export default function Einvoice() {
                                         </div>
                                     )
                                 }
-                                
                             </div>
                             <div className="text-vulcan-900 text-xs font-normal">
                                 Please fill in the required personal or business detail. {data.type}

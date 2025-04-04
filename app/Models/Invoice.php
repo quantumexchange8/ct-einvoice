@@ -48,4 +48,9 @@ class Invoice extends Model
         'business_registration',
         'merchant_id',
     ];
+
+    public function invoice_lines(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->BelongsTo(InvoiceLineItem::class, 'invoice_id', 'id');
+    }
 }

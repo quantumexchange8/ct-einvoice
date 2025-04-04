@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
+use App\Models\InvoiceLineItem;
 use App\Models\Merchant;
 use App\Models\PayoutConfig;
 use Illuminate\Http\Request;
@@ -52,6 +53,13 @@ class InvoiceController extends Controller
             'total_amount' => 'required',
             'date_time' => 'required',
             'status' => 'required',
+            'items' => 'required|array|min:1', 
+            'items.*.id' => 'required|integer|exists:order_items,id',
+            'items.*.item_name' => 'required|string',
+            'items.*.qty' => 'required|integer|min:1',
+            'items.*.price' => 'required|numeric|min:0.01',
+            'items.*.subtotal' => 'required|numeric|min:0.01',
+            'items.*.classification_id' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -81,6 +89,16 @@ class InvoiceController extends Controller
                 'status' => $request->status,
                 'invoice_status' => 'pending',
             ]);
+
+            foreach ($request->items as $item) {
+                $createItem = InvoiceLineItem::create([
+                    'invoice_id' => $invoice->id,
+                    'item_name' => $item['item_name'],
+                    'item_qty' => $item['item_qty'],
+                    'item_price' => $item['item_price'],
+                    'classification_id' => $item['classification_id'],
+                ]);
+            }
 
             return response()->json([
                 'message' => 'Invoice stored successfully'
