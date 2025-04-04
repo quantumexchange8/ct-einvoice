@@ -18,9 +18,6 @@ Route::get('/getCountries', [InvoiceController::class, 'getCountries'])->name('g
 Route::get('/getStates', [InvoiceController::class, 'getStates'])->name('getStates');
 Route::post('/submitInvoice', [InvoiceController::class, 'submitInvoice'])->name('submitInvoice');
 
-// get invoicing from crm
-Route::post('/store-invoice', [InvoiceController::class, 'storeInvoice'])->name('store-invoice');
-
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

@@ -279,15 +279,4 @@ class InvoiceController extends Controller
 
         return redirect()->back();
     }
-
-    public function storeInvoice(Request $request)
-    {
-
-
-
-        return response()->json([
-            'status' => '200',
-            'message' => 'succesfull',
-        ]);
-    }
 }
