@@ -42,7 +42,9 @@ class InvoiceController extends Controller
         $payoutConfig = PayoutConfig::where('merchant_id', $merchant_id)->first();
 
         if (empty($request->all())) {
+
             return Inertia::render('Invoice/Einvoice');
+
         } else if ($amount && $invoice_no && $merchant_id && $date_issued && $eCode) {
 
             $validateECode = md5($invoice_no . $merchant_id . $payoutConfig->secret_key);
@@ -52,13 +54,21 @@ class InvoiceController extends Controller
             }
 
             // find existing einvoice
-            $ExistInvoice = Invoice::where('merchant_id', $merchant_id)->where('invoice_no', $invoice_no)->first();
+            $ExistInvoice = Invoice::where('merchant_id', $merchant_id)
+                    ->where('invoice_no', $invoice_no)
+                    ->where('status', 'pending')
+                    ->where('invoice_status', 'pending')
+                    ->first();
 
             // Existing invoice
             if ($ExistInvoice) {
                 
-                return Inertia::render('Profile/Partials/Pending', [
-                    'invoice' => $ExistInvoice
+                return Inertia::render('Profile/Invoice', [
+                    'invoice_no' => $invoice_no,
+                    'merchant_id' => $merchant_id,
+                    'date_issued' => $date_issued,
+                    'amount' => $amount,
+                    'ExistInvoice' => $ExistInvoice,
                 ]);
             }
 
@@ -66,7 +76,7 @@ class InvoiceController extends Controller
 
                 $merchant = Merchant::find($merchant_id);
 
-                return Inertia::render('Profile/Invoice', [
+                return Inertia::render('Invoice/Einvoice', [
                     'invoice_no' => $invoice_no,
                     'merchant_id' => $merchant_id,
                     'date_issued' => $date_issued,
@@ -96,7 +106,7 @@ class InvoiceController extends Controller
 
     public function submitInvoice(InvoiceRequest $request)
     {
-
+        // dd($request->all());
         $invoice = Invoice::where('invoice_no', $request->invoice_no)
                 ->where('merchant_id', $request->merchant_id)
                 ->with(['invoice_lines', 'invoice_lines.classification'])
@@ -119,7 +129,7 @@ class InvoiceController extends Controller
                 'city' => $request->city,
                 'postcode' => $request->postcode,
                 'state' => $request->state['State'],
-                'country' => $request->country['country'],
+                'country' => $request->country,
                 'status' => 'pending',
             ]);
         } else {

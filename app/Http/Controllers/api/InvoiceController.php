@@ -147,7 +147,7 @@ class InvoiceController extends Controller
         $merchants = Merchant::find($merchant);
 
         $validator = Validator::make($request->all(), [
-            'invoices' => 'required|array|min:1',
+            'receiptNo' => 'required|array|min:1',
         ]);
         
         if ($validator->fails()) {
