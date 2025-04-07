@@ -8,6 +8,7 @@ use App\Models\InvoiceLineItem;
 use App\Models\Merchant;
 use App\Models\PayoutConfig;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class InvoiceController extends Controller
@@ -50,6 +51,8 @@ class InvoiceController extends Controller
 
         $validator = Validator::make($request->all(), [
             'invoice_no' => 'required',
+            'amount' => 'required',
+            'sst_amount' => 'required',
             'total_amount' => 'required',
             'date_time' => 'required',
             'status' => 'required',
@@ -83,7 +86,10 @@ class InvoiceController extends Controller
 
             $invoice = Invoice::create([
                 'invoice_no' => $request->invoice_no,
-                'amount' => $request->total_amount,
+                'amount' => $request->amount,
+                'sst_amount' => $request->sst_amount,
+                'service_tax' => $request->service_tax_amount,
+                'total_amount' => $request->total_amount,
                 'merchant_id' => $merchants->id,
                 'date' => $request->date_time,
                 'status' => $request->status,
@@ -142,7 +148,6 @@ class InvoiceController extends Controller
 
         $validator = Validator::make($request->all(), [
             'invoices' => 'required|array|min:1',
-            'invoices.*' => 'required|string|distinct'
         ]);
         
         if ($validator->fails()) {
@@ -159,7 +164,16 @@ class InvoiceController extends Controller
 
             $findInvoice = Invoice::where('invoice_no', $invoice)->where('merchant_id', $merchants->id)->first();
 
+            if (!$findInvoice) {
+                Log::info('Invoice not found', [
+                    'invoice_no' => $invoice,
+                    'merchant_id' => $merchants->id,
+                ]);
+                continue;
+            }
+
             $findInvoice->status = 'consolidated';
+            $findInvoice->invoice_status = 'consolidated';
             $findInvoice->save();
         }
 

@@ -15,4 +15,9 @@ class InvoiceLineItem extends Model
         'classification_id',
         'subtotal',
     ];
+
+    public function classification(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->BelongsTo(Classification::class, 'classification_id', 'id');
+    }
 }

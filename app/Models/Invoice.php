@@ -25,6 +25,9 @@ class Invoice extends Model
     protected $fillable = [
         'invoice_no',
         'amount',
+        'sst_amount',
+        'service_tax',
+        'total_amount',
         'date',
         'type',
         'company_url',
@@ -47,6 +50,8 @@ class Invoice extends Model
         'invoice_status',
         'business_registration',
         'merchant_id',
+        'submitted_uuid',
+        'submitted_status',
     ];
 
     public function invoice_lines(): \Illuminate\Database\Eloquent\Relations\BelongsTo
