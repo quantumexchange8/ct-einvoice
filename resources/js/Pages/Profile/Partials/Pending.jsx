@@ -1,9 +1,9 @@
 import React from "react";
-import { Button } from "primereact/button";
 import { Link } from "@inertiajs/react";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { formatAmount } from "@/Composables";
-import { CoinIcon } from "@/Components/Outline";
+import { CoinIcon, DownloadIcon } from "@/Components/Outline";
+import Button from "@/Components/Button";
 
 export default function Pending({ invoice }) {
     const handleDownload = () => {
@@ -179,19 +179,13 @@ export default function Pending({ invoice }) {
                     ) : null}
                     </div>
                         <div className="flex justify-center items-center w-full self-stretch ">
-                        <Button onClick={handleDownload}
-                                className=" w-full py-3 px-4 font-manrope text-sm not-italic font-medium leading-5 
-                                        text-vulcan-500 border rounded-sm border-vulcan-200 bg-white 
-                                        p-button p-button-outlined flex items-center justify-center gap-1"
-                                        
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="16" viewBox="0 0 15 16" fill="none">
-                                    <path d="M2.10156 8.00249V13.4H12.9016V8" stroke="#85888E" strokeLinecap="square"/>
-                                    <path d="M4.80117 7.19971L7.50117 9.89971L10.2012 7.19971" stroke="#85888E" strokeLinecap="square"/>
-                                    <path d="M7.49805 2.3999V9.5999" stroke="#85888E" strokeLinecap="square"/>
-                                </svg>
-                                Download e-Invoice
-                            </Button>
+                        <Button onClick={handleDownload} disabled={invoice.invoice_status === 'pending'}
+                            className="w-full  flex items-center justify-center gap-2 text-sm font-medium disabled:bg-white disabled:text-vulcan-500" 
+                            size="md"
+                        >
+                            <DownloadIcon />
+                            Download e-Invoice
+                        </Button>
                         </div>
                 </div> 
             </div>

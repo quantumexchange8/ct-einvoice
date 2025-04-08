@@ -248,6 +248,16 @@ const CoinIcon = () => {
     );
 }
 
+const DownloadIcon = ({ className }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" className={className} width="15" height="16" viewBox="0 0 15 16" fill="none">
+            <path d="M2.10156 8.00249V13.4H12.9016V8" stroke="currentColor" strokeLinecap="square"/>
+            <path d="M4.80117 7.19971L7.50117 9.89971L10.2012 7.19971" stroke="currentColor" strokeLinecap="square"/>
+            <path d="M7.49805 2.3999V9.5999" stroke="currentColor" strokeLinecap="square"/>
+        </svg>
+    );
+}
+
 
 export {
     DotVerticleIcon,
@@ -274,4 +284,5 @@ export {
     SortAsc,
     SortDesc,
     CoinIcon,
+    DownloadIcon,
 }

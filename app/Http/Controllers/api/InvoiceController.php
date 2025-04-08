@@ -158,15 +158,15 @@ class InvoiceController extends Controller
             ], 422);
         }
         
-        $invoices = $request->invoices;
-
+        $invoices = $request->receiptNo;
+        
         foreach ($invoices as $invoice) {
 
-            $findInvoice = Invoice::where('invoice_no', $invoice)->where('merchant_id', $merchants->id)->first();
+            $findInvoice = Invoice::where('invoice_no', $invoice['invoice_no'])->where('merchant_id', $merchants->id)->first();
 
             if (!$findInvoice) {
                 Log::info('Invoice not found', [
-                    'invoice_no' => $invoice,
+                    'invoice_no' => $invoice['invoice_no'],
                     'merchant_id' => $merchants->id,
                 ]);
                 continue;

@@ -242,7 +242,8 @@ const submit = (e) => {
                       mode="currency" 
                       className="w-full box-border h-11 border border-vulcan-200 rounded-[2px] hover:border-2 focus:border-vulcan-700 outline-none focus:outline-none focus:ring-0 text-vulcan-950 disabled:bg-vulcan-25 disabled:border-vulcan-50 disabled:text-vulcan-400"
                       currency="MYR" 
-                      locale="en-MY" 
+                      locale="en-MY"
+                      disabled
                   />
               </div>
             </div>
