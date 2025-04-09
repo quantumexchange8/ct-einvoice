@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "@inertiajs/react";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { formatAmount } from "@/Composables";
-import { CoinIcon, DownloadIcon } from "@/Components/Outline";
+import { CoinIcon, DownloadIcon, FailIcon, InfoIcon, PendingIcon, SuccessIcon } from "@/Components/Outline";
 import Button from "@/Components/Button";
 
 export default function Pending({ invoice }) {
@@ -22,21 +22,68 @@ export default function Pending({ invoice }) {
             <div className="flex flex-col w-full items-start justify-center self-stretch pb-[75px] bg-white"> 
                 <div className="flex flex-col w-full p-5 gap-8 bg-white">
                     <div className="flex w-full flex-col justify-center items-start gap-6 ">
-                        <div className="flex w-full p-4 items-center self-stretch rounded-sm bg-warning-50 ">
-                            <div className="flex shrink-0">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" className="mr-2">
-                                    <rect width="20" height="20" rx="10" fill="#E79B19"/>
-                                    <path d="M10 10H12.7273H15.4545" stroke="#FEFAEC" strokeWidth="1.6361" strokeLinecap="square"/>
-                                    <path d="M10 10V7.27273V4.54545" stroke="#FEFAEC" strokeWidth="1.6361" strokeLinecap="square"/>
-                                </svg>
-                            </div>
-                            <div className="w-full font-manrope not-italic">
-                                <div className=" font-bold text-warning-500 text-base leading-[22px]">Pending Validation</div>
-                                    <span className="block text-warning-950 text-xs leading-[18px] font-normal">
-                                    e-invoice will be available for download once it has been successfully validated.
-                                    </span>
-                            </div>
-                        </div>
+                        {/* Banner */}
+                        {
+                            invoice.status === 'consolidated' && (
+                                <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-warning-50 ">
+                                    <div className="flex shrink-0">
+                                        <InfoIcon />
+                                    </div>
+                                    <div className="w-full font-manrope not-italic">
+                                        <div className=" font-bold text-warning-500 text-base leading-[22px]">Consolidated</div>
+                                            <span className="block text-warning-950 text-xs leading-[18px] font-normal">
+                                                This invoice/receipt has been submitted as consolidated e-invoice by the merchant.
+                                            </span>
+                                    </div>
+                                </div>
+                            )
+                        }
+                        {
+                            invoice.status === 'pending' || invoice.status === 'requested' && (
+                                <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-warning-50 ">
+                                    <div className="flex shrink-0">
+                                        <PendingIcon />
+                                    </div>
+                                    <div className="w-full font-manrope not-italic">
+                                        <div className=" font-bold text-warning-500 text-base leading-[22px]">Pending Validation</div>
+                                            <span className="block text-warning-950 text-xs leading-[18px] font-normal">
+                                            e-invoice will be available for download once it has been successfully validated.
+                                            </span>
+                                    </div>
+                                </div>
+                            )
+                        }
+                        {
+                            invoice.status === 'success' && (
+                                <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-warning-50 ">
+                                    <div className="flex shrink-0">
+                                        <SuccessIcon />
+                                    </div>
+                                    <div className="w-full font-manrope not-italic">
+                                        <div className=" font-bold text-warning-500 text-base leading-[22px]">Validated</div>
+                                            <span className="block text-warning-950 text-xs leading-[18px] font-normal">
+                                            Your transaction has been successfully validated by LHDN. You can now proceed to download your e-invoice.
+                                            </span>
+                                    </div>
+                                </div>
+                            )
+                        }
+                        {
+                            invoice.status === 'fail' && (
+                                <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-warning-50 ">
+                                    <div className="flex shrink-0">
+                                        <FailIcon />
+                                    </div>
+                                    <div className="w-full font-manrope not-italic">
+                                        <div className=" font-bold text-warning-500 text-base leading-[22px]">Failed</div>
+                                            <span className="block text-warning-950 text-xs leading-[18px] font-normal">
+                                                We encountered an issue with your e-invoice submission. Please review the details you provided and try submitting again.
+                                            </span>
+                                    </div>
+                                </div>
+                            )
+                        }
+                        
                         <div className="flex w-full items-start gap-4 self-stretch">
                             <div className="text-vulcan-900 font-bold leading-[26px] not-italic text-xl flex flex-col gap-2 w-full">
                                 <div>#{invoice.invoice_no}</div>
@@ -180,7 +227,7 @@ export default function Pending({ invoice }) {
                     </div>
                         <div className="flex justify-center items-center w-full self-stretch ">
                         <Button onClick={handleDownload} disabled={invoice.invoice_status === 'pending'}
-                            className="w-full  flex items-center justify-center gap-2 text-sm font-medium disabled:bg-white disabled:text-vulcan-500" 
+                            className="w-full flex items-center justify-center gap-2 text-sm font-medium disabled:bg-white disabled:text-vulcan-500" 
                             size="md"
                         >
                             <DownloadIcon />

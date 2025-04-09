@@ -47,7 +47,7 @@ export default ({
                 variantClasses = `bg-transparent border border-error-500 text-error-500 disabled:text-neutral-700 disabled:bg-transparent`
                 break
         default:
-            variantClasses = `bg-vulcan-800 text-vulcan-25 shadow-button hover:bg-vulcan-800 hover:text-vulcan-200 disabled:text-white disabled:bg-vulcan-400 rounded-sm`
+            variantClasses = `bg-vulcan-800 text-vulcan-25 shadow-button hover:bg-vulcan-800 hover:text-vulcan-200 disabled:bg-vulcan-400 rounded-sm`
     }
 
     const sizeClasses = `${

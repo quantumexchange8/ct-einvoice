@@ -14,15 +14,23 @@ use Inertia\Inertia;
 Route::get('/', [InvoiceController::class, 'einvoice'])->name('einvoice');
 
 Route::get('/invoice', [InvoiceController::class, 'invoice'])->name('invoice');
-Route::get('/getCountries', [InvoiceController::class, 'getCountries'])->name('getCountries');
-Route::get('/getStates', [InvoiceController::class, 'getStates'])->name('getStates');
 Route::post('/submitInvoice', [InvoiceController::class, 'submitInvoice'])->name('submitInvoice');
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+    /**
+     * ==============================
+     *           Global use
+     * ==============================
+    */
+    Route::get('/getClassification', [GlobalController::class, 'getClassification'])->name('getClassification');
+    Route::get('/getMSICcode', [GlobalController::class, 'getMSICcode'])->name('getMSICcode');
+    Route::get('/getCountries', [GlobalController::class, 'getCountries'])->name('getCountries');
+    Route::get('/getStates', [GlobalController::class, 'getStates'])->name('getStates');
 
 Route::middleware('auth')->group(function () {
+
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->name('dashboard');
 
     Route::get('/invoice-listing', [InvoiceListingController::class, 'invoiceListing'])->name('invoice-listing');
     Route::get('/getInvoiceListing', [InvoiceListingController::class, 'getInvoiceListing'])->name('getInvoiceListing');
@@ -40,14 +48,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    /**
-     * ==============================
-     *           Global use
-     * ==============================
-    */
-    Route::get('/getClassification', [GlobalController::class, 'getClassification'])->name('getClassification');
-    Route::get('/getMSICcode', [GlobalController::class, 'getMSICcode'])->name('getMSICcode');
     
     /**
      * ==============================

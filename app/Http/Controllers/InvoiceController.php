@@ -81,6 +81,16 @@ class InvoiceController extends Controller
                 ]);
             }
 
+            if ($ExistInvoice->status === 'consolidated') {
+                return Inertia::render('Profile/Partials/Pending', [
+                    'invoice_no' => $invoice_no,
+                    'merchant_id' => $merchant_id,
+                    'date_issued' => $date_issued,
+                    'amount' => $amount,
+                    'invoice' => $ExistInvoice,
+                ]);
+            }
+
             if (!$ExistInvoice) {
 
                 $merchant = Merchant::find($merchant_id);
@@ -93,24 +103,6 @@ class InvoiceController extends Controller
                 ]);
             }
         }
-    }
-
-
-
-    public function getCountries()
-    {
-
-        $country = Country::get();
-
-        return response()->json($country);
-    }
-
-    public function getStates()
-    {
-
-        $state = State::get();
-
-        return response()->json($state);
     }
 
     public function submitInvoice(InvoiceRequest $request)
@@ -169,6 +161,15 @@ class InvoiceController extends Controller
         $msic = MSICcode::find($merchantDetail->msic_id);
         $state = State::where('State', $merchantDetail->state_code)->first();
 
+        Log::info('Details', [
+            'merchantDetail' => $merchantDetail,
+            'merchantId' => $merchantId,
+            'checkToken' => $checkToken,
+            'payout' => $payout,
+            'msic' => $msic,
+            'state' => $state,
+        ]);
+
          // 1. 获取有效的 token
          $token = $this->getValidToken($merchantDetail, $checkToken);
          if (!$token) {
@@ -182,6 +183,11 @@ class InvoiceController extends Controller
 
     protected function getValidToken($merchantDetail, $checkToken)
     {
+        Log::info('data', [
+            'merchantDetail' => $merchantDetail,
+            'checkToken' => $checkToken,
+        ]);
+        
         // 如果没有 token 或者 token 已过期，获取新 token
         if (!$checkToken || Carbon::now() >= $checkToken->expired_at) {
             $accessTokenApi = $this->env === 'production'

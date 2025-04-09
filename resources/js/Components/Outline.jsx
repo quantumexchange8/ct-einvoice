@@ -258,6 +258,42 @@ const DownloadIcon = ({ className }) => {
     );
 }
 
+const InfoIcon = ({ className }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <rect width="22" height="22" rx="11" fill="#228BFF"/>
+            <path d="M11.0098 15V11M11.0098 7H10.9998" stroke="#FEFAEC" strokeWidth="2.5" strokeLinecap="round" stroke-linejoin="round"/>
+        </svg>
+    );
+}
+
+const PendingIcon = ({ className }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <rect width="20" height="20" rx="10" fill="#E79B19"/>
+            <path d="M10 10H12.7273H15.4545" stroke="#FEFAEC" strokeWidth="1.6361" strokeLinecap="square"/>
+            <path d="M10 10V7.27273V4.54545" stroke="#FEFAEC" strokeWidth="1.6361" strokeLinecap="square"/>
+        </svg>
+    );
+}
+
+const SuccessIcon = ({ className }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <rect width="22" height="22" rx="11" fill="#29AE02"/>
+            <path d="M15.7273 8L9.72727 14L7 11.2727" stroke="#EFFFE5" strokeWidth="2.5" strokeLinecap="round" stroke-linejoin="round"/>
+        </svg>
+    );
+}
+
+const FailIcon = ({ className }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <rect width="22" height="22" rx="11" fill="#FF2742"/>
+            <path d="M11.0098 7V11M11.0098 15H10.9998" stroke="#FEF9FA" strokeWidth="2.5" strokeLinecap="round" stroke-linejoin="round"/>
+        </svg>
+    );
+}
 
 export {
     DotVerticleIcon,
@@ -285,4 +321,8 @@ export {
     SortDesc,
     CoinIcon,
     DownloadIcon,
+    InfoIcon,
+    PendingIcon,
+    SuccessIcon,
+    FailIcon,
 }
