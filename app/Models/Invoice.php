@@ -55,8 +55,8 @@ class Invoice extends Model
         'remark',
     ];
 
-    public function invoice_lines(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    public function invoice_lines(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
-        return $this->BelongsTo(InvoiceLineItem::class, 'invoice_id', 'id');
+        return $this->hasMany(InvoiceLineItem::class, 'invoice_id', 'id');
     }
 }
