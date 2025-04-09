@@ -609,7 +609,7 @@ class InvoiceController extends Controller
 
         if ($submiturl->successful()) {
 
-            Log::debug('submission response', $submiturl);
+            Log::debug('submission ', ['submission' => $submiturl]);
             // Check if the response contains 'acceptedDocuments'
             if (!empty($submiturl['acceptedDocuments'])) {
                 $submission_uuid = $submiturl['submissionUid'] ?? null;
