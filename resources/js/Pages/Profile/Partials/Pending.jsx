@@ -39,7 +39,7 @@ export default function Pending({ invoice }) {
                             )
                         }
                         {
-                            invoice.status === 'pending' || invoice.status === 'requested' && (
+                            invoice.status === 'pending' || invoice.invoice_status === 'Submitted' && (
                                 <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-warning-50 ">
                                     <div className="flex shrink-0">
                                         <PendingIcon />
@@ -54,7 +54,7 @@ export default function Pending({ invoice }) {
                             )
                         }
                         {
-                            invoice.status === 'success' && (
+                            invoice.invoice_status === 'Valid' && (
                                 <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-warning-50 ">
                                     <div className="flex shrink-0">
                                         <SuccessIcon />
@@ -69,7 +69,7 @@ export default function Pending({ invoice }) {
                             )
                         }
                         {
-                            invoice.status === 'fail' && (
+                            invoice.invoice_status === 'Invalid' || invoice.invoice_status === 'Cancelled' && (
                                 <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-warning-50 ">
                                     <div className="flex shrink-0">
                                         <FailIcon />

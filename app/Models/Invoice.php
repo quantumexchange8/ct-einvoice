@@ -52,6 +52,7 @@ class Invoice extends Model
         'merchant_id',
         'submitted_uuid',
         'submitted_status',
+        'remark',
     ];
 
     public function invoice_lines(): \Illuminate\Database\Eloquent\Relations\BelongsTo

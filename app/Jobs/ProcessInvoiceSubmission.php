@@ -43,7 +43,7 @@ class ProcessInvoiceSubmission implements ShouldQueue
     public function handle(): void
     {
         Log::debug('✅ Queue is working! Test job executed.');
-        
+
         $invoice = Invoice::where('invoice_no', $this->invoiceId)
                 ->where('merchant_id', $this->merchantId)
                 ->with(['invoice_lines', 'invoice_lines.classification'])
@@ -510,12 +510,30 @@ class ProcessInvoiceSubmission implements ShouldQueue
         if ($submiturl->successful()) {
 
             Log::debug('submission response', $submiturl);
+            // Check if the response contains 'acceptedDocuments'
+            if (!empty($submiturl['acceptedDocuments'])) {
+                $submission_uuid = $submiturl['submissionUid'] ?? null;
+                $uuid = $submiturl['acceptedDocuments'][0]['uuid'] ?? null;
+                $status = 'Submitted';
+                $remark = null;
+            }
+
+            // Check if the response contains 'rejectedDocuments'
+            if (!empty($submiturl['rejectedDocuments'])) {
+                $submission_uuid = $submiturl['submissionUid'] ?? null;
+                $uuid = $submiturl['rejectedDocuments'][0]['uuid'] ?? null;
+                $status = 'Invalid';
+                $remark = $submiturl['rejectedDocuments'][0]['reason'] ?? null;
+            }
 
             // Normal Invoice
             $uuid = $submiturl['acceptedDocuments']['uuid'];
 
-            $invoice->submitted_uuid = $uuid;
-            $invoice->submitted_status = 'submitted';
+            $invoice->submitted_uuid = $submission_uuid;
+            $invoice->invoice_uuid = $uuid;
+            $invoice->status = $status;
+            $invoice->invoice_status = $status;
+            $invoice->remark = $remark;
             $invoice->save();
 
             $updateMerchantStatus = Http::post($payout->url . $payout->callBackUrl, [
