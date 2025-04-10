@@ -636,8 +636,9 @@ class InvoiceController extends Controller
             $updateMerchantStatus = Http::post($payout->url . $payout->callBackUrl, [
                 'eCode' => $eCode,
                 'invoice_no' => $invoice->invoice_no,
+                'submission_uuid' => $submission_uuid,
                 'invoice_uuid' => $uuid,
-                'status' => 'submitted',
+                'status' => $invoice->invoice_status,
                 'submission_date' => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
 
