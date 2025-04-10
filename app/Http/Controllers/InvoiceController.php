@@ -368,10 +368,10 @@ class InvoiceController extends Controller
                                     "Line" => [["_" => $invoice->addressLine1]]
                                 ],
                                 [
-                                    "Line" => [["_" => $invoice->addressLine2]]
+                                    "Line" => [["_" => $invoice->addressLine2 ?? ""]]
                                 ],
                                 [
-                                    "Line" => [["_" => $invoice->addressLine3]]
+                                    "Line" => [["_" => $invoice->addressLine3 ?? ""]]
                                 ],
                             ],
                             "CityName" => [["_" => $invoice->city]],
@@ -626,10 +626,7 @@ class InvoiceController extends Controller
                 $remark = $submiturl['rejectedDocuments'][0]['reason'] ?? null;
             }
 
-            // Normal Invoice
-            $uuid = $submiturl['acceptedDocuments']['uuid'];
-
-            $invoice->submitted_uuid = $submission_uuid;
+            $invoice->submission_uuid = $submission_uuid;
             $invoice->invoice_uuid = $uuid;
             $invoice->status = $status;
             $invoice->invoice_status = $status;
