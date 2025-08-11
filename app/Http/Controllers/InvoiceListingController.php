@@ -12,18 +12,18 @@ class InvoiceListingController extends Controller
 
         return Inertia::render('InvoiceListing/InvoiceListing');
     }
-    public function getInvoiceListing()
+    public function getInvoiceListing(Request $request)
     {
-        $invoices = Invoice::get();
-        $configurations = Configuration::first(); 
 
-        $configurations->logo = $configurations->getFirstMediaUrl('image');
-        // $configurations = Configuration::with('media')->latest()->get();
+        if ($request->status === 'all') {
+            $invoices = Invoice::with(['merchant'])->get();
+        } else {
+            $invoices = Invoice::where('status', $request->status)
+                ->with(['merchant'])
+                ->get();
+        }
 
-        return response()->json([
-            'configurations' => $configurations,
-            'invoices' => $invoices
-        ]);
+        return response()->json($invoices);
     }
     
 }

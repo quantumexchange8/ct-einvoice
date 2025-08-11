@@ -117,7 +117,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.merchant_name}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('merchant_name', e.target.value)}
                             placeholder='e.g. Burger Sdn Bhd'
                         />
@@ -136,7 +135,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.merchant_email}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('merchant_email', e.target.value)}
                             placeholder='e.g. burger@burger.com'
                         />
@@ -155,7 +153,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.merchant_contact}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('merchant_contact', e.target.value)}
                             placeholder='e.g. 6012345677'
                         />
@@ -182,7 +179,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.address_1}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('address_1', e.target.value)}
                         />
                         <InputError message={errors.address_1} />
@@ -209,7 +205,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.address_3}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('address_3', e.target.value)}
                         />
                     </div>
@@ -226,7 +221,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.city}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('city', e.target.value)}
                             placeholder="e.g. Kuala Lumpur"
                         />
@@ -262,7 +256,6 @@ export default function Step1({data, setData, errors}) {
                                 value={data.postal_code}
                                 className="mt-1 w-full box-border h-11"
                                 autoComplete="username"
-                                isFocused={true}
                                 onChange={(e) => setData('postal_code', e.target.value)}
                             />
                             <InputError message={errors.postal_code} />
@@ -307,7 +300,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.tin_no}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('tin_no', e.target.value)}
                         />
                         <InputError message={errors.tin_no} />
@@ -325,7 +317,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.brn_no}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('brn_no', e.target.value)}
                         />
                         <InputError message={errors.brn_no} />
@@ -339,7 +330,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.sst_no}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('sst_no', e.target.value)}
                         />
                     </div>
@@ -352,7 +342,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.ttx_no}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('ttx_no', e.target.value)}
                         />
                     </div>
@@ -404,7 +393,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.irbm_client_id}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('irbm_client_id', e.target.value)}
                         />
                         <InputError message={errors.irbm_client_id} />
@@ -422,7 +410,6 @@ export default function Step1({data, setData, errors}) {
                             value={data.irbm_client_secret}
                             className="mt-1 w-full box-border h-11"
                             autoComplete="username"
-                            isFocused={true}
                             onChange={(e) => setData('irbm_client_secret', e.target.value)}
                         />
                         <InputError message={errors.irbm_client_secret} />

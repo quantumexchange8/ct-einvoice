@@ -10,8 +10,10 @@ import { Tab, TabGroup, TabList } from "@headlessui/react";
 import { Checkbox } from "primereact/checkbox";
 import {Dialog } from '@headlessui/react'
 import { CreateInvoiceIcon, DotVerticleIcon, ExportIcon, PreviewIcon, ShareIcon, VoidIcon } from "@/Components/Outline";
+import { formatAmount } from "@/Composables";
 
 export default function InvoiceListing() {
+    
     const [invoices, setInvoices] = useState([]);
     const [filteredInvoices, setFilteredInvoices] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -24,15 +26,17 @@ export default function InvoiceListing() {
     const [isPreviewOpen, setIsPreviewOpen] = useState(false); 
     const [configurations, setConfigurations] = useState(null);
 
-    useEffect(() => {
-        fetchInvoices();
-    }, []);
-
     const fetchInvoices = async () => {
+
         try {
-            const response = await axios.get("/getInvoiceListing");
-            setInvoices(response.data);
+            const response = await axios.get("/getInvoiceListing", {
+                params: {
+                    status: selectedStatus
+                },
+            });
+
             setFilteredInvoices(response.data);
+
         } catch (error) {
             console.error("Error fetching invoices:", error);
         } finally {
@@ -41,50 +45,12 @@ export default function InvoiceListing() {
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
-        try {
-            const response = await axios.get("/getInvoiceListing"); 
-            setConfigurations(response.data.configurations);
-            setInvoices(response.data.invoices);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    };
-    
-    useEffect(() => {
-        let filtered = invoices;
-
-        if (searchTerm.trim()) {
-            filtered = filtered.filter(
-                (invoice) =>
-                    invoice.invoice_no.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                    invoice.full_name.toLowerCase().includes(searchTerm.toLowerCase())
-            );
-        }
-
-        // Status filter
-        if (selectedStatus !== "all") {
-            filtered = filtered.filter((invoice) => invoice.status.toLowerCase() === selectedStatus);
-        }
-        if (selectedDate && selectedDate.length === 2 && selectedDate[0] && selectedDate[1]) {
-            const start = new Date(selectedDate[0]);
-            const end = new Date(selectedDate[1]);
-
-            filtered = filtered.filter((invoice) => {
-                const invoiceDate = new Date(invoice.date);
-                return invoiceDate >= start && invoiceDate <= end;
-            });
-        }
-        setFilteredInvoices(filtered);
-    }, [selectedStatus, searchTerm, selectedDate, invoices]);
+        fetchInvoices();
+    }, [selectedStatus]);
 
     const statusBodyTemplate = (rowData) => {
-        // console.log(rowData)
         return (
-            <>
+            <div className="flex">
                 {
                     rowData.status === 'pending' && (
                         <div className="flex items-center font-manrope not-italic font-bold tracking-[1.32px] uppercase leading-[18px] text-[11px] gap-2 py-1 px-2 border border-vulcan-300" >
@@ -105,7 +71,7 @@ export default function InvoiceListing() {
                         </div>
                     )
                 }
-            </>
+            </div>
         );
     };
     
@@ -119,8 +85,9 @@ export default function InvoiceListing() {
     };
 
     const handleTabChange = (index) => {
-        const statuses = ["all", "pending", "paid"];
+        const statuses = ["all", "pending", "Submitted", "Valid", "Invalid"];
         setSelectedStatus(statuses[index]);
+        setLoading(true);
     };
 
     const handleCheckboxChange = (e, rowData) => {
@@ -158,32 +125,57 @@ export default function InvoiceListing() {
     dropdownItem: "w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
 };
 
-const actionBodyTemplate = (rowData) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const actionBodyTemplate = (rowData) => {
+        const [isOpen, setIsOpen] = useState(false);
 
-    return (
-        <div className="flex w-full p-2 items-center gap-3 bg-white self-stretch relative">
-            <div className={dropdownStyles.container}>
-                <button onClick={() => setIsOpen(!isOpen)} className={dropdownStyles.button}>
-                    <DotVerticleIcon />
-                </button>
-                {isOpen && (
-                    <div className={dropdownStyles.dropdown}>
+        return (
+            <div className="flex w-full p-2 items-center gap-3 relative">
+                <div className={dropdownStyles.container}>
+                    <button onClick={() => setIsOpen(!isOpen)} className={dropdownStyles.button}>
+                        <DotVerticleIcon />
+                    </button>
+                    {isOpen && (
+                        <div className={dropdownStyles.dropdown}>
+                        
+                            <button className={dropdownStyles.dropdownItem} >
+                                <ShareIcon />
+                                Share
+                            </button>
                     
-                        <button className={dropdownStyles.dropdownItem} >
-                            <ShareIcon />
-                            Share
-                        </button>
-                
-                    <button onClick={() => handlePreview(rowData)} className={dropdownStyles.dropdownItem}>
-                        <PreviewIcon /> Preview
-                        </button>
-                    </div>
-                )}
+                        <button onClick={() => handlePreview(rowData)} className={dropdownStyles.dropdownItem}>
+                            <PreviewIcon /> Preview
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
-        </div>
-    );
-};
+        );
+    };
+
+    const merchantTemplate = (data) => {
+        return (
+            <div className="flex flex-col">
+                <span className="text-xs">{data.merchant.name}</span>
+                <span className="text-xs">{data.merchant.merchant_uid}</span>
+            </div>
+        )
+    }
+
+    const amountTemplate = (data) => {
+        return (
+            <div>
+                RM {formatAmount(data.total_amount)}
+            </div>
+        )
+    }
+
+    const customLoadingAnimate = () => {
+        return (
+            <div className="min-h-[30vh] flex justify-center items-center">
+                No data found...
+            </div>
+        )
+    }
 
     return (
         <AuthenticatedLayout>
@@ -202,25 +194,25 @@ const actionBodyTemplate = (rowData) => {
                         <div className="flex items-center gap-3">
                             <button className="flex px-3 py-2 gap-2 border rounded-sm border-vulcan-300 bg-white text-vulcan-700 text-xs font-medium">
                             <ExportIcon/>
-                            Export
+                                Export
                             </button>
-                            <button className="flex px-3 py-2 gap-2 border rounded-sm border-vulcan-700 bg-vulcan-700 text-vulcan-25 text-xs font-medium">
+                            {/* <button className="flex px-3 py-2 gap-2 border rounded-sm border-vulcan-700 bg-vulcan-700 text-vulcan-25 text-xs font-medium">
                             <CreateInvoiceIcon/>
-                            Create Ad-hoc Invoice
-                            </button>
+                                Create Ad-hoc Invoice
+                            </button> */}
                         </div>
                     </div>
                     <div className="flex w-full">
                         {/* Tabs for Invoice Status */}
-                        <TabGroup selectedIndex={["all", "pending", "paid"].indexOf(selectedStatus)} onChange={handleTabChange}>
+                        <TabGroup selectedIndex={["all", "pending", "Submitted", "Valid", "Invalid"].indexOf(selectedStatus)} onChange={handleTabChange}>
                             <TabList className="flex gap-[2px] p-[3px] items-center justify-center bg-vulcan-100 rounded-sm">
-                                {["All", "Pending", "Paid"].map((label, index) => (
+                                {["All", "Pending", "Submitted", "Valid", "Invalid"].map((label, index) => (
                                     <Tab
                                         key={index}
                                         className={({ selected }) =>
                                             `flex px-3 py-[5px] text-xs rounded-sm ${
                                                 selected
-                                                    ? "bg-white font-bold text-black border-none shadow-sm" // No border on selected tab
+                                                    ? "bg-white font-bold text-black border-none shadow-sm outline-none" // No border on selected tab
                                                     : "text-vulcan-950 font-normal hover:bg-gray-200"
                                             }`
                                         }
@@ -234,35 +226,6 @@ const actionBodyTemplate = (rowData) => {
                     <div className="flex w-full items-center gap-4">
                         <div className="flex items-center justify-between w-full">
                             <div className="flex items-center gap-2">
-                                <div className="flex max-w-[270px] p-[3px] items-center bg-vulcan-50 gap-2">
-                                    <i className="pi pi-search text-vulcan-500"></i>
-                                    <InputText
-                                        placeholder="Search"
-                                        className="w-full text-vulcan-900 px-3 py-2 bg-transparent border-none outline-none text-xs font-medium"
-                                        value={searchTerm}
-                                        onChange={(e) => setSearchTerm(e.target.value)}
-                                    />
-                                </div>
-                               <div className="flex gap-2">
-                                <div className="relative gap-3 max-w-[600px] flex items-center px-3 py-2 text-[5px]">
-                                        <Calendar
-                                            value={selectedDate}
-                                            onChange={(e) => setSelectedDate(e.value)}
-                                            placeholder="Select Date"
-                                            dateFormat="dd/mm/yy"
-                                            selectionMode="range"
-                                            className=" border-none font-manrope outline-none text-[5px] font-medium"
-                                        />
-                                        {selectedDate && selectedDate.length > 0 && (
-                                            <button
-                                            onClick={() => setSelectedDate(null)}
-                                            className="flex right-5 text-gray-500 font-manrope text-[5px] hover:text-red-500" 
-                                         >
-                                            <i className="pi pi-times"></i>
-                                        </button>
-                                        )}
-                                    </div>
-                               </div>
 
                             </div>
                             <div className="flex items-center gap-3">
@@ -283,45 +246,64 @@ const actionBodyTemplate = (rowData) => {
                         </div>
                     </div>
 
-
                     <div >
                         {
-                            filteredInvoices.length > 0 ? (
+                            loading ? (
                                 <>
-                                    <DataTable
-                                        value={filteredInvoices.slice(first, first + rows)}
-                                        selection={selectedInvoices}
-                                        onSelectionChange={(e) => setSelectedInvoices(e.value)}
-                                        selectionMode="multiple"
-                                        className="font-manrope text-[10px] not-italic text-vulcan-800 font-bold leading-[16px]"
-                                        paginator
-                                        rows={5}
-                                    >
-                                        <Column selectionMode="multiple" />
-                                        <Column field="date" header="Date Issued" body={(rowData) => format(new Date(rowData.date), "dd/MM/yyyy")} className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
-                                        <Column field="invoice_no" header="Invoice No" className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
-                                        <Column field="amount" header="Total Amount" className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
-                                        <Column field="full_name" header="Name" className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
-                                        <Column field="tin_no" header="TIN No." className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
-                                        <Column field="type" header="Type" className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
-                                        <Column field="status" header="Status" body={statusBodyTemplate} className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
-                                        <Column header="Action" body={actionBodyTemplate} className="font-manrope bg-white text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
-                                    </DataTable>
-                                    {/* <Paginator
-                                        first={first}
-                                        rows={rows}
-                                        totalRecords={filteredInvoices.length}
-                                        onPageChange={(e) => {
-                                        setFirst(e.first);
-                                        setRows(e.rows);
-                                        }}
-                                    /> */}
+                                    loading...
                                 </>
                             ) : (
-                                <p>No invoices found.</p>
+                                <>
+                                    {
+                                        filteredInvoices.length > 0 ? (
+                                            <>
+                                                <DataTable
+                                                    value={filteredInvoices.slice(first, first + rows)}
+                                                    selection={selectedInvoices}
+                                                    onSelectionChange={(e) => setSelectedInvoices(e.value)}
+                                                    selectionMode="multiple"
+                                                    className="font-manrope text-[10px] not-italic text-vulcan-800 font-bold leading-[16px]"
+                                                    paginator
+                                                    rows={5}
+                                                    removableSort
+                                                >
+                                                    <Column selectionMode="multiple" />
+                                                    <Column field="date" header="Date Issued" body={(rowData) => format(new Date(rowData.date), "dd/MM/yyyy")} sortable  className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                                    <Column field="merchant" header="Merchant" body={merchantTemplate} sortable  className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                                    <Column field="invoice_no" header="Invoice No" sortable  className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                                    <Column field="total_amount" header="Total Amount" sortable  body={amountTemplate} className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                                    <Column field="status" header="Status" body={statusBodyTemplate}  tableStyle={{ maxWidth: '60px' }} className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                                    <Column header="Action" body={actionBodyTemplate} tableStyle={{ maxWidth: '60px' }} className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                                </DataTable>
+                                            </>
+                                        ) : (
+                                            <DataTable
+                                                value={filteredInvoices.slice(first, first + rows)}
+                                                selection={selectedInvoices}
+                                                onSelectionChange={(e) => setSelectedInvoices(e.value)}
+                                                selectionMode="multiple"
+                                                className="font-manrope text-[10px] not-italic text-vulcan-800 font-bold leading-[16px]"
+                                                paginator
+                                                rows={5}
+                                                removableSort
+                                                emptyMessage={customLoadingAnimate}
+                                            >
+                                                <Column field="date" header="Date Issued" body={(rowData) => format(new Date(rowData.date), "dd/MM/yyyy")} sortable  className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                                <Column field="merchant" header="Merchant" body={merchantTemplate} sortable  className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                                <Column field="invoice_no" header="Invoice No" sortable  className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                                <Column field="total_amount" header="Total Amount" sortable  body={amountTemplate} className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                                <Column field="status" header="Status" body={statusBodyTemplate}  tableStyle={{ maxWidth: '60px' }} className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                                <Column header="Action" body={actionBodyTemplate} tableStyle={{ maxWidth: '60px' }} className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
+                                            </DataTable>
+                                        )
+                                    }
+                                </>
                             )
                         }
+                        
                     </div>
+
+
                     <Dialog
                         open={isPreviewOpen}
                         onClose={() => setIsPreviewOpen(false)}
@@ -345,13 +327,11 @@ const actionBodyTemplate = (rowData) => {
                                             <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic"> {configurations.poscode} {configurations.area} ,{configurations.state}</span>
                                         </div>
                                        
-                                       <div>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Reg.No : {configurations.registration}</span>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Contact : {configurations.phone}</span>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Email : {configurations.email}</span>
-                                       </div>
-                                        
-                                        
+                                        <div>
+                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Reg.No : {configurations.registration}</span>
+                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Contact : {configurations.phone}</span>
+                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Email : {configurations.email}</span>
+                                        </div>
                                     </div>
                                     ) : (
                                         <span>Loading configuration...</span>
@@ -417,9 +397,6 @@ const actionBodyTemplate = (rowData) => {
                             </div>
                         </div>
                     </Dialog>
-                                
-                  
-   
                 </div>
             </div>
         </AuthenticatedLayout>

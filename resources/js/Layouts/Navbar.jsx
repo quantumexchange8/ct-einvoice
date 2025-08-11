@@ -15,7 +15,7 @@ export default function Navbar({ toggleSidebar }) {
   };
 
   return (
-    <nav className="sticky top-0 flex w-full p-4 justify-between items-center bg-white border-b border-vulcan-100">
+    <nav className="sticky top-0 z-20 flex w-full p-4 justify-between items-center bg-white border-b border-vulcan-100">
       <div className="flex items-center py-2.5 px-2 cursor-pointer hover:bg-vulcan-100 rounded-lg" onClick={toggleSidebar} >
         <BreadcumbIcon className='text-[#333333]' />
       </div>

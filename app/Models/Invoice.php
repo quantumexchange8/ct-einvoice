@@ -59,4 +59,9 @@ class Invoice extends Model
     {
         return $this->hasMany(InvoiceLineItem::class, 'invoice_id', 'id');
     }
+
+    public function merchant(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Merchant::class, 'merchant_id', 'id');
+    }
 }

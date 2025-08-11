@@ -51,7 +51,7 @@ export default function Sidebar({ showingNavigationDropdown, expanded, toggleSid
                   </div>
                 </Link>
                 <Link href={route('merchant')} >
-                  <div className={`${url === '/merchant' ? 'w-full flex items-center gap-2 py-2 px-3 bg-vulcan-700 text-vulcan-50 text-sm rounded-[2px] ' : 'w-full flex items-center gap-2 py-2 px-3 text-vulcan-900 text-sm hover:bg-vulcan-100 rounded-[2px]'}`} >
+                  <div className={`${url === '/merchant' || url === '/add-merchant' ? 'w-full flex items-center gap-2 py-2 px-3 bg-vulcan-700 text-vulcan-50 text-sm rounded-[2px] ' : 'w-full flex items-center gap-2 py-2 px-3 text-vulcan-900 text-sm hover:bg-vulcan-100 rounded-[2px]'}`} >
                     <MerchantIcon />
                     <span>Merchant</span>
                   </div>
