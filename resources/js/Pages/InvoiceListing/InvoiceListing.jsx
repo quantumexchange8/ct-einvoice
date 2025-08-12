@@ -137,15 +137,19 @@ export default function InvoiceListing() {
                     {isOpen && (
                         <div className={dropdownStyles.dropdown}>
                         
+                            <button onClick={() => submit(rowData)} className={dropdownStyles.dropdownItem}>
+                                <PreviewIcon /> Submit Invoice
+                            </button>
+
                             <button className={dropdownStyles.dropdownItem} >
                                 <ShareIcon />
                                 Share
                             </button>
                     
-                        <button onClick={() => handlePreview(rowData)} className={dropdownStyles.dropdownItem}>
-                            <PreviewIcon /> Preview
-                            </button>
-                        </div>
+                            <button onClick={() => handlePreview(rowData)} className={dropdownStyles.dropdownItem}>
+                                <PreviewIcon /> Preview
+                                </button>
+                            </div>
                     )}
                 </div>
             </div>

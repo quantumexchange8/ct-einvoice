@@ -312,7 +312,7 @@ export default function Einvoice() {
                                     checked={enabled}
                                     className="focus:ring-0 rounded-[2px]"
                                 >
-
+                                    
                                 </Checkbox>
 
                                 <div className="text-vulcan-900 font-manrope text-xs font-medium">
