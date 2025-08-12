@@ -83,7 +83,10 @@ class InvoiceController extends Controller
 
     public function submitInvoice(InvoiceRequest $request)
     {
-        // dd($request->all());
+         Log::info('request->state', [
+            'state' => $request->state['State'],
+        ]);
+
         $invoice = Invoice::where('invoice_no', $request->invoice_no)
                 ->where('merchant_id', $request->merchant_id)
                 ->with(['invoice_lines', 'invoice_lines.classification'])
@@ -137,7 +140,7 @@ class InvoiceController extends Controller
         $msic = MSICcode::find($merchantDetail->msic_id);
         $state = State::where('State', $invoice->state)->first();
         $eCode = md5($invoice->invoice_no . $merchantId . $payout->secret_key);
-
+ 
         Log::info('Details', [
             'merchantDetail' => $merchantDetail,
             'merchantId' => $merchantId,
@@ -462,8 +465,10 @@ class InvoiceController extends Controller
         $jsonDocument = json_encode($invoiceData);
         $base64Document = base64_encode($jsonDocument);
 
-        // Step 3: Generate the SHA-256 hash of the raw JSON
-        $documentHash = hash('sha256', $jsonDocument);
+        Log::info('json', [
+            'jsonDocument' => $jsonDocument,
+            'base64Document' => $base64Document,
+        ]);
         
         function canonicalizeJson($data) {
             if (is_array($data)) {
@@ -477,13 +482,16 @@ class InvoiceController extends Controller
             return $data;
         }
 
-        $canonicalData = canonicalizeJson($invoiceData);
+        $canonicalData = canonicalizeJson($invoiceData); // before adding UBLExtensions
 
         $canonicalJson = json_encode($canonicalData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         Log::debug('canonicalJson: ' . $canonicalJson);
 
         // SHA-256 binary hash
         $binaryHash = hash('sha256', $canonicalJson, true);
+
+        // Step 3: Generate the SHA-256 hash of the raw JSON
+        $documentHash = hash('sha256', $binaryHash);
 
         // Convert binary hash → HEX string
         $hexHash = bin2hex($binaryHash);
@@ -637,12 +645,13 @@ class InvoiceController extends Controller
             ]]
         ];
 
-        $invoiceData['Invoice'][0] = array_merge(
-            $invoiceData['Invoice'][0],
-            $signatureBlock
-        );
+        $invoiceData['Invoice'][0] = array_merge($invoiceData['Invoice'][0], $signatureBlock);
 
-        $finalJson = json_encode($invoiceData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        $finalJson = json_encode($invoiceData);
+
+        Log::info('final', [
+            'finajson' => $finalJson,
+        ]);
 
         $document = [
             'documents' => [
