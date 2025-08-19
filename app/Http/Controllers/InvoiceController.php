@@ -12,6 +12,8 @@ use App\Models\PayoutConfig;
 use App\Models\State;
 use App\Models\Token;
 use Carbon\Carbon;
+use DOMDocument;
+use DOMXPath;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
@@ -127,7 +129,7 @@ class InvoiceController extends Controller
                 'city' => $request->city,
                 'postcode' => $request->postcode,
                 'state' => $request->state['State'],
-                'country' => $request->country['country'],
+                'country' => $request->country,
                 'status' => 'requested',
             ]);
         }
@@ -162,100 +164,62 @@ class InvoiceController extends Controller
         $invoiceLines = [];
         foreach ($invoice->invoice_lines as $index => $item) {
             $invoiceLines[] = [
-                "ID" => [
-                    ["_" => (string)($index + 1)] // Line item ID starting from 1
-                ],
-                "Item" => [
-                    [
-                        "CommodityClassification" => [
-                            [
-                                "ItemClassificationCode" => [
-                                    [
-                                        "_" => $item->classification->code,
-                                        "listID" => "CLASS"
-                                    ]
+                "ID" => [["_" => (string)($index + 1)]], // Line number
+                "Item" => [[
+                    "Description" => [["_" => $item->classification->description]],
+                    "CommodityClassification" => [[
+                        "ItemClassificationCode" => [[
+                            "_" => $item->classification->code,
+                            "listID" => "CLASS"
+                        ]]
+                    ]]
+                ]],
+                "InvoicedQuantity" => [["_" => (float) $item->quantity, "unitCode" => $item->unit ?? "EA"]],
+                "LineExtensionAmount" => [["_" => round($item->item_price * $item->quantity, 2), "currencyID" => "MYR"]],
+                "Price" => [[
+                    "PriceAmount" => [["_" => round($item->item_price, 2), "currencyID" => "MYR"]]
+                ]],
+                "TaxTotal" => [[
+                    "TaxSubtotal" => [[
+                        "TaxCategory" => [[
+                            "ID" => [["_" => "E"]],
+                            "TaxScheme" => [
+                                [
+                                    "ID" => [[
+                                        "_" => "OTH",
+                                        "schemeID" => "UN/ECE 5153",
+                                        "schemeAgencyID" => "6"
+                                    ]]
                                 ]
+                            ],
+                            "TaxExemptionReason" => [
+                                ["_" => "Exempt New Means of Transport"]
                             ]
-                        ],
-                        "Description" => [
-                            ["_" => $item->classification->description]
-                        ]
-                    ]
-                ],
-                "Price" => [
-                    [
-                        "PriceAmount" => [
-                            [
-                                "currencyID" => "MYR",
-                                "_" => (float) number_format($item->item_price, 2, '.', ''), // Total Excluding Tax Amount
-                            ]
-                        ]
-                    ]
-                ],
-                "TaxTotal" => [
-                    [
-                        "TaxSubtotal" => [
-                            [
-                                "TaxCategory" => [
-                                    [
-                                        "ID" => [["_" => "E"]],
-                                        "TaxScheme" => [
-                                            [
-                                                "ID" => [
-                                                    [
-                                                        "_" => "OTH",
-                                                        "schemeID" => "UN/ECE 5153",
-                                                        "schemeAgencyID" => "6"
-                                                    ]
-                                                ]
-                                            ]
-                                        ],
-                                        "TaxExemptionReason" => [
-                                            ["_" => "Exempt New Means of Transport"]
-                                        ]
-                                    ]
-                                ],
-                                "TaxAmount" => [
-                                    [
-                                        "_" => 0,
-                                        "currencyID" => "MYR"
-                                    ]
-                                ],
-                                "TaxableAmount" => [
-                                    [
-                                        "_" => (float) number_format($item->item_price, 2, '.', ''),
-                                        "currencyID" => "MYR"
-                                    ]
-                                ]
-                            ]
-                        ],
-                        "TaxAmount" => [
-                            [
-                                "currencyID" => "MYR",
-                                "_" => 0 // Total Excluding Tax Amount
-                            ]
-                        ]
-                    ]
-                ],
-                "ItemPriceExtension" => [
-                    [
-                        "Amount" => [
-                            [
-                                "currencyID" => "MYR",
-                                "_" => 100.00
-                            ]
-                        ]
-                    ]
-                ],
-                "LineExtensionAmount" => [
-                    [
-                        "currencyID" => "MYR",
-                        "_" => 1436.50
-                    ]
-                ]
+                        ]],
+                        "TaxAmount" => [[
+                            "_" => 0,
+                            "currencyID" => "MYR"
+                        ]],
+                        "TaxableAmount" => [[
+                            "_" => (float) number_format($item->item_price, 2, '.', ''),
+                            "currencyID" => "MYR"
+                        ]]
+                    ]],
+                    "TaxAmount" => [[
+                            "currencyID" => "MYR",
+                            "_" => 0 // Total Excluding Tax Amount
+                        ]]
+                    ]],
+                    "ItemPriceExtension" => [[
+                        "Amount" => [[
+                            "currencyID" => "MYR",
+                            "_" => 100.00
+                    ]]
+                ]]
             ];
         }
 
+        // STEP 1&2: invoice body without signature & ubl element
         $invoiceData = [
             "_D" => "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2",
             "_A" => "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
@@ -264,400 +228,90 @@ class InvoiceController extends Controller
                 "ID" => [["_" => $invoice->invoice_no]],
                 "IssueDate" => [["_" => Carbon::now('UTC')->format('Y-m-d')]],
                 "IssueTime" => [["_" => Carbon::now('UTC')->format('H:i:s')."Z"]],
-                "InvoiceTypeCode" => [
-                    [
-                        "_" => "01",
-                        "listVersionID" => "1.1"
-                    ]
-                ],
-                "DocumentCurrencyCode" => [["_" => "MYR"]],
+                "InvoiceTypeCode" => [["_" => "01", "listVersionID" => "1.0"]],
                 "TaxCurrencyCode" => [["_" => "MYR"]],
+                "DocumentCurrencyCode" => [["_" => "MYR"]],
                 "AccountingSupplierParty" => [[
                     "Party" => [[
-                        "PartyLegalEntity" => [[
-                            "RegistrationName" => [["_" => $merchantDetail->name]]
-                        ]],
-                        "PartyIdentification" => [
-                            [
-                                "ID" => [[
-                                    "_" => "C29802509040", // NEED CHANGE
-                                    "schemeID" => "TIN"
-                                ]]
-                            ], [
-                                "ID" => [[
-                                    "_" => "202201017212", // NEED CHANGE
-                                    "schemeID" => "BRN"
-                                ]]
-                            ], [
-                                "ID" => [[
-                                    "_" => $merchantDetail->sst_no ?? "NA",
-                                    "schemeID" => "SST"
-                                ]]
-                            ], [
-                                "ID" => [[
-                                    "_" => "NA",
-                                    "schemeID" => "TTX"
-                                ]]
-                            ]
-                        ],
                         "IndustryClassificationCode" => [[
-                            "name" => $msic->Description, // Business Activity Description
-                            "_" => $msic->Code            // MSIC Code (if applicable)
+                            "_" => '63120',
+                            "name" => $msic->Description,
                         ]],
+                        "PartyLegalEntity" => [["RegistrationName" => [["_" => $merchantDetail->name]]]],
+                        "PartyIdentification" => array_filter([
+                            ["ID" => [["_" => $merchantDetail->tin_no ?? "NA", "schemeID" => "TIN"]]],
+                            ["ID" => [["_" => $merchantDetail->brn_no ?? "NA", "schemeID" => "BRN"]]],
+                            ["ID" => [["_" => $merchantDetail->sst_no ?? "NA", "schemeID" => "SST"]]],
+                            ["ID" => [["_" => "NA", "schemeID" => "TTX"]]]
+                        ]),
                         "PostalAddress" => [[
-                            "AddressLine" => [
-                                [
-                                    "Line" => [["_" => $merchantDetail->address1]]
-                                ],
-                                [
-                                    "Line" => [["_" => $merchantDetail->address2 ?? ""]]
-                                ],
-                                [
-                                    "Line" => [["_" => $merchantDetail->address3 ?? ""]]
-                                ],
-                            ],
+                            "AddressLine" => array_filter([
+                                ["Line" => [["_" => $merchantDetail->address1]]],
+                                ["Line" => [["_" => $merchantDetail->address2 ?? ""]]],
+                                ["Line" => [["_" => $merchantDetail->address3 ?? ""]]]
+                            ]),
                             "CityName" => [["_" => $merchantDetail->city]],
                             "CountrySubentityCode" => [["_" => $state->Code]],
-                            "Country" => [[
-                                "IdentificationCode" => [[
-                                    "listID" => "ISO3166-1",
-                                    "listAgencyID" => "6",
-                                    "_" => "MYS"
-                                ]]
-                            ]]
+                            "Country" => [["IdentificationCode" => [["_" => "MYS", "listID" => "ISO3166-1", "listAgencyID" => "6"]]]]
                         ]],
-                        "Contact" => [
-                            [
-                                "Telephone" => [["_" => $merchantDetail->contact]],
-                                "ElectronicMail" => [["_" => $merchantDetail->email]]
-                            ]
-                        ]
+                        "Contact" => [["Telephone" => [["_" => $merchantDetail->contact]], "ElectronicMail" => [["_" => $merchantDetail->email]]]]
                     ]]
                 ]],
                 "AccountingCustomerParty" => [[
                     "Party" => [[
-                        "PartyLegalEntity" => [[
-                            "RegistrationName" => [["_" => $invoice->full_name]]
-                        ]],
-                        "PartyIdentification" => [
-                            [
-                                "ID" => [[
-                                    "schemeID" => "TIN",
-                                    "_" => $invoice->tin_no,
-                                ]]
-                            ], 
-                            [
-                                "ID" => [[
-                                    "schemeID" => "BRN",
-                                    "_" => $invoice->id_no // NRIC(12 CHAR), PASSPORT(12 CHAR), BRN(20CHAR), ARMY(12 CHAR)
-                                ]]
-                            ],
-                            [
-                                "ID" => [[
-                                    "schemeID" => "SST",
-                                    "_" => $invoice->sst_no ?? null,
-                                ]]
-                            ],
-                            [
-                                "ID" => [[
-                                    "schemeID" => "TTX",
-                                    "_" => "NA"
-                                ]]
-                            ]
-                        ],
+                        "PartyLegalEntity" => [["RegistrationName" => [["_" => $invoice->full_name]]]],
+                        "PartyIdentification" => array_filter([
+                            ["ID" => [["_" => $invoice->tin_no ?? "NA", "schemeID" => "TIN"]]],
+                            ["ID" => [["_" => $invoice->id_no ?? "NA", "schemeID" => "BRN"]]],
+                            ["ID" => [["_" => $invoice->sst_no ?? "NA", "schemeID" => "SST"]]],
+                            ["ID" => [["_" => "NA", "schemeID" => "TTX"]]]
+                        ]),
                         "PostalAddress" => [[
-                            "AddressLine" => [
-                                [
-                                    "Line" => [["_" => $invoice->addressLine1]]
-                                ],
-                                [
-                                    "Line" => [["_" => $invoice->addressLine2 ?? ""]]
-                                ],
-                                [
-                                    "Line" => [["_" => $invoice->addressLine3 ?? ""]]
-                                ],
-                            ],
+                            "AddressLine" => array_filter([
+                                ["Line" => [["_" => $invoice->addressLine1]]],
+                                ["Line" => [["_" => $invoice->addressLine2 ?? ""]]],
+                                ["Line" => [["_" => $invoice->addressLine3 ?? ""]]]
+                            ]),
                             "CityName" => [["_" => $invoice->city]],
                             "CountrySubentityCode" => [["_" => $state->Code]],
-                            "Country" => [[
-                                "IdentificationCode" => [[
-                                    "_" => "MYS",
-                                    "listID" => "ISO3166-1",
-                                    "listAgencyID" => "6"
-                                ]]
-                            ]]
+                            "Country" => [["IdentificationCode" => [["_" => "MYS", "listID" => "ISO3166-1", "listAgencyID" => "6"]]]]
                         ]],
-                        "Contact" => [
-                            [
-                                "Telephone" => [["_" => $invoice->contact ]],
-                                "ElectronicMail" => [["_" => $invoice->email ]]
-                            ],
-                        ]
+                        "Contact" => [["Telephone" => [["_" => $invoice->contact]], "ElectronicMail" => [["_" => $invoice->email]]]]
                     ]]
                 ]],
-                "LegalMonetaryTotal" => [
-                    [
-                        // Required
-                        "TaxExclusiveAmount" => [[
-                            "_" => (float) number_format($invoice->amount, 2, '.', ''),  // Total Excluding Tax Amount
-                            "currencyID" => "MYR"  // Currency Code
-                        ]],
-                        "TaxInclusiveAmount" => [[
-                            "_" => (float) number_format($invoice->total_amount, 2, '.', ''),  // Total Excluding Tax Amount
-                            "currencyID" => "MYR"  // Currency Code
-                        ]],
-                        "PayableAmount" => [[
-                            "_" => (float) number_format($invoice->total_amount, 2, '.', ''),  // Total Excluding Tax Amount
-                            "currencyID" => "MYR"  // Currency Code
-                        ]],
-
-                        // optional
-                        // "LineExtensionAmount" => [[
-                        //     "_" => 1436.50,  // Total Excluding Tax Amount
-                        //     "currencyID" => "MYR"  // Currency Code
-                        // ]],
-                        // "PayableRoundingAmount" => [[
-                        //     "_" => 1436.50,  // Total Excluding Tax Amount
-                        //     "currencyID" => "MYR"  // Currency Code
-                        // ]],
-                        // "AllowanceTotalAmount" => [[
-                        //     "_" => 1436.50,  // Total Excluding Tax Amount
-                        //     "currencyID" => "MYR"  // Currency Code
-                        // ]],
-                        // "ChargeTotalAmount" => [[
-                        //     "_" => 1436.50,  // Total Excluding Tax Amount
-                        //     "currencyID" => "MYR"  // Currency Code
-                        // ]]
-                    ]
-                ],
-                "TaxTotal" => [
-                    [
-                        "TaxAmount" => [[
-                            "_" => ($invoice->sst_amount + $invoice->service_tax),
-                            "currencyID" => "MYR"
-                        ]],
-                        "TaxSubtotal" => [[
-                            "TaxableAmount" => [[
-                                "_" => ($invoice->sst_amount + $invoice->service_tax),
-                                "currencyID" => "MYR"
-                            ]],
-                            "TaxAmount" => [[
-                                "_" => ($invoice->sst_amount + $invoice->service_tax),
-                                "currencyID" => "MYR"
-                            ]],
-                            "TaxCategory" => [[
-                                "ID" => [["_" => "01"]],
-                                "TaxScheme" => [[
-                                    "ID" => [[
-                                        "_" => "OTH",
-                                        "schemeID" => "UN/ECE 5153",
-                                        "schemeAgencyID" => "6",
-                                    ]]
-                                ]],
+                "TaxTotal" => [[
+                    "TaxAmount" => [["_" => round($invoice->sst_amount + $invoice->service_tax, 2), "currencyID" => "MYR"]],
+                    "TaxSubtotal" => [[
+                        "TaxableAmount" => [["_" => round($invoice->amount, 2), "currencyID" => "MYR"]],
+                        "TaxAmount" => [["_" => round($invoice->sst_amount + $invoice->service_tax, 2), "currencyID" => "MYR"]],
+                        "TaxCategory" => [[
+                            "ID" => [[
+                                "_" => "01"]],
+                            "TaxScheme" => [[
+                                "ID" => [["_" => "OTH", "schemeID" => "UN/ECE 5153", "schemeAgencyID" => "6"]]
                             ]]
                         ]]
-                    ]
-                ],
-                "InvoiceLine" => $invoiceLines,
+                    ]]
+                ]],
+                "LegalMonetaryTotal" => [[
+                    "TaxExclusiveAmount" => [["_" => round($invoice->amount, 2), "currencyID" => "MYR"]],
+                    "TaxInclusiveAmount" => [["_" => round($invoice->total_amount, 2), "currencyID" => "MYR"]],
+                    "PayableAmount" => [["_" => round($invoice->total_amount, 2), "currencyID" => "MYR"]]
+                ]],
+                "InvoiceLine" => $invoiceLines
             ]]
         ];
 
         $jsonDocument = json_encode($invoiceData);
         $base64Document = base64_encode($jsonDocument);
 
-        Log::info('json', [
-            'jsonDocument' => $jsonDocument,
-            'base64Document' => $base64Document,
-        ]);
-        
-        function canonicalizeJson($data) {
-            if (is_array($data)) {
-                if (array_keys($data) !== range(0, count($data) - 1)) {
-                    ksort($data); // Sort keys alphabetically
-                }
-                foreach ($data as &$value) {
-                    $value = canonicalizeJson($value);
-                }
-            }
-            return $data;
-        }
-
-        $canonicalData = canonicalizeJson($invoiceData); // before adding UBLExtensions
-
-        $canonicalJson = json_encode($canonicalData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-        Log::debug('canonicalJson: ' . $canonicalJson);
-
-        // SHA-256 binary hash
-        $binaryHash = hash('sha256', $canonicalJson, true);
-
-        // Step 3: Generate the SHA-256 hash of the raw JSON
-        $documentHash = hash('sha256', $binaryHash);
-
-        // Convert binary hash → HEX string
-        $hexHash = bin2hex($binaryHash);
-
-        // Convert HEX string → Base64
-        $docDigest = base64_encode(hex2bin($hexHash));
-
-        // Load PFX file from storage
-        $pfxFile = storage_path('certs/signing.pfx');
-        $p12Password = env('PRIVATE_KEY_PASS');
-        $p12Content = file_get_contents($pfxFile);
-
-        $certs = [];
-        if (!openssl_pkcs12_read($p12Content, $certs, $p12Password)) {
-            if ($error = openssl_error_string()) {
-                Log::error('Detailed error message', ['error' => $error]);
-            }
-            throw new \Exception("Unable to read PFX file or incorrect password.");
-        }
-
-        // The private key
-        $privateKey = openssl_pkey_get_private($certs['pkey']);
-        Log::info('private key', ['private key' => $privateKey]);
-
-        $dataToSign = $binaryHash;
-
-        $signature = '';
-        if (!openssl_sign($dataToSign, $signature, $privateKey, OPENSSL_ALGO_SHA256)) {
-            throw new \Exception("Unable to read PFX file or incorrect password.");
-        }
-
-        // Convert binary signature to Base64 (Sig)
-        $sig = base64_encode($signature);
-        Log::debug('Sig: ' . $sig);
-
-        $cleanCert = str_replace(
-            ["-----BEGIN CERTIFICATE-----", "-----END CERTIFICATE-----", "\r", "\n"],
-            '',
-            $certs['cert']
-        );
-        $derCert = base64_decode($cleanCert);
-
-        $certHashBase64 = base64_encode(hash('sha256', $derCert, true));
-
-        $signingTime = Carbon::now('UTC')->format('Y-m-d\TH:i:s\Z');
-
-        $certInfo = openssl_x509_parse($certs['cert']);
-        $issuerName = '';
-        foreach ($certInfo['issuer'] as $key => $value) {
-            $issuerName .= strtoupper($key) . '=' . $value . ',';
-        }
-
-        $serialNumber = $certInfo['serialNumber']; // decimal
-
-        $signatureBlock = [
-            "UBLExtensions" => [[
-                "UBLExtension" => [[
-                    "ExtensionContent" => [[
-                        "UBLDocumentSignatures" => [[
-                            "SignatureInformation" => [[
-                                "Signature" => [[
-                                    "ID" => "urn:oasis:names:specification:ubl:signature:Invoice",
-                                    "Object" => [[
-                                        "QualifyingProperties" => [[
-                                            "Target" => "signature",
-                                            "SignedProperties" => [[
-                                                "ID" => "id-xades-signed-props",
-                                                "SignedSignatureProperties" => [[
-                                                    "SigningTime" => [[
-                                                        "_" => $signingTime,
-                                                    ]],
-                                                    "SigningCertificate" => [[
-                                                        "Cert" => [[
-                                                            "CertDigest" => [[
-                                                                "DigestMethod" => [[
-                                                                    "_" => "",
-                                                                    "Algorithm" => "http://www.w3.org/2001/04/xmlenc#sha256"
-                                                                ]],
-                                                                "DigestValue" => [[
-                                                                    "_" => $certHashBase64,
-                                                                ]],
-                                                            ]],
-                                                            "IssuerSerial" => [[
-                                                                "X509IssuerName" => [[
-                                                                    "_" => $issuerName,
-                                                                ]],
-                                                                "X509SerialNumber" => [[
-                                                                    "_" => $serialNumber,
-                                                                ]]
-                                                             ]]
-                                                        ]]
-                                                    ]]
-                                                ]]
-                                            ]]
-                                        ]]
-                                    ]],
-                                    "SignedInfo" => [[
-                                        "CanonicalizationMethod" => [[
-                                            "@Algorithm" => "http://www.w3.org/TR/2001/REC-xml-c14n-20010315"
-                                        ]],
-                                        "SignatureMethod" => [[
-                                            "_" => "",
-                                            "@Algorithm" => "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
-                                        ]],
-                                        "Reference" => [
-                                            [
-                                                "@Id" => "id-doc-signed-data",
-                                                "@URI" => "",
-                                                "DigestMethod" => [[
-                                                    "@Algorithm" => "http://www.w3.org/2001/04/xmlenc#sha256"
-                                                ]],
-                                                "DigestValue" => [["_"=> $docDigest]]
-                                            ],
-                                            [
-                                                "@URI" => "#id-xades-signed-props",
-                                                "DigestMethod" => [[
-                                                    "@Algorithm" => "http://www.w3.org/2001/04/xmlenc#sha256"
-                                                ]],
-                                                "DigestValue" => [["_"=> $docDigest]] // From your SignedProperties
-                                            ]
-                                        ]
-                                    ]],
-                                    "SignatureValue" => [["_"=> $sig]],
-                                    "KeyInfo" => [[
-                                        "X509Data" => [[
-                                            "X509Certificate" => [["_"=> $cleanCert]],
-                                            "X509SubjectName" => [["_"=> $issuerName]],
-                                            "X509IssuerSerial" => [[
-                                                "X509IssuerName" => [[
-                                                    "_" => $issuerName,
-                                                ]],
-                                                "X509SerialNumber" => [[
-                                                    "_" => $serialNumber
-                                                ]]
-                                            ]],
-                                        ]]
-                                    ]]
-                                ]]
-                            ]]
-                        ]]
-                    ]]
-                ]]
-            ]],
-            "Signature" => [[
-                "ID" => [[
-                    "_" => "urn:oasis:names:specification:ubl:signature:Invoice"
-                ]],
-                "SignatureMethod" => [[
-                    "_" => "urn:oasis:names:specification:ubl:dsig:enveloped:xades",
-                ]]
-            ]]
-        ];
-
-        $invoiceData['Invoice'][0] = array_merge($invoiceData['Invoice'][0], $signatureBlock);
-
-        $finalJson = json_encode($invoiceData);
-
-        Log::info('final', [
-            'finajson' => $finalJson,
-        ]);
+        $documentHash = hash('sha256', $jsonDocument);
 
         $document = [
             'documents' => [
                 [
                     'format' => 'JSON',
-                    'document' => base64_encode($finalJson),
+                    'document' => $base64Document,
                     'documentHash' => $documentHash,
                     'codeNumber' => $invoice->invoice_no,
                 ]
@@ -675,7 +329,311 @@ class InvoiceController extends Controller
         $submiturl = Http::withToken($token)->post($docsSubmitApi, $document);
 
         if ($submiturl->successful()) {
+            openssl_free_key($privateKey);
+            Log::debug('submission ', ['submission' => $submiturl]);
+            // Check if the response contains 'acceptedDocuments'
+            if (!empty($submiturl['acceptedDocuments'])) {
+                $submission_uuid = $submiturl['submissionUid'] ?? null;
+                $uuid = $submiturl['acceptedDocuments'][0]['uuid'] ?? null;
+                $status = 'Submitted';
+                $remark = null;
+            }
 
+            // Check if the response contains 'rejectedDocuments'
+            if (!empty($submiturl['rejectedDocuments'])) {
+                $submission_uuid = $submiturl['submissionUid'] ?? null;
+                $uuid = $submiturl['rejectedDocuments'][0]['uuid'] ?? null;
+                $status = 'Invalid';
+                $remark = $submiturl['rejectedDocuments'][0]['reason'] ?? null;
+            }
+
+            $invoice->submission_uuid = $submission_uuid;
+            $invoice->invoice_uuid = $uuid;
+            $invoice->status = $status;
+            $invoice->invoice_status = $status;
+            $invoice->remark = $remark;
+            $invoice->save();
+
+            $updateMerchantStatus = Http::post($payout->url . $payout->callBackUrl, [
+                'eCode' => $eCode,
+                'invoice_no' => $invoice->invoice_no,
+                'submission_uuid' => $submission_uuid,
+                'invoice_uuid' => $uuid,
+                'status' => $invoice->invoice_status,
+                'submission_date' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
+            if ($updateMerchantStatus->successful()) {
+                Log::debug('update callback invoice status', [
+                    'status' => $updateMerchantStatus->status()
+                ]);
+            } else {
+                Log::debug('update callback invoice status error', [
+                    'status' => $updateMerchantStatus->status()
+                ]);
+            }
+        }
+
+        return redirect()->back();
+
+        // STEP 3: Canonicalize the document and generate the document hash (digest)
+        function canonicalizeJson($data) {
+            if (is_array($data)) {
+                // Object: sort keys lexicographically
+                if (array_keys($data) !== range(0, count($data) - 1)) {
+                    ksort($data);
+                }
+                foreach ($data as $k => $v) {
+                    $data[$k] = canonicalizeJson($v);
+                }
+                return $data;
+            }
+            return $data;
+        }
+        function toCanonicalJson($data)
+        {
+            return json_encode(
+                canonicalizeJson($data),
+                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            );
+        }
+
+
+        // 1. Canonicalize
+        $canonicalData = canonicalizeJson($invoiceData); // canonical version, to be used for signing
+        // 2. Minify JSON (no spaces, no line breaks, no slash escaping)
+        $canonicalJson = json_encode($canonicalData, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); // Hash the canonicalized document invoice body using SHA-256
+        Log::info('canonicalJson ', ['canonicalJson' => $canonicalJson]);
+
+        // 3. SHA-256 binary hash
+        $binaryHash = hash('sha256', $canonicalJson, true);
+        // 4. Convert HEX → Base64
+        // $docDigest = base64_encode($binaryHash);
+        // Log::info('DocDigest ' . $docDigest);
+        
+        // ----- Step 4: Sign the document digest -----
+        $pfxFile = storage_path('certs/signing.pfx'); // your soft cert path
+        $pfxPassword = env('PRIVATE_KEY_PASS');       // PIN/password from env
+        
+        // Load the .p12/.pfx file
+        $pfxContent = file_get_contents($pfxFile);
+        if ($pfxContent === false) {
+            Log::error('Unable to read PFX file');
+        }
+
+        // Extract cert + private key
+        $certs = [];
+        if (!openssl_pkcs12_read($pfxContent, $certs, $pfxPassword)) {
+            while ($error = openssl_error_string()) {
+                \Log::error("OpenSSL Error: $error");
+            }
+            throw new \Exception("Unable to parse PFX file. Check password and file.");
+        }
+        // Get private key
+        $privateKey = openssl_pkey_get_private($certs['pkey']);
+        if (!$privateKey) {
+            Log::error('Unable to get the private key');
+        }
+
+        // Sign the binary hash (RSA-SHA256)
+        $signature = '';
+        if (!openssl_sign($binaryHash, $signature, $privateKey, OPENSSL_ALGO_SHA256)) {
+            Log::error('Unable to sign document digest');
+        }
+
+        // Convert signature → Base64 for Sig field
+        $sig = base64_encode($signature);
+        Log::info('sig ' . $sig);
+
+        // --- STEP 5: Prepare certificate info ---
+        $X509Certificate = preg_replace('/\-+BEGIN CERTIFICATE\-+|\-+END CERTIFICATE\-+|\s+/', '', $certs['cert']);
+        $CertDigest = base64_encode(hash('sha256', base64_decode($X509Certificate), true));
+        $certInfo = openssl_x509_parse($certs['cert']);
+        $issuerParts = [];
+        foreach (array_reverse($certInfo['issuer']) as $key => $value) {
+            $issuerParts[] = strtoupper($key) . '=' . $value;
+        }
+        $issuerName = implode(', ', $issuerParts);
+        $serialNumber = $certInfo['serialNumber'];
+        $signingTime = gmdate('Y-m-d\TH:i:s\Z');
+
+        $SignedProperties = [
+            "SignedProperties" => [[
+                "Id" => "id-xades-signed-props",
+                "SignedSignatureProperties" => [[
+                    "SigningTime" => [["_" => $signingTime]],
+                    "SigningCertificate" => [[
+                        "Cert" => [[
+                            "CertDigest" => [[
+                                "DigestMethod" => [[
+                                    "_" => "",
+                                    "Algorithm" => "http://www.w3.org/2001/04/xmlenc#sha256"
+                                ]],
+                                "DigestValue" => [["_" => $CertDigest]]
+                            ]],
+                            "IssuerSerial" => [[
+                                "X509IssuerName" => [["_" => $issuerName]],
+                                "X509SerialNumber" => [["_" => $serialNumber]]
+                            ]]
+                        ]]
+                    ]]
+                ]]
+            ]]
+        ];
+
+        $canonicalSP  = canonicalizeJson($SignedProperties);
+        Log::info('canonicalSP: ', ['canonicalSP' => $canonicalSP]);
+        $signedPropsDigest = base64_encode(hash('sha256', json_encode($canonicalSP, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE), true));
+        Log::info('SignedProperties Digest: ' . $signedPropsDigest);
+
+        $ublExtensions = [
+           "UBLExtensions" => [[
+                "UBLExtension" => [[
+                    "ExtensionURI" => [[
+                        "_" => "urn:oasis:names:specification:ubl:dsig:enveloped:xades"
+                    ]],
+                    "ExtensionContent" => [[
+                        "UBLDocumentSignatures" => [[
+                            "SignatureInformation" => [[
+                                "ID" => [[
+                                    "_" => "urn:oasis:names:specification:ubl:signature:1"
+                                ]],
+                                "ReferencedSignatureID" => [[
+                                    "_" => "urn:oasis:names:specification:ubl:signature:Invoice"
+                                ]],
+                                "Signature" => [[
+                                    "Id" => "signature",
+                                    "Object" => [[
+                                        "QualifyingProperties" => [[
+                                            "Target" => "signature",
+                                        ] + $SignedProperties]
+                                    ]],
+                                    "KeyInfo" => [[
+                                        "X509Data" => [[
+                                            "X509Certificate" => [["_"=> $X509Certificate]],
+                                            "X509SubjectName" => [["_"=> $issuerName]],
+                                            "X509IssuerSerial" => [[
+                                                "X509IssuerName" => [["_" => $issuerName,]],
+                                                "X509SerialNumber" => [["_" => $serialNumber,]]
+                                            ]]
+                                        ]]
+                                    ]],
+                                    "SignatureValue" => [["_"=> ""]], // Sig
+                                    "SignedInfo" => [[
+                                        "SignatureMethod" => [[
+                                            "_" => "",
+                                            "Algorithm" => "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"
+                                        ]],
+                                        "Reference" => [
+                                            [
+                                                "Type" => "http://uri.etsi.org/01903/v1.3.2#SignedProperties",
+                                                "URI" => "#id-xades-signed-props",
+                                                "DigestMethod" => [[
+                                                    "_" => "",
+                                                    "Algorithm" => "http://www.w3.org/2001/04/xmlenc#sha256"
+                                                ]],
+                                                "DigestValue" => [["_"=> $signedPropsDigest]] // SignedProperties
+                                            ],
+                                            [
+                                                "Type" => "",
+                                                "URI" => "",
+                                                "DigestMethod" => [[
+                                                    "_" => "",
+                                                    "Algorithm" => "http://www.w3.org/2001/04/xmlenc#sha256"
+                                                ]],
+                                                "DigestValue" => [["_"=> ""]] // DocDigest
+                                            ],
+                                        ]
+                                    ]],
+                                ]]
+                            ]]
+                        ]]
+                    ]]
+                ]]
+            ]],
+            "Signature" => [[
+                "ID" => [[
+                    "_" => "urn:oasis:names:specification:ubl:signature:Invoice"
+                ]],
+                "SignatureMethod" => [[
+                    "_" => "urn:oasis:names:specification:ubl:dsig:enveloped:xades",
+                ]]
+            ]]
+        ];
+
+        // Merge into invoice
+        $invoiceData['Invoice'][0] = array_merge($ublExtensions, $invoiceData['Invoice'][0]);
+
+        // -------------------
+        // STEP 3: Digest SignedProperties
+        // -------------------
+        $spPath = &$invoiceData['Invoice'][0]['UBLExtensions'][0]['UBLExtension'][0]['ExtensionContent'][0]
+            ['UBLDocumentSignatures'][0]['SignatureInformation'][0]['Signature'][0]['Object'][0]
+            ['QualifyingProperties'][0]['SignedProperties'][0];
+
+        $spCanonicalJson = toCanonicalJson($spPath);
+        $signedPropsDigest = base64_encode(hash('sha256', $spCanonicalJson, true));
+
+        $invoiceData['Invoice'][0]['UBLExtensions'][0]['UBLExtension'][0]['ExtensionContent'][0]
+            ['UBLDocumentSignatures'][0]['SignatureInformation'][0]['Signature'][0]['SignedInfo'][0]
+            ['Reference'][0]['DigestValue'][0]['_'] = $signedPropsDigest;
+
+        // -------------------
+        // STEP 4: Digest full document
+        // -------------------
+        $invoiceCanonicalJson = toCanonicalJson($invoiceData);
+        $docDigest = base64_encode(hash('sha256', $invoiceCanonicalJson, true));
+
+        $invoiceData['Invoice'][0]['UBLExtensions'][0]['UBLExtension'][0]['ExtensionContent'][0]
+            ['UBLDocumentSignatures'][0]['SignatureInformation'][0]['Signature'][0]['SignedInfo'][0]
+            ['Reference'][1]['DigestValue'][0]['_'] = $docDigest;
+
+        // -------------------
+        // STEP 5: Sign SignedInfo
+        // -------------------
+        $signedInfoPath = $invoiceData['Invoice'][0]['UBLExtensions'][0]['UBLExtension'][0]['ExtensionContent'][0]
+            ['UBLDocumentSignatures'][0]['SignatureInformation'][0]['Signature'][0]['SignedInfo'][0];
+
+        $signedInfoCanonicalJson = toCanonicalJson($signedInfoPath);
+
+        openssl_sign($signedInfoCanonicalJson, $signature, $privateKey, OPENSSL_ALGO_SHA256);
+        $sigValue = base64_encode($signature);
+
+        $invoiceData['Invoice'][0]['UBLExtensions'][0]['UBLExtension'][0]['ExtensionContent'][0]
+            ['UBLDocumentSignatures'][0]['SignatureInformation'][0]['Signature'][0]['SignatureValue'][0]['_'] = $sigValue;
+
+        Log::info('completed signed xml document: ' . json_encode($invoiceData, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+
+        $LatestjsonDocument = json_encode($invoiceData);
+        $latestBase64Document = base64_encode($LatestjsonDocument);
+
+        $latestDocumentHash = hash('sha256', $LatestjsonDocument);
+
+        $document = [
+            'documents' => [
+                [
+                    'format' => 'JSON',
+                    'document' => $latestBase64Document,
+                    'documentHash' => $latestDocumentHash,
+                    'codeNumber' => $invoice->invoice_no,
+                ]
+            ]
+        ];
+
+        dd($document);
+
+        Log::debug('document: ', ['document' => $document]);
+
+        if ($this->env === 'production') {
+            $docsSubmitApi = 'https://preprod-api.myinvois.hasil.gov.my/api/v1.0/documentsubmissions';
+        } else {
+            $docsSubmitApi = 'https://preprod-api.myinvois.hasil.gov.my/api/v1.0/documentsubmissions';
+        }
+
+        $submiturl = Http::withToken($token)->post($docsSubmitApi, $document);
+
+        if ($submiturl->successful()) {
+            openssl_free_key($privateKey);
             Log::debug('submission ', ['submission' => $submiturl]);
             // Check if the response contains 'acceptedDocuments'
             if (!empty($submiturl['acceptedDocuments'])) {
