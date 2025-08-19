@@ -17,7 +17,7 @@ class CheckSubmittedInvoice extends Command
      *
      * @var string
      */
-    protected $signature = 'app:check-submitted-invoice';
+    protected $signature = 'check:submitted-invoice';
 
     /**
      * The console command description.
