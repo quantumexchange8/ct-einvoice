@@ -329,7 +329,6 @@ class InvoiceController extends Controller
         $submiturl = Http::withToken($token)->post($docsSubmitApi, $document);
 
         if ($submiturl->successful()) {
-            openssl_free_key($privateKey);
             Log::debug('submission ', ['submission' => $submiturl]);
             // Check if the response contains 'acceptedDocuments'
             if (!empty($submiturl['acceptedDocuments'])) {
