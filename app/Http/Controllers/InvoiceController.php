@@ -234,7 +234,7 @@ class InvoiceController extends Controller
                 "AccountingSupplierParty" => [[
                     "Party" => [[
                         "IndustryClassificationCode" => [[
-                            "_" => '63120',
+                            "_" => $msic->Code,
                             "name" => $msic->Description,
                         ]],
                         "PartyLegalEntity" => [["RegistrationName" => [["_" => $merchantDetail->name]]]],
