@@ -83,15 +83,13 @@ class CheckSubmittedInvoice extends Command
             $invoice->internal_id = $submiturl['internalId'];
             $invoice->rejected_at = $submiturl['rejectRequestDateTime'] ?? null;
             $invoice->remark = $submiturl['documentStatusReason'] ?? null;
+            $invoice->invoice_datetime = Carbon::now();
             $invoice->save();
             
         } else {
             Log::debug('Error submission ', [
                 'invoice No.: ' => $invoice->invoice_no,
-                'error' => [[
-                    'error' => $submiturl['error']['error'],
-                    'error_description' => $submiturl['error']['innerError'], 
-                ]],
+                'error' => $submiturl,
             ]);
         }
     }
