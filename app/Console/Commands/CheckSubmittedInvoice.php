@@ -34,6 +34,7 @@ class CheckSubmittedInvoice extends Command
 
     public function __construct()
     {
+        parent::__construct();
         $this->env = env('APP_ENV');
     }
 
