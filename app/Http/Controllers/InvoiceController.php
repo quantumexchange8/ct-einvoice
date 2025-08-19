@@ -722,4 +722,25 @@ class InvoiceController extends Controller
        // 返回有效的现有 token
         return $checkToken->token;
     }
+
+    public function resubmit(Request $request)
+    {
+
+        $invoice = Invoice::find($request->id);
+
+        $invoice->status = 'pending';
+        $invoice->invoice_status = 'pending';
+        $invoice->save();
+
+        $payoutConfig = PayoutConfig::where('merchant_id', $invoice->merchant_id)->first();
+
+        $eCode = md5($invoice->invoice_no . $invoice->merchant_id . $payoutConfig->secret_key);
+
+        return redirect()->route('invoice', [
+            'amount'      => $invoice->amount,
+            'eCode'       => $eCode,
+            'invoice_no'  => $invoice->invoice_no,
+            'merchant_id' => $invoice->merchant_id,
+        ]);
+    }
 }

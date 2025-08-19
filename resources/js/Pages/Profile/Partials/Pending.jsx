@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "@inertiajs/react";
+import { Link, useForm } from "@inertiajs/react";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { formatAmount } from "@/Composables";
 import { CoinIcon, DownloadIcon, FailIcon, InfoIcon, PendingIcon, SuccessIcon } from "@/Components/Outline";
@@ -16,6 +16,15 @@ export default function Pending({ invoice }) {
             alert("Download link is unavailable.");
         }
     };
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        id: invoice.id,
+    }); 
+
+    const reSubmit = (e) => {
+        e.preventDefault();
+        post(route('resubmit'));
+    }
 
     return (
         <GuestLayout class>
@@ -69,13 +78,13 @@ export default function Pending({ invoice }) {
                             )
                         }
                         {
-                            invoice.invoice_status === 'Invalid' || invoice.invoice_status === 'Cancelled' && (
-                                <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-warning-50 ">
+                            (invoice.invoice_status === 'Invalid' || invoice.invoice_status === 'Cancelled') && (
+                                <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-error-50 ">
                                     <div className="flex shrink-0">
                                         <FailIcon />
                                     </div>
                                     <div className="w-full font-manrope not-italic">
-                                        <div className=" font-bold text-warning-500 text-base leading-[22px]">Failed</div>
+                                        <div className=" font-bold text-error-500 text-base leading-[22px]">Failed</div>
                                             <span className="block text-warning-950 text-xs leading-[18px] font-normal">
                                                 We encountered an issue with your e-invoice submission. Please review the details you provided and try submitting again.
                                             </span>
@@ -226,13 +235,25 @@ export default function Pending({ invoice }) {
                     ) : null}
                     </div>
                         <div className="flex justify-center items-center w-full self-stretch ">
-                        <Button onClick={handleDownload} disabled={invoice.invoice_status === 'pending'}
-                            className="w-full flex items-center justify-center gap-2 text-sm font-medium disabled:bg-white disabled:text-vulcan-500" 
-                            size="md"
-                        >
-                            <DownloadIcon />
-                            Download e-Invoice
-                        </Button>
+                            {
+                                invoice.invoice_status === 'Invalid' || invoice.invoice_status === 'Cancelled' ? (
+                                    <Button onClick={reSubmit}
+                                        className="w-full flex items-center justify-center gap-2 text-sm font-medium disabled:bg-white disabled:text-vulcan-500" 
+                                        size="md"
+                                    >
+                                        Request again
+                                    </Button>
+                                ) : (
+                                    <Button onClick={handleDownload} disabled={invoice.invoice_status === 'pending' || invoice.invoice_status === 'Submitted'}
+                                        className="w-full flex items-center justify-center gap-2 text-sm font-medium disabled:bg-white disabled:text-vulcan-500" 
+                                        size="md"
+                                    >
+                                        <DownloadIcon />
+                                        Download e-Invoice
+                                    </Button>
+                                )
+                            }
+                            
                         </div>
                 </div> 
             </div>

@@ -49,12 +49,13 @@ export default function InvoiceListing() {
     }, [selectedStatus]);
 
     const statusBodyTemplate = (rowData) => {
+        console.log('status', rowData.status)
         return (
             <div className="flex">
                 {
                     rowData.status === 'pending' && (
                         <div className="flex items-center font-manrope not-italic font-bold tracking-[1.32px] uppercase leading-[18px] text-[11px] gap-2 py-1 px-2 border border-vulcan-300" >
-                            <div className="w-1.5 h-1.5 rounded-full bg-[#FC0]"></div>
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#007aff]"></div>
                             <div>
                                 PENDING
                             </div>
@@ -67,6 +68,46 @@ export default function InvoiceListing() {
                             <div className="w-1.5 h-1.5 rounded-full bg-[#34C759]"></div>
                             <div>
                                Paid
+                            </div>
+                        </div>
+                    )
+                }
+                {
+                    rowData.status === 'requested' && (
+                        <div className="flex items-center font-manrope not-italic font-bold tracking-[1.32px] uppercase leading-[18px] text-[11px] gap-2 py-1 px-2 border border-vulcan-300" >
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#efba30]"></div>
+                            <div>
+                               Requested
+                            </div>
+                        </div>
+                    )
+                }
+                {
+                    rowData.status === 'Invalid' && (
+                        <div className="flex items-center font-manrope not-italic font-bold tracking-[1.32px] uppercase leading-[18px] text-[11px] gap-2 py-1 px-2 border border-vulcan-300" >
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#ff2742]"></div>
+                            <div>
+                               Invalid
+                            </div>
+                        </div>
+                    )
+                }
+                {
+                    rowData.status === 'Submitted' && (
+                        <div className="flex items-center font-manrope not-italic font-bold tracking-[1.32px] uppercase leading-[18px] text-[11px] gap-2 py-1 px-2 border border-vulcan-300" >
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#efba30]"></div>
+                            <div>
+                               Submitted
+                            </div>
+                        </div>
+                    )
+                }
+                {
+                    rowData.status === 'Valid' && (
+                        <div className="flex items-center font-manrope not-italic font-bold tracking-[1.32px] uppercase leading-[18px] text-[11px] gap-2 py-1 px-2 border border-vulcan-300" >
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#34C759]"></div>
+                            <div>
+                               Valid
                             </div>
                         </div>
                     )

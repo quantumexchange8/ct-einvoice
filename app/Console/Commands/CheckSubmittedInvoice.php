@@ -38,7 +38,6 @@ class CheckSubmittedInvoice extends Command
         $this->env = env('APP_ENV');
     }
 
-
     public function handle()
     {
         $submiitedInvoices = Invoice::where('status', 'Submitted')
@@ -84,6 +83,8 @@ class CheckSubmittedInvoice extends Command
             $invoice->internal_id = $submiturl['internalId'];
             $invoice->rejected_at = $submiturl['rejectRequestDateTime'] ?? null;
             $invoice->remark = $submiturl['documentStatusReason'] ?? null;
+            $invoice->save();
+            
         } else {
             Log::debug('Error submission ', [
                 'invoice No.: ' => $invoice->invoice_no,
