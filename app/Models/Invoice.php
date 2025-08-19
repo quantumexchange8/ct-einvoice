@@ -53,6 +53,9 @@ class Invoice extends Model
         'submitted_uuid',
         'submitted_status',
         'remark',
+        'longId',
+        'internal_id',
+        'rejected_at',
     ];
 
     public function invoice_lines(): \Illuminate\Database\Eloquent\Relations\HasMany

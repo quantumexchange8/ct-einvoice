@@ -21,7 +21,8 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withSchedule(function(Schedule $schedule) {
-        $schedule->command('app:submit-e-invoice')->everyMinute();
+        // $schedule->command('app:submit-e-invoice')->everyMinute();
+        $schedule->command('app:check-submitted-invoice')->everyMinute();
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
