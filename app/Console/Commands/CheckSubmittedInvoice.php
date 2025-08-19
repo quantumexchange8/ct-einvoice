@@ -42,7 +42,6 @@ class CheckSubmittedInvoice extends Command
     {
         $submiitedInvoices = Invoice::where('status', 'Submitted')
                         ->where('invoice_status', 'Submitted')
-                        ->whereNull('invoice_uuid')
                         ->get();
 
         if ($submiitedInvoices->isEmpty()) {
