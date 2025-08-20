@@ -756,8 +756,7 @@ class InvoiceController extends Controller
         return Pdf::view('invoices.pdf', compact('invoice', 'merchant'))
             ->format('a4')
             ->name("invoice-{$invoice->invoice_no}.pdf")
-            ->inline(); // preview in browser
-            // ->download(); 
+            ->download(); 
 
     }
 
