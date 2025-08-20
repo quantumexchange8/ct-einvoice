@@ -14,6 +14,8 @@ class InvoiceLineItem extends Model
         'item_price',
         'classification_id',
         'subtotal',
+        'tax_rate',
+        'tax_amount',
     ];
 
     public function classification(): \Illuminate\Database\Eloquent\Relations\BelongsTo

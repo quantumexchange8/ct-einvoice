@@ -89,6 +89,7 @@ class InvoiceController extends Controller
                 'amount' => $request->amount,
                 'sst_amount' => $request->sst_amount,
                 'service_tax' => $request->service_tax_amount,
+                'service_tax_rate' => $request->service_tax_rate ?? null,
                 'total_amount' => $request->total_amount,
                 'merchant_id' => $merchants->id,
                 'date' => $request->date_time,
@@ -104,6 +105,8 @@ class InvoiceController extends Controller
                     'item_price' => $item['price'],
                     'subtotal' => $item['subtotal'],
                     'classification_id' => $item['classification_id'],
+                    'tax_rate' => $item['tax_rate'] ?? null,
+                    'tax_amount' => $item['tax_amount'] ?? 0.00,
                 ]);
             }
 

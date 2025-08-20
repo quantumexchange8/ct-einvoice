@@ -6,20 +6,14 @@ import { CoinIcon, DownloadIcon, FailIcon, InfoIcon, PendingIcon, SuccessIcon } 
 import Button from "@/Components/Button";
 
 export default function Pending({ invoice }) {
-    const handleDownload = () => {
-        if (invoice?.download_url) {
-            const link = document.createElement("a");
-            link.href = invoice.download_url; // The URL where the invoice is hosted
-            link.download = `invoice_${invoice.invoice_no}.pdf`; // Set default download filename
-            link.click();
-        } else {
-            alert("Download link is unavailable.");
-        }
-    };
 
     const { data, setData, post, processing, errors, reset } = useForm({
         id: invoice.id,
     }); 
+
+    const handleDownload = () => {
+        window.open(`/downloadInvoice/${invoice.id}/download`, "_blank");
+    };
 
     const reSubmit = (e) => {
         e.preventDefault();
@@ -64,12 +58,12 @@ export default function Pending({ invoice }) {
                         }
                         {
                             invoice.invoice_status === 'Valid' && (
-                                <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-warning-50 ">
+                                <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-success-50 ">
                                     <div className="flex shrink-0">
                                         <SuccessIcon />
                                     </div>
                                     <div className="w-full font-manrope not-italic">
-                                        <div className=" font-bold text-warning-500 text-base leading-[22px]">Validated</div>
+                                        <div className=" font-bold text-success-500 text-base leading-[22px]">Validated</div>
                                             <span className="block text-warning-950 text-xs leading-[18px] font-normal">
                                             Your transaction has been successfully validated by LHDN. You can now proceed to download your e-invoice.
                                             </span>

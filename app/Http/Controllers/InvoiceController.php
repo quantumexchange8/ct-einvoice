@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use Spatie\LaravelPdf\Facades\Pdf;
 
 class InvoiceController extends Controller
 {
@@ -743,4 +744,21 @@ class InvoiceController extends Controller
             'merchant_id' => $invoice->merchant_id,
         ]);
     }
+
+    public function downloadInvoice($id)
+    {
+        $invoice = Invoice::with(['invoice_lines', 'invoice_lines.classification'])->find($id);
+        $merchant = Merchant::with(['msic', 'classification'])->find($invoice->merchant_id);
+
+        // Generate QR code (you can encode invoice number, or a verification URL)
+        // $qrCode = base64_encode(QrCode::format('png')->size(150)->generate($invoice->invoice_no));
+
+        return Pdf::view('invoices.pdf', compact('invoice', 'merchant'))
+            ->format('a4')
+            ->name("invoice-{$invoice->invoice_no}.pdf")
+            ->inline(); // preview in browser
+            // ->download(); 
+
+    }
+
 }

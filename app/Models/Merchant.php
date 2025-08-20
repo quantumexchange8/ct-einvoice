@@ -35,4 +35,12 @@ class Merchant extends Model
         
     ];
 
+    public function msic(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(MSICcode::class, 'msic_id', 'id');
+    }
+    public function classification(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Classification::class, 'classification_id', 'id');
+    }
 }

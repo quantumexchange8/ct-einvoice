@@ -78,11 +78,12 @@ class CheckSubmittedInvoice extends Command
             ]);
 
             $invoice->status = $submiturl['status'];
+            $invoice->invoice_status = $submiturl['status'];
             $invoice->longId = $submiturl['longId'];
             $invoice->internal_id = $submiturl['internalId'];
             $invoice->rejected_at = $submiturl['rejectRequestDateTime'] ?? null;
             $invoice->remark = $submiturl['documentStatusReason'] ?? null;
-            $invoice->invoice_datetime = Carbon::now();
+            $invoice->invoice_datetime = $submiturl['dateTimeValidated'];
             $invoice->save();
             
         } else {

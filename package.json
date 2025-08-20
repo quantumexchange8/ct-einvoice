@@ -25,6 +25,7 @@
         "date-fns": "^4.1.0",
         "primeicons": "^7.0.0",
         "primereact": "^10.9.2",
+        "puppeteer": "^24.16.2",
         "react-countup": "^6.5.3",
         "react-hot-toast": "^2.5.2",
         "react-to-print": "^3.0.5"

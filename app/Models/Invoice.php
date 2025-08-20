@@ -27,6 +27,7 @@ class Invoice extends Model
         'amount',
         'sst_amount',
         'service_tax',
+        'service_tax_rate',
         'total_amount',
         'date',
         'type',
@@ -56,6 +57,7 @@ class Invoice extends Model
         'longId',
         'internal_id',
         'rejected_at',
+        'invoice_datetime',
     ];
 
     public function invoice_lines(): \Illuminate\Database\Eloquent\Relations\HasMany

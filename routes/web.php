@@ -16,6 +16,8 @@ Route::get('/', [InvoiceController::class, 'einvoice'])->name('einvoice');
 Route::get('/invoice', [InvoiceController::class, 'invoice'])->name('invoice');
 Route::post('/submitInvoice', [InvoiceController::class, 'submitInvoice'])->name('submitInvoice');
 Route::post('/resubmit', [InvoiceController::class, 'resubmit'])->name('resubmit');
+Route::get('/downloadInvoice/{id}/download', [InvoiceController::class, 'downloadInvoice'])->name('downloadInvoice');
+
 
     /**
      * ==============================
