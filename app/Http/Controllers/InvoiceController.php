@@ -11,6 +11,7 @@ use App\Models\MSICcode;
 use App\Models\PayoutConfig;
 use App\Models\State;
 use App\Models\Token;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use DOMDocument;
 use DOMXPath;
@@ -18,7 +19,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
-use Spatie\LaravelPdf\Facades\Pdf;
 
 class InvoiceController extends Controller
 {
@@ -750,10 +750,9 @@ class InvoiceController extends Controller
         $invoice = Invoice::with(['invoice_lines', 'invoice_lines.classification'])->find($id);
         $merchant = Merchant::with(['msic', 'classification'])->find($invoice->merchant_id);
 
-        return Pdf::view('invoices.pdf', compact('invoice', 'merchant'))
-            ->format('a4')
-            ->name("invoice-{$invoice->invoice_no}.pdf")
-            ->download(); 
+        return Pdf::loadView('invoices.pdf', compact('invoice', 'merchant'))
+            ->setPaper('a4')   // optional
+            ->download("invoice-{$invoice->invoice_no}.pdf");
     }
 
 }
