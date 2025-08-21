@@ -750,14 +750,10 @@ class InvoiceController extends Controller
         $invoice = Invoice::with(['invoice_lines', 'invoice_lines.classification'])->find($id);
         $merchant = Merchant::with(['msic', 'classification'])->find($invoice->merchant_id);
 
-        // Generate QR code (you can encode invoice number, or a verification URL)
-        // $qrCode = base64_encode(QrCode::format('png')->size(150)->generate($invoice->invoice_no));
-
         return Pdf::view('invoices.pdf', compact('invoice', 'merchant'))
             ->format('a4')
             ->name("invoice-{$invoice->invoice_no}.pdf")
             ->download(); 
-
     }
 
 }
