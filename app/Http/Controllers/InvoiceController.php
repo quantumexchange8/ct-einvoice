@@ -19,6 +19,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class InvoiceController extends Controller
 {
@@ -750,9 +752,15 @@ class InvoiceController extends Controller
         $invoice = Invoice::with(['invoice_lines', 'invoice_lines.classification'])->find($id);
         $merchant = Merchant::with(['msic', 'classification'])->find($invoice->merchant_id);
 
-        return Pdf::loadView('invoices.pdf', compact('invoice', 'merchant'))
+        $prodUrl = $this->env === 'production'
+            ? 'https://preprod.myinvois.hasil.gov.my/'
+            : 'https://preprod.myinvois.hasil.gov.my/';
+
+        $generateQr = $prodUrl . $invoice->invoice_uuid . '/share/' . $invoice->longId;
+
+        return Pdf::loadView('invoices.pdf', compact('invoice', 'merchant', 'generateQr'))
             ->setPaper('a4')   // optional
-            ->download("invoice-{$invoice->invoice_no}.pdf");
+            ->stream("invoice-{$invoice->invoice_no}.pdf");
     }
 
 }

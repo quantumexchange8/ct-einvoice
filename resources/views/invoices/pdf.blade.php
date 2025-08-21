@@ -141,12 +141,17 @@
             </tfoot>
         </table>
 
-        <div class="bold" style="margin-top:20px;">
-            Date and Time of Validation: {{ $invoice->invoice_datetime ?? 'N/A' }}
-        </div>
-        <div class="bold" style="margin-top:10px;">
-            This document is a visual presentation of the e-invoice.
-        </div>
+        <table class="info-table" style="margin: 20px 0; width: 100%;">
+            <tr>
+                <td style="vertical-align: middle;">
+                    <div>Date and Time of Validation: {{ $invoice->invoice_datetime ?? 'N/A' }}</div>
+                    <div>This document is a visual presentation of the e-invoice.</div>
+                </td>
+                <td style="text-align: right; vertical-align: middle;">
+                    <img src="data:image/png;base64, {!! base64_encode(QrCode::size(100)->generate($generateQr)) !!} " style="width: 100px; height: 100px;">
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>
