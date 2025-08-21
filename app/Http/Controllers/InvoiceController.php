@@ -760,7 +760,7 @@ class InvoiceController extends Controller
 
         return Pdf::loadView('invoices.pdf', compact('invoice', 'merchant', 'generateQr'))
             ->setPaper('a4')   // optional
-            ->stream("invoice-{$invoice->invoice_no}.pdf");
+            ->download("invoice-{$invoice->invoice_no}.pdf");
     }
 
 }
