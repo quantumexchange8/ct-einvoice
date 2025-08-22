@@ -20,6 +20,8 @@ export default function Pending({ invoice }) {
         post(route('resubmit'));
     }
 
+    console.log('invoice.invoice_error', invoice.invoice_error)
+
     return (
         <GuestLayout class>
             <div className="flex flex-col w-full items-start justify-center self-stretch pb-[75px] bg-white"> 
@@ -73,16 +75,37 @@ export default function Pending({ invoice }) {
                         }
                         {
                             (invoice.invoice_status === 'Invalid' || invoice.invoice_status === 'Cancelled') && (
-                                <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-error-50 ">
-                                    <div className="flex shrink-0">
-                                        <FailIcon />
+                                <div className=" p-4 flex flex-col gap-2 bg-error-50">
+                                    <div className="flex gap-2 w-full items-center self-stretch rounded-sm ">
+                                        <div className="flex shrink-0">
+                                            <FailIcon />
+                                        </div>
+                                        <div className="w-full font-manrope not-italic">
+                                            <div className=" font-bold text-error-500 text-base leading-[22px]">Invalid</div>
+                                                <span className="block text-warning-950 text-xs leading-[18px] font-normal">
+                                                    We encountered an issue with your e-invoice submission. Please review the details you provided and try submitting again.
+                                                </span>
+                                        </div>
                                     </div>
-                                    <div className="w-full font-manrope not-italic">
-                                        <div className=" font-bold text-error-500 text-base leading-[22px]">Failed</div>
-                                            <span className="block text-warning-950 text-xs leading-[18px] font-normal">
-                                                We encountered an issue with your e-invoice submission. Please review the details you provided and try submitting again.
-                                            </span>
-                                    </div>
+                                    {
+                                        invoice.invoice_status === 'Invalid' && (
+                                            <div>
+                                                {
+                                                    invoice.invoice_error.length > 0 && (
+                                                        <ul className="list-disc flex flex-col gap-1">
+                                                            {
+                                                                invoice.invoice_error.map((error, index) => (
+                                                                    <li key={index} className=" pl-5 text-error-500 text-xs leading-[18px] font-normal">
+                                                                        <span>{error.error_step}: {error.error_code} - {error.error_message}</span>
+                                                                    </li>
+                                                                ))
+                                                            }
+                                                        </ul>
+                                                    )
+                                                }
+                                            </div>
+                                        )
+                                    }
                                 </div>
                             )
                         }

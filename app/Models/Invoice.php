@@ -70,4 +70,11 @@ class Invoice extends Model
     {
         return $this->belongsTo(Merchant::class, 'merchant_id', 'id');
     }
+
+    public function invoice_error(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(InvoiceError::class, 'invoice_id', 'id');
+    }
+
+    
 }
