@@ -15,7 +15,11 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('merchant_id');
             $table->string('invoice_no');
-            $table->string('amount'); 
+            $table->double('amount');
+            $table->double('sst_amount');
+            $table->double('service_tax');
+            $table->integer('service_tax_rate');
+            $table->double('total_amount');
             $table->date('date'); 
             $table->enum('type', ['Personal', 'Business'])->nullable();
             $table->string('company_url')->nullable(); 
@@ -36,9 +40,14 @@ return new class extends Migration
             $table->string('country')->nullable();
             $table->string('status')->nullable();
             $table->string('invoice_status')->nullable();
+            $table->string('submission_uuid')->nullable();
             $table->string('invoice_uuid')->nullable();
             $table->longText('longId')->nullable();
+            $table->string('internal_id')->nullable();
+            $table->dateTime('issue_date')->nullable();
+            $table->dateTime('invoice_datetime')->nullable();
             $table->longText('remark')->nullable();
+            $table->dateTime('rejected_at')->nullable();
             $table->timestamps();
         });
     }

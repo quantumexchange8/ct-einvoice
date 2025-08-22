@@ -16,7 +16,7 @@ class InvoiceListingController extends Controller
     {
 
         if ($request->status === 'all') {
-            $invoices = Invoice::with(['merchant'])->latest()->get();
+            $invoices = Invoice::with(['merchant', 'merchant.msic', 'invoice_lines'])->latest()->get();
         } else {
             $invoices = Invoice::where('status', $request->status)
                 ->with(['merchant'])

@@ -116,6 +116,7 @@ class InvoiceController extends Controller
                 'state' => $request->state['State'],
                 'country' => $request->country,
                 'status' => 'requested',
+                'issue_date' => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
         } else {
             $invoice->update([
@@ -134,6 +135,7 @@ class InvoiceController extends Controller
                 'state' => $request->state['State'],
                 'country' => $request->country,
                 'status' => 'requested',
+                'issue_date' => Carbon::now()->format('Y-m-d H:i:s'),
             ]);
         }
 

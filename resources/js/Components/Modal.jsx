@@ -78,7 +78,7 @@ export default function Modal({
                         <div className='flex p-5 text-lg font-Lora font-bold'>
                             {header}
                         </div>
-                        <div className='py-3 px-4 flex w-full'>
+                        <div className='py-3 px-4 flex w-full max-h-450px md:max-h-[500px] lg:max-h-[600px] overflow-y-auto'>
                             {children}
                         </div>
                         <div className={`"w-full p-4 bg-white rounded-b-lg shadow-modal" `}>

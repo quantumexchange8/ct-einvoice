@@ -58,6 +58,7 @@ class Invoice extends Model
         'internal_id',
         'rejected_at',
         'invoice_datetime',
+        'issue_date',
     ];
 
     public function invoice_lines(): \Illuminate\Database\Eloquent\Relations\HasMany

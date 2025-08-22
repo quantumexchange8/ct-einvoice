@@ -41,7 +41,7 @@
                     <div class="submission-uid">E-Invoice Version: 1.0</div>
                     <div class="submission-uid">Submission UID: {{ $invoice->submission_uuid }}</div>
                     <div class="submission-uid">UUID: {{ $invoice->invoice_uuid }}</div>
-                    <div class="submission-uid">Issue Date&Time: {{ $invoice->updated_at }}</div>
+                    <div class="submission-uid">Issue Date&Time: {{ $invoice->issue_date }}</div>
                 </td>
             </tr>
         </table>

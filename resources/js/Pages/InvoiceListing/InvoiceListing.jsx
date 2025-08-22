@@ -1,5 +1,5 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
@@ -11,6 +11,11 @@ import { Checkbox } from "primereact/checkbox";
 import {Dialog } from '@headlessui/react'
 import { CreateInvoiceIcon, DotVerticleIcon, ExportIcon, PreviewIcon, ShareIcon, VoidIcon } from "@/Components/Outline";
 import { formatAmount } from "@/Composables";
+import Button from "@/Components/Button";
+import { Menu } from "primereact/menu";
+import toast from "react-hot-toast";
+import Modal from "@/Components/Modal";
+import QRCode from "react-qrcode-logo";
 
 export default function InvoiceListing() {
     
@@ -49,7 +54,6 @@ export default function InvoiceListing() {
     }, [selectedStatus]);
 
     const statusBodyTemplate = (rowData) => {
-        console.log('status', rowData.status)
         return (
             <div className="flex">
                 {
@@ -158,41 +162,66 @@ export default function InvoiceListing() {
         setSelectedInvoice(invoice);
         setIsPreviewOpen(true);
     };
-
-  const dropdownStyles = {
-    container: " w-full",
-    button: "p-2 hover:bg-gray-200 rounded focus:outline-none",
-    dropdown: "absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-50 overflow-hidden",
-    dropdownItem: "w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer"
-};
+    const closePreview = () => {
+        setSelectedInvoice(null);
+        setIsPreviewOpen(false);
+    };
 
     const actionBodyTemplate = (rowData) => {
-        const [isOpen, setIsOpen] = useState(false);
+        const menuRight = useRef(null);
+        const handleShare = (invoice) => {
+            const value = `https://preprod.myinvois.hasil.gov.my/${invoice.invoice_uuid}/share/${invoice.longId}`;
+            navigator.clipboard.writeText(value).then(() => {
+                toast.success('Copied!', {
+                    title: 'Copied!',
+                    duration: 3000,
+                    variant: 'variant3',
+                });
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        };
+
+        const items = [
+            {
+                label: 'Share',
+                template: () => {
+                    return (
+                        <div className="p-menuitem-content py-2 px-3 flex items-center gap-3" data-pc-section="content" onClick={(e) => {
+                            e.stopPropagation()
+                            handleShare(rowData)
+                            menuRight.current.hide(e);
+                            
+                        }}  >
+                            <ShareIcon />
+                            <span className="text-vulcan-700 text-sm font-medium">Share</span>
+                        </div>
+                    );
+                }
+            },
+            {
+                label: 'Preview',
+                template: () => {
+                    return (
+                        <div className="p-menuitem-content py-2 px-3 flex items-center gap-3" data-pc-section="content" onClick={(e) => {
+                            e.stopPropagation()
+                            handlePreview(rowData);
+                            menuRight.current.hide(e);
+                            }}>
+                            <PreviewIcon />
+                            <span className="text-vulcan-700 text-sm font-medium">Preview</span>
+                        </div>
+                    );
+                }
+            },
+        ];
 
         return (
-            <div className="flex w-full p-2 items-center gap-3 relative">
-                <div className={dropdownStyles.container}>
-                    <button onClick={() => setIsOpen(!isOpen)} className={dropdownStyles.button}>
-                        <DotVerticleIcon />
-                    </button>
-                    {isOpen && (
-                        <div className={dropdownStyles.dropdown}>
-                        
-                            <button onClick={() => submit(rowData)} className={dropdownStyles.dropdownItem}>
-                                <PreviewIcon /> Submit Invoice
-                            </button>
-
-                            <button className={dropdownStyles.dropdownItem} >
-                                <ShareIcon />
-                                Share
-                            </button>
-                    
-                            <button onClick={() => handlePreview(rowData)} className={dropdownStyles.dropdownItem}>
-                                <PreviewIcon /> Preview
-                                </button>
-                            </div>
-                    )}
-                </div>
+            <div className="card flex justify-center">
+                <Button size="sm" variant="textOnly" label="Show Right" className="" onClick={(event) => menuRight.current.toggle(event)} aria-controls="popup_menu_right" aria-haspopup >
+                    <DotVerticleIcon />
+                </Button>
+                <Menu model={rowData.status === 'Valid' ? items : null } popup ref={menuRight} id="popup_menu_right" popupAlignment="right" />
             </div>
         );
     };
@@ -221,6 +250,8 @@ export default function InvoiceListing() {
             </div>
         )
     }
+
+    console.log('selectedInvoice', selectedInvoice);
 
     return (
         <AuthenticatedLayout>
@@ -268,7 +299,7 @@ export default function InvoiceListing() {
                             </TabList>
                         </TabGroup>
                     </div>
-                    <div className="flex w-full items-center gap-4">
+                    {/* <div className="flex w-full items-center gap-4">
                         <div className="flex items-center justify-between w-full">
                             <div className="flex items-center gap-2">
 
@@ -289,7 +320,7 @@ export default function InvoiceListing() {
                                 </button>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
 
                     <div >
                         {
@@ -309,10 +340,10 @@ export default function InvoiceListing() {
                                                     selectionMode="multiple"
                                                     className="font-manrope text-[10px] not-italic text-vulcan-800 font-bold leading-[16px]"
                                                     paginator
-                                                    rows={5}
+                                                    rows={8}
                                                     removableSort
+                                                    scrollHeight="500px"
                                                 >
-                                                    <Column selectionMode="multiple" />
                                                     <Column field="date" header="Date Issued" body={(rowData) => format(new Date(rowData.date), "dd/MM/yyyy")} sortable  className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
                                                     <Column field="merchant" header="Merchant" body={merchantTemplate} sortable  className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
                                                     <Column field="invoice_no" header="Invoice No" sortable  className="font-manrope text-sm not-italic text-vulcan-900 font-medium whitespace-nowrap text-ellipsis leading-5" />
@@ -348,100 +379,147 @@ export default function InvoiceListing() {
                         
                     </div>
 
-
-                    <Dialog
-                        open={isPreviewOpen}
-                        onClose={() => setIsPreviewOpen(false)}
-                        className="fixed inset-0 z-50 flex items-center justify-center"
-                        >
-                        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-2xl">
-                            <div className="flex justify-between items-center border-b pb-3">
-                            <img src={configurations?.logo} alt="logo" className="h-16 w-auto" />
-
-                            <h1 className="text-3xl font-serif font-bold">INVOICE</h1>
+                    <Modal
+                        show={isPreviewOpen}
+                        onClose={closePreview}
+                        maxWidth='lg'
+                        maxHeight='lg'
+                        header='Preview Invoice'
+                        footer={
+                            <div className="flex justify-end gap-5 ">
+                                <Button variant="redOutline" size="md" onClick={closePreview}>Close</Button>
                             </div>
-
-                            <div className="mt-4">
-                                <div className="flex justify-between">
-                                    {configurations ? (
-                                    <div className="flex flex-col gap-5">
-                                        <div className="gap-1">
-                                            <span className="flex flex-col text-[10px] text-vulcan-950 font-manrope font-bold leading-4 not-italic">{configurations.companyName}</span>
-                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic"> {configurations.address1}</span>
-                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic"> {configurations.address2}</span>
-                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic"> {configurations.poscode} {configurations.area} ,{configurations.state}</span>
+                        }
+                    >
+                        {
+                            selectedInvoice && (
+                                <div className="flex flex-col gap-4 w-full">
+                                    {/* header */}
+                                    <div className="flex flex-col gap-3">
+                                        <div className="flex items-center justify-between">
+                                            <img src="/assets/image/logo.png" alt="" />
+                                            <div className="font-bold text-lg">
+                                                Invoice No: {selectedInvoice.invoice_no}
+                                            </div>
                                         </div>
-                                       
-                                        <div>
-                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Reg.No : {configurations.registration}</span>
-                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Contact : {configurations.phone}</span>
-                                            <span className="flex flex-col text-vulcan-950 font-manrope tfont-normal leading-4 text-[10px] not-italic">Email : {configurations.email}</span>
+                                        <div className="flex justify-between items-center">
+                                            <div className="flex flex-col gap-1 text-xs">
+                                                <div className="font-bold ">{selectedInvoice.merchant.name}</div>
+                                                <div className="max-w-60">Address: {selectedInvoice.merchant.address1}, {selectedInvoice.merchant.address2 ? `${selectedInvoice.merchant.address2},` : null} {selectedInvoice.merchant.postcode}, {selectedInvoice.merchant.city}, Malaysia</div>
+                                                <div className="">Reg.No: {selectedInvoice.merchant.brn_no}</div>
+                                                <div className="">Contact: {selectedInvoice.merchant.contact}</div>
+                                                <div className="">Email: {selectedInvoice.merchant.email}</div>
+                                            </div>
+                                            <div className="flex flex-col gap-1 text-xs items-end">
+                                                <div>E-Invoice Version: 1.0</div>
+                                                <div>Submission UID: {selectedInvoice.submission_uuid}</div>
+                                                <div>UUID: {selectedInvoice.invoice_uuid}</div>
+                                                <div>Issue Date&Time: {selectedInvoice.issue_date}</div>
+                                            </div>
+                                        </div>
+                                        <div className="w-full text-right">{selectedInvoice.invoice_status === 'Valid' ? <span className="text-success-600 font-bold text-lg">Valid</span> : <span className="text-error-600 font-bold text-lg">Invalid</span>}</div>
+                                    </div>
+                                    {/* content */}
+                                    <div className="flex justify-between">
+                                        <div className="flex flex-col gap-1 text-xs">
+                                            <div>Supplier TIN: {selectedInvoice.merchant.tin_no}</div>
+                                            <div>Supplier Name: {selectedInvoice.merchant.name}</div>
+                                            <div>Supplier Registration Number: {selectedInvoice.merchant.brn_no}</div>
+                                            <div>Supplier SST ID: {selectedInvoice.merchant.sst_no ? selectedInvoice.merchant.sst_no : 'NA'}</div>
+                                            <div>Supplier Business activity description: {selectedInvoice.merchant.business_activity}</div>
+                                            <div>Supplier Contact: {selectedInvoice.merchant.contact}</div>
+                                            <div>Supplier MSIC: {selectedInvoice.merchant.msic.Code}</div>
+                                        </div>
+                                        <div className="flex flex-col items-end gap-1 text-xs">
+                                            <div>Buyer TIN: {selectedInvoice.tin_no}</div>
+                                            <div>Buyer Name: {selectedInvoice.full_name}</div>
+                                            <div>Buyer BRN: {selectedInvoice.business_registration}</div>
+                                            <div>Buyer Address: {selectedInvoice.addressLine1}, {selectedInvoice.postcode}, {selectedInvoice.city}, Malaysia</div>
+                                            <div>Buyer Email: {selectedInvoice.email}</div>
                                         </div>
                                     </div>
-                                    ) : (
-                                        <span>Loading configuration...</span>
-                                    )}
-                                   
                                     <div>
-                                        <div className="text-right">
-                                            {selectedInvoice?.status === "Paid" ? (
-                                            <span className="text-green-700 font-bold text-lg bg-green-200 px-4 py-2 rounded">
-                                                PARTIALLY PAID
-                                            </span>
-                                            ) : (
-                                            <span className="text-red-700 font-bold text-lg bg-red-200 px-4 py-2 rounded">
-                                                UNPAID
-                                            </span>
-                                            )}
-                                        </div>
-                                    </div>                  
-                                </div>
-
-                                <div className="mt-4 border-t pt-3 flex justify-between"> 
-                                    <div className="text-left">
-                                        <h2 className="flex flex-col text-vulcan-950 font-manrope leading-4 text-[10px] not-italic font-bold">Bill to</h2>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">{selectedInvoice?.full_name}</span>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">{selectedInvoice?.addressLine1}</span>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">{selectedInvoice?.addressLine2}</span>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">{selectedInvoice?.city}, {selectedInvoice?.postcode}</span>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">{selectedInvoice?.state}, {selectedInvoice?.country}</span>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">Phone No.: {selectedInvoice?.contact}</span>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">Reg. No: {selectedInvoice?.reg_no}</span>
-                                        <span className="flex flex-col text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">Email: {selectedInvoice?.email}</span>
+                                        <table className="border border-[#d0d0d0] border-collapse w-full text-xs">
+                                            <thead>
+                                                <tr className="bg-vulcan-950 text-white  ">
+                                                    <th className="text-center border border-[#d0d0d0]">Classification</th>
+                                                    <th className="text-center border border-[#d0d0d0]">Description</th>
+                                                    <th className="text-center border border-[#d0d0d0]">Quantity</th>
+                                                    <th className="text-center border border-[#d0d0d0]">Unit Price</th>
+                                                    <th className="text-center border border-[#d0d0d0]">Amount</th>
+                                                    <th className="text-center border border-[#d0d0d0]">Disc</th>
+                                                    <th className="text-center border border-[#d0d0d0]">Tax Rate</th>
+                                                    <th className="text-center border border-[#d0d0d0]">Tax Amount</th>
+                                                    <th className="text-center border border-[#d0d0d0]">Total Product / Service</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {selectedInvoice.invoice_lines.map((item, index) => (
+                                                    <tr key={index}>
+                                                        <td className="text-center border border-[#d0d0d0]">{item.classification?.code}</td>
+                                                        <td className="text-left border border-[#d0d0d0]">{item.item_name}</td>
+                                                        <td className="text-center border border-[#d0d0d0]">{item.item_qty}</td>
+                                                        <td className="text-center border border-[#d0d0d0]">RM {Number(item.item_price).toFixed(2)}</td>
+                                                        <td className="text-center border border-[#d0d0d0]">RM {(item.item_price * item.item_qty).toFixed(2)}</td>
+                                                        <td className="border border-[#d0d0d0]">-</td>
+                                                        <td className="border border-[#d0d0d0]">{Number(item.tax_rate).toFixed(2)}%</td>
+                                                        <td className="text-right border border-[#d0d0d0]">RM {Number(item.tax_amount).toFixed(2)}</td>
+                                                        <td className="text-right border border-[#d0d0d0]">RM {Number(item.subtotal).toFixed(2)}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                <td colSpan="4" className="text-right font-bold border border-[#d0d0d0]">Subtotal:</td>
+                                                <td className="text-right font-bold border border-[#d0d0d0]">RM {Number(selectedInvoice.amount).toFixed(2)}</td>
+                                                <td className="border border-[#d0d0d0]">-</td>
+                                                <td className="border border-[#d0d0d0]"></td>
+                                                <td className="text-right font-bold border border-[#d0d0d0]">RM {Number(selectedInvoice.sst_amount).toFixed(2)}</td>
+                                                <td className="text-right font-bold border border-[#d0d0d0]">
+                                                    RM {(selectedInvoice.amount + selectedInvoice.sst_amount).toFixed(2)}
+                                                </td>
+                                                </tr>
+                                                <tr>
+                                                <td colSpan="8" className="text-right font-bold border border-[#d0d0d0]">Total excluding tax:</td>
+                                                <td className="text-right font-bold border border-[#d0d0d0]">RM {Number(selectedInvoice.amount).toFixed(2)}</td>
+                                                </tr>
+                                                <tr>
+                                                <td colSpan="8" className="text-right font-bold border border-[#d0d0d0]">Tax Amount:</td>
+                                                <td className="text-right font-bold border border-[#d0d0d0]">RM {Number(selectedInvoice.sst_amount).toFixed(2)}</td>
+                                                </tr>
+                                                <tr>
+                                                <td colSpan="8" className="text-right font-bold border border-[#d0d0d0]">Total Including tax:</td>
+                                                <td className="text-right font-bold border border-[#d0d0d0]">
+                                                    RM {(selectedInvoice.amount + selectedInvoice.sst_amount).toFixed(2)}
+                                                </td>
+                                                </tr>
+                                                <tr>
+                                                <td colSpan="8" className="text-right font-bold border border-[#d0d0d0]">Total Amount:</td>
+                                                <td className="text-right font-bold">
+                                                    RM {(selectedInvoice.amount + selectedInvoice.sst_amount).toFixed(2)}
+                                                </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
                                     </div>
-                                    <div className="text-right">
-                                        <div className="flex justify-between">
-                                            <span className="text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">Invoice Type</span>
-                                            <span className="text-vulcan-950 font-manrope font-bold leading-4 text-[10px] not-italic">{selectedInvoice?.type}</span>
+                                    {/* footer */}
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex flex-col gap-1 text-xs">
+                                            <div>Date and Time of Validation: {selectedInvoice.invoice_datetime}</div>
+                                            <div>Thhis document us a visual presentation of the e-invoice.</div>
                                         </div>
-                                        <div className="flex justify-between">
-                                            <span className="text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">Invoice No</span>
-                                            <span className="text-vulcan-950 font-manrope font-bold leading-4 text-[10px] not-italic">{selectedInvoice?.invoice_no}</span>
+                                        <div>
+                                            <QRCode 
+                                                value={'https://preprod.myinvois.hasil.gov.my/' + selectedInvoice.invoice_uuid + '/share/' + selectedInvoice.longId} 
+                                                fgColor="#000000"
+                                                size={120}
+                                            />
                                         </div>
-                                        <div className="flex justify-between">
-                                            <span className="text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic whitespace-pre-wrap">Invoice Date      </span>
-                                            <span className="text-vulcan-950 font-manrope font-bold leading-4 text-[10px] not-italic">{selectedInvoice?.date?.split("T")[0]}</span>
-                                        </div>
-                                        {/* <div className="flex justify-between">
-                                            <span className="text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">Terms</span>
-                                            <span className="text-vulcan-950 font-manrope font-bold leading-4 text-[10px] not-italic">{selectedInvoice?.terms} days</span>
-                                        </div> */}
-                                        {/* <div className="flex justify-between">
-                                            <span className="text-vulcan-950 font-manrope font-normal leading-4 text-[10px] not-italic">Due Date</span>
-                                            <span className=" text-vulcan-950 font-manrope font-bold leading-4 text-[10px] not-italic">{selectedInvoice?.due_date?.split("T")[0]}</span>
-                                        </div> */}
                                     </div>
                                 </div>
-
-                                <button
-                                    onClick={() => setIsPreviewOpen(false)}
-                                    className="mt-6 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-700 w-full"
-                                >
-                                    Close
-                                </button>
-                            </div>
-                        </div>
-                    </Dialog>
+                            )
+                        }
+                    </Modal>
                 </div>
             </div>
         </AuthenticatedLayout>

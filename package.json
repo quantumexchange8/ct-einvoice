@@ -28,6 +28,7 @@
         "puppeteer": "^24.16.2",
         "react-countup": "^6.5.3",
         "react-hot-toast": "^2.5.2",
+        "react-qrcode-logo": "^4.0.0",
         "react-to-print": "^3.0.5"
     }
 }

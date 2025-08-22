@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
+import { CustomToaster } from "@/Components/CustomToaster";
 
 const AuthenticatedLayout = ({ children, header }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -32,6 +33,7 @@ const AuthenticatedLayout = ({ children, header }) => {
 
   return (
     <div className="min-h-screen flex">
+      <CustomToaster />
       {/* Sidebar: Show only when isSidebarOpen is true */}
       <Sidebar expanded={isSidebarExpanded} showingNavigationDropdown={showingNavigationDropdown} toggleSidebar={toggleSidebar} />
 
