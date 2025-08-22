@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Invoice;
+use App\Models\InvoiceError;
 use App\Models\Merchant;
 use App\Models\Token;
 use Carbon\Carbon;
@@ -85,6 +86,36 @@ class CheckSubmittedInvoice extends Command
             $invoice->remark = $submiturl['documentStatusReason'] ?? null;
             $invoice->invoice_datetime = isset($submiturl['dateTimeValidated'])? Carbon::parse($submiturl['dateTimeValidated'])->format('Y-m-d H:i:s'): null;
             $invoice->save();
+
+            if ($submiturl['status'] === 'Invalid') {
+                $invoiceId = $invoice->id; // FK reference to your invoices table
+
+                foreach ($submiturl['validationResults']['validationSteps'] as $step) {
+                    if ($step['status'] === 'Invalid' && isset($step['error'])) {
+                        $errorStep = $step['error']['error'] ?? $step['name'];
+
+                        // If there are multiple innerErrors
+                        if (!empty($step['error']['innerError'])) {
+                            foreach ($step['error']['innerError'] as $innerError) {
+                                InvoiceError::create([
+                                    'invoice_id'   => $invoiceId,
+                                    'error_step'   => $errorStep,
+                                    'error_code'   => $innerError['errorCode'] ?? null,
+                                    'error_message'=> $innerError['error'] ?? null,
+                                ]);
+                            }
+                        } else {
+                            // If only single error without innerError
+                            InvoiceError::create([
+                                'invoice_id'   => $invoiceId,
+                                'error_step'   => $errorStep,
+                                'error_code'   => $step['error']['errorCode'] ?? null,
+                                'error_message'=> $step['error']['error'] ?? null,
+                            ]);
+                        }
+                    }
+                }
+            }
             
         } else {
             Log::debug('Error submission ', [
