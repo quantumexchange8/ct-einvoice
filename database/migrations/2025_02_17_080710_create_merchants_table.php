@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('registration_name');
             $table->string('irbm_client_id');
             $table->string('irbm_client_key');
+            $table->string('onbehalfof');
             $table->string('tin_no');
             $table->string('brn_no');
             $table->string('sst_no')->nullable();

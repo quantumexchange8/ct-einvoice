@@ -74,7 +74,16 @@ class GlobalController extends Controller
             
             $submiturl = Http::withToken($token)->get($prodUrl);
 
-            return response()->json($submiturl);
+            Log::info('searchTIN ', [
+                'url' => $prodUrl,
+                'response' => $submiturl,
+            ]);
+
+            if ($submiturl->successful()) {
+                return response()->json($submiturl['tin']);
+            } else {
+                return response()->json(['message' => 'Invalid search type'], 400);
+            }
         }
         if ($request->searchType === 'idType') {
             $request->validate([
@@ -89,7 +98,16 @@ class GlobalController extends Controller
             
             $submiturl = Http::withToken($token)->get($prodUrl);
 
-            return response()->json($submiturl);
+            Log::info('searchTIN ', [
+                'url' => $prodUrl,
+                'response' => $submiturl,
+            ]);
+
+            if ($submiturl->successful()) {
+                return response()->json($submiturl['tin']);
+            } else {
+                return response()->json(['message' => 'Invalid search type'], 400);
+            }
         }
 
 
@@ -99,10 +117,6 @@ class GlobalController extends Controller
 
     protected function getValidToken($merchantDetail, $checkToken)
     {
-        Log::info('data', [
-            'merchantDetail' => $merchantDetail,
-            'checkToken' => $checkToken,
-        ]);
 
         // 如果没有 token 或者 token 已过期，获取新 token
         if (!$checkToken || Carbon::now() >= $checkToken->expired_at) {
