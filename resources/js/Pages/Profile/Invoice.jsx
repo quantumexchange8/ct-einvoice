@@ -448,7 +448,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
       >
           {
               (searchType === null && searchResult === null) && (
-                  <div className="w-full flex items-center gap-5">
+                  <div className="w-full flex flex-col md:flex-row items-center gap-5">
                       <div className="border border-vulcan-50 bg-white p-3 w-full flex flex-col gap-2 items-center justify-center cursor-pointer hover:bg-vulcan-50 rounded-lg" onClick={() => setSearchType('taxpayerName')}>
                           <SearchIcon />
                           <span className="text-sm font-bold">Search by Taxpayer Name</span>

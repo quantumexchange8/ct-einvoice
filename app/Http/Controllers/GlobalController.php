@@ -92,8 +92,8 @@ class GlobalController extends Controller
             ]);
 
             $prodUrl = $this->env === 'production'
-                    ? 'https://preprod-api.myinvois.hasil.gov.my/api/v1.0/taxpayer/search/tin?idType=' . $request->taxpayerName . '&idValue=' . $request->TINValue
-                    : 'https://preprod-api.myinvois.hasil.gov.my/api/v1.0/taxpayer/search/tin?idType=' . $request->taxpayerName . '&idValue=' . $request->TINValue;
+                    ? 'https://preprod-api.myinvois.hasil.gov.my/api/v1.0/taxpayer/search/tin?idType=' . $request->idType . '&idValue=' . $request->TINValue
+                    : 'https://preprod-api.myinvois.hasil.gov.my/api/v1.0/taxpayer/search/tin?idType=' . $request->idType . '&idValue=' . $request->TINValue;
 
             
             $submiturl = Http::withToken($token)->get($prodUrl);

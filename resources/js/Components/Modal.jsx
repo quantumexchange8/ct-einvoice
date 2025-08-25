@@ -26,7 +26,7 @@ export default function Modal({
 
     const maxWidthClass = {
         sm: 'min-w-[300px] max-w-[400px] lg:min-w-[360px] lg:max-w-[480px] xl:min-w-[400px] xl:max-w-[600px]',
-        md: 'min-w-[450px] max-w-[600px] lg:min-w-[500px] lg:max-w-[720px] xl:min-w-[600px] xl:max-w-[800px]',
+        md: 'min-w-[300px] max-w-[450px] md:min-w-[450px] md:max-w-[600px] lg:min-w-[500px] lg:max-w-[720px] xl:min-w-[600px] xl:max-w-[800px]',
         lg: 'min-w-[600px] max-w-[720px] lg:min-w-[720px] lg:max-w-[800px] xl:min-w-[800px] xl:max-w-[960px]',
     }[maxWidth];
 
