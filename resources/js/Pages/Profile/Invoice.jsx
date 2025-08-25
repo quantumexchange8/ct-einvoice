@@ -228,8 +228,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
               merchant_id: merchant_id,
           })
 
-          console.log('response: ', response);
-          setSearchResult(response.data.tin);
+          setSearchResult(response.data);
           setSearchType(null);
           setIdType(null);
           setTaxpayerName(null);
