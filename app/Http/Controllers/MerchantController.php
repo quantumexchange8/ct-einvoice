@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Merchant;
 use App\Services\RunningNumberService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class   MerchantController extends Controller
@@ -129,6 +130,56 @@ class   MerchantController extends Controller
         return redirect()->back();
     }
 
+    public function updateValidateStep1(Request $request)
+    {
+        $request->validate([
+            'merchant_name' => [
+                'required',
+                'max:255',
+                Rule::unique('merchants', 'name')->ignore($request->id),
+            ],
+            'merchant_email' => [
+                'required',
+                'max:255',
+                Rule::unique('merchants', 'email')->ignore($request->id),
+            ],
+            'merchant_contact' => [
+                'required',
+                'max:255',
+                Rule::unique('merchants', 'contact')->ignore($request->id),
+            ],
+            'address_1' => 'required',
+            'city' => 'required',
+            'state' => 'required',
+            'postal_code' => 'required',
+            'country' => 'required',
+            'tin_no' => [
+                'required',
+                'max:255',
+                Rule::unique('merchants', 'tin_no')->ignore($request->id),
+            ],
+            'brn_no' => [
+                'required',
+                'max:255',
+                Rule::unique('merchants', 'brn_no')->ignore($request->id),
+            ],
+            'classification_code' => 'required',
+            'msic_code' => 'required',
+            'irbm_client_id' => [
+                'required',
+                'max:255',
+                Rule::unique('merchants', 'irbm_client_id')->ignore($request->id),
+            ],
+            'irbm_client_secret' => [
+                'required',
+                'max:255',
+                Rule::unique('merchants', 'irbm_client_key')->ignore($request->id),
+            ],
+        ]);
+
+        return redirect()->back();
+    }
+
     public function storeMerchant(Request $request)
     {
 
@@ -137,7 +188,7 @@ class   MerchantController extends Controller
             'merchant_uid' => RunningNumberService::getID('merchant'),
             'registration_name' => $request->merchant_name,
             'irbm_client_id' => $request->irbm_client_id,
-            'irbm_client_key' => $request->irbm_client_key,
+            'irbm_client_key' => $request->irbm_client_secret,
             'tin_no' => $request->tin_no,
             'brn_no' => $request->brn_no,
             'sst_no' => $request->sst_no ?? null,
@@ -154,6 +205,67 @@ class   MerchantController extends Controller
         ]);
 
         return redirect()->back();
+    }
+
+    public function editMerchant($id)
+    {
+
+        $findMerchant = Merchant::where('merchant_uid', $id)->first();
+
+        return Inertia::render('Merchant/EditMerchant', [
+            'merchant' => $findMerchant,
+        ]);
+    }
+
+    public function updateMerchantDetails(Request $request)
+    {
+
+        $merchant = Merchant::find($request->id);
+
+        $merchant->update([
+            'name' => $request->merchant_name,
+            'registration_name' => $request->merchant_name,
+            'irbm_client_id' => $request->irbm_client_id,
+            'irbm_client_key' => $request->irbm_client_key,
+            'tin_no' => $request->tin_no,
+            'brn_no' => $request->brn_no,
+            'sst_no' => $request->sst_no ?? null,
+            'ttx_no' => $request->ttx_no ?? null,
+            'msic_id' => $request->msic_code,
+            'classification_id' => $request->classification_code,
+            'address1' => $request->address_1,
+            'address2' => $request->address_2 ?? null,
+            'address3' => $request->address_3 ?? null,
+            'city' => $request->city,
+            'state_code' => $request->state,
+            'country_code' => $request->country,
+        ]);
+    
+        return redirect()->back();
+    }
+
+    public function deactivateClient($id)
+    {
+
+        $merchant = Merchant::where('merchant_uid', $id)->first();
+
+        if ($merchant->status === 'active') {
+            
+            $merchant->status = 'inactive';
+            $merchant->save();
+
+            return response()->json(['message' => 'merchant status updated'], 200);
+        }
+
+        if ($merchant->status === 'inactive') {
+
+            $merchant->status = 'active';
+            $merchant->save();
+
+            return response()->json(['message' => 'merchant status updated'], 200);
+        }
+
+        return response()->json(['message' => 'something when wrong'], 400);
     }
 
 }

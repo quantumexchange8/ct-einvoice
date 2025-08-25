@@ -3,18 +3,23 @@ import { DefaultSortIcon, DotVerticleIcon, SortAsc, SortDesc } from "@/Component
 import { formatDate, formatDateDMY } from "@/Composables";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FilterMatchMode } from 'primereact/api';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import TextInput from "@/Components/TextInput";
 import Button from "@/Components/Button";
+import { Menu } from "primereact/menu";
+import Modal from "@/Components/Modal";
+import axios from "axios";
 
-export default function MerchantTable() {
+export default function MerchantTable({ CountTotalMerchant }) {
 
     const [merchant, setMerchant] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [isEditClientOpen, setIsEditClientOpen] = useState(false);
+    const [selectedClient, setSelectedClient] = useState(null);
 
     const fetchMerchant = async () => {
         try {
@@ -62,8 +67,15 @@ export default function MerchantTable() {
             <div className="">
                 {
                     data.status === 'active' && (
-                        <Badge>
+                        <Badge variant="success">
                             Active
+                        </Badge>
+                    )
+                }
+                {
+                    data.status === 'inactive' && (
+                        <Badge variant="grey">
+                            Inactive
                         </Badge>
                     )
                 }
@@ -71,10 +83,74 @@ export default function MerchantTable() {
         )
     }
 
-    const actionTemplate = (data) => {
+    const editClientOpen = (data) => {
+        window.location.href = `/edit-merchant/${data.merchant_uid}`;
+    }
+
+    const deactivateClient = async (data) => {
+        try {
+            
+            const response = await axios.post(`/deactivate-client/${data.merchant_uid}`)
+            
+            if (response.status === 200) {
+                fetchMerchant();
+                CountTotalMerchant();
+            }
+        } catch (error) {
+            console.error('errro: ', error)
+        }
+    }
+
+    const actionTemplate = (rowData) => {
+        const menuRight = useRef(null);
+        const items = [
+            {
+                label: 'Edit Client',
+                template: () => {
+                    return (
+                        <div className="p-menuitem-content py-2 px-3 flex items-center gap-3 cursor-pointer" data-pc-section="content" onClick={(e) => {
+                            e.stopPropagation()
+                            editClientOpen(rowData)
+                            menuRight.current.hide(e);
+                        }}  >
+                            
+                            <span className="text-vulcan-700 text-sm font-medium">Edit Client</span>
+                        </div>
+                    );
+                }
+            },
+            {
+                label: 'Deactivate Client',
+                template: () => {
+                    return (
+                        <div className="p-menuitem-content py-2 px-3 flex items-center gap-3 cursor-pointer" data-pc-section="content" onClick={(e) => {
+                            e.stopPropagation()
+                            deactivateClient(rowData)
+                            menuRight.current.hide(e);
+                            
+                        }}  >
+                            {
+                                rowData.status === 'active' && (
+                                    <span className="text-error-700 text-sm font-medium font-sans">Deactivate Client</span>
+                                )
+                            }
+                            {
+                                rowData.status === 'inactive' && (
+                                    <span className="text-error-700 text-sm font-medium font-sans">Activate Client</span>
+                                )
+                            }
+                        </div>
+                    );
+                }
+            }
+        ];
+
         return (
             <div className="flex items-center justify-center">
-                <DotVerticleIcon />
+                <Button size="sm" variant="textOnly" label="Show Right" onClick={(event) => menuRight.current.toggle(event)} aria-controls="popup_menu_right" aria-haspopup>
+                    <DotVerticleIcon />
+                </Button>
+                <Menu model={items} popup ref={menuRight} id="popup_menu_right" popupAlignment="right" />
             </div>
         )
     }

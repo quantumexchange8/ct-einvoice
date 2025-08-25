@@ -32,7 +32,7 @@ export default function Pending({ invoice }) {
                             invoice.status === 'consolidated' && (
                                 <div className="flex gap-2 w-full p-4 items-center self-stretch rounded-sm bg-warning-50 ">
                                     <div className="flex shrink-0">
-                                        <InfoIcon />
+                                        <PendingIcon />
                                     </div>
                                     <div className="w-full font-manrope not-italic">
                                         <div className=" font-bold text-warning-500 text-base leading-[22px]">Consolidated</div>
@@ -261,7 +261,7 @@ export default function Pending({ invoice }) {
                                         Request again
                                     </Button>
                                 ) : (
-                                    <Button onClick={handleDownload} disabled={invoice.invoice_status === 'pending' || invoice.invoice_status === 'Submitted'}
+                                    <Button onClick={handleDownload} disabled={invoice.invoice_status === 'pending' || invoice.invoice_status === 'Submitted' || invoice.invoice_status === 'consolidated'}
                                         className="w-full flex items-center justify-center gap-2 text-sm font-medium disabled:bg-white disabled:text-vulcan-500" 
                                         size="md"
                                     >

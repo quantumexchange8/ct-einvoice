@@ -91,7 +91,7 @@ export default function Merchant() {
                             </Link>
                         </div>
                     </div>
-                    <MerchantTable />
+                    <MerchantTable CountTotalMerchant={CountTotalMerchant} />
                 </div>
             </div>
         </AuthenticatedLayout>

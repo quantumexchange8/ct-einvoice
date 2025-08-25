@@ -65,8 +65,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/updateMerchant/{id}', [MerchantController::class, 'updateMerchant'])->name('updateMerchant');
     Route::delete('/deleteMerchant/{id}', [MerchantController::class, 'deleteMerchant'])->name('deleteMerchant');
     Route::post('/validate-step1', [MerchantController::class, 'validateStep1'])->name('validate-step1');
+    Route::post('/update-validate-step1', [MerchantController::class, 'updateValidateStep1'])->name('update-validate-step1');
     Route::post('/store-merchant', [MerchantController::class, 'storeMerchant'])->name('store-merchant');
     Route::get('/countTotalMerchant', [MerchantController::class, 'countTotalMerchant'])->name('countTotalMerchant');
+    Route::get('/edit-merchant/{id}', [MerchantController::class, 'editMerchant'])->name('edit-merchant');
+    Route::post('/update-merchant-details', [MerchantController::class, 'updateMerchantDetails'])->name('update-merchant-details');
+    Route::post('/deactivate-client/{id}', [MerchantController::class, 'deactivateClient'])->name('deactivate-client');
     
     /**
      * ==============================

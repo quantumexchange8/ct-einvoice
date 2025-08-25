@@ -4,86 +4,33 @@ import { FileUpload } from "primereact/fileupload";
 import { Toast } from "primereact/toast";
 import axios from "axios";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { useForm } from "@inertiajs/react";
 
 export default function Configuration() {
-    const [company, setCompany] = useState({
-        invoicePrefix: "",
-        invoice: "",
-        companyName: "",
-        tin: "",
-        registration: "",
-        MSIC: "",
-        phone: "",
-        email: "",
-        sst: "",
-        businessActivity: "",
-        address1: "",
-        address2: "",
-        poscode: "",
-        area: "",
-        state: "",
-        image: "",
+    
+    const [imageFile, setImageFile] = useState(null);
+
+    const { data, setData, post, processing, errors, reset, progress } = useForm({
+        invoice_prefix: '',
+        company_name: '',
+        tin: '',
+        registration: '',
+        sst: '',
+        TTX: '',
+        contact: '',
+        email: '',
     });
 
-    const [imageFile, setImageFile] = useState(null); 
-    const toast = useRef(null);
+    const onUpload = () => {
 
-    const handleChange = (e, key) => {
-        setCompany({ ...company, [key]: e.target.value });
-    };
-
-    const onUpload = (event) => {
-        const file = event.files[0];
-        setImageFile(file);
-    };
-
-    const handleSave = async () => {
-        try {
-            const formData = new FormData();
-            Object.keys(company).forEach((key) => {
-                formData.append(key, company[key]);
-            });
-
-            if (imageFile) {
-                formData.append("image", imageFile);
-            }
-
-            const response = await axios.post("/updateConfiguration", formData, {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            });
-
-            if (response.status === 200) {
-                toast.current.show({
-                    severity: "success",
-                    summary: "Success",
-                    detail: "Company details saved successfully",
-                    life: 3000,
-                });
-            } else {
-                toast.current.show({
-                    severity: "error",
-                    summary: "Error",
-                    detail: "Failed to save details",
-                    life: 3000,
-                });
-            }
-        } catch (error) {
-            console.error("Error saving company details:", error);
-            toast.current.show({
-                severity: "error",
-                summary: "Error",
-                detail: "An error occurred while saving",
-                life: 3000,
-            });
-        }
-    };
+    }
     
+    const save = () => {
+
+    }
 
     return (
         <AuthenticatedLayout>
-            <Toast ref={toast} />
             <div className="flex w-full flex-col justify-center items-center self-stretch p-5 gap-6 bg-white rounded-lg max-w-3xl mx-auto">
                 <div className="flex w-full p-4 flex-col gap-6 self-stretch border rounded-sm border-vulcan-200 bg-white">
                     <div className="flex items-center justify-between">
@@ -95,7 +42,7 @@ export default function Configuration() {
                                 Active and inactive clients will all be shown in this list.
                             </div>
                         </div>
-                        <button className="px-4 py-2 border shadow-sm border-gray-300 rounded-sm text-sm" onClick={handleSave}>
+                        <button className="px-4 py-2 border shadow-sm border-gray-300 rounded-sm text-sm" onClick={save}>
                             Save Changes
                         </button>
                     </div>
@@ -105,7 +52,7 @@ export default function Configuration() {
                                 <img 
                                     src={URL.createObjectURL(imageFile)} 
                                     alt="Uploaded" 
-                                    className="flex w-full max-w-[208px] max-h-[80px] " 
+                                    className="flex w-full max-w-[208px] max-h-[80px] object-cover " 
                                 />
                             )}
                              <div className="flex border border-vulcan-950 rounded-md">
@@ -142,23 +89,7 @@ export default function Configuration() {
                         </button>
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        {Object.entries({
-                            invoicePrefix: "Invoice Prefix",
-                            invoice: "Invoice No.",
-                            companyName: "Company Name",
-                            tin: "TIN No.",
-                            registration: "Registration No.",
-                            MSIC: "MSIC Code",
-                            phone: "Phone No.",
-                            email: "Email Address",
-                            sst: "SST Registration No.",
-                            businessActivity: "Business Activity Description",
-                        }).map(([key, label]) => (
-                            <div key={key} className="flex flex-col">
-                                <label className="text-sm font-medium mb-1">{label}</label>
-                                <InputText value={company[key]} onChange={(e) => handleChange(e, key)} placeholder={label} />
-                            </div>
-                        ))}
+                        
                     </div>
                 </div>
                 <div className="flex w-full p-4 flex-col gap-6 self-stretch border rounded-sm border-vulcan-200 bg-white">
@@ -169,24 +100,9 @@ export default function Configuration() {
                             </div>
                             <div className="text-xs text-vulcan-900">Essential company information for your e-Invoice.</div>
                         </div>
-                        <button className="px-4 py-2 border shadow-sm border-gray-300 rounded-sm text-sm" onClick={handleSave}>
+                        <button className="px-4 py-2 border shadow-sm border-gray-300 rounded-sm text-sm" onClick={save}>
                             Save Changes
                         </button>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                        {Object.entries({
-                            address1: "Address 1",
-                            address2: "Address 2",
-                            poscode: "Postcode",
-                            area: "Area",
-                            state: "State",
-                        }).map(([key, label]) => (
-                            <div key={key} className="flex flex-col">
-                                <label className="text-sm font-medium mb-1">{label}</label>
-                                <InputText value={company[key]} onChange={(e) => handleChange(e, key)} placeholder={label} />
-                            </div>
-                        ))}
                     </div>
                 </div>
             </div>
