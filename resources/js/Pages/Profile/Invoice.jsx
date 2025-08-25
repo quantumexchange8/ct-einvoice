@@ -12,11 +12,12 @@ import Personal from "./Partials/Personal";
 import Business from "./Partials/Business";
 import { formatDateDMY } from "@/Composables";
 import Button from "@/Components/Button";
-import { ClearInputIcon } from "@/Components/Outline";
+import { ClearInputIcon, SearchIcon, SearchIdIcon } from "@/Components/Outline";
 import { Calendar } from "primereact/calendar";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import { InputNumber } from "primereact/inputnumber";
 import toast from "react-hot-toast";
+import Modal from "@/Components/Modal";
 
 export default function Invoice({invoice_no, merchant_id, date_issued, amount }) {
 
@@ -32,6 +33,13 @@ export default function Invoice({invoice_no, merchant_id, date_issued, amount })
   const [getStates, setGetStates] = useState([]);
   const [selectedid_type, setSelectedid_type] = useState(null);
   const [activeTab, setActiveTab] = useState("Personal");
+  const [openSearchTIN, setOpenSearchTIN] = useState(false);
+  const [searchType, setSearchType] = useState(null);
+  const [taxpayerName, setTaxpayerName] = useState(null);
+  const [idType, setIdType] = useState(null);
+  const [TINValue, setTINValue] = useState(null);
+  const [loadingSearchTIN, setLoadingSearchTIN] = useState(false);
+  const [searchResult, setSearchResult] = useState(null);
 
   const fetchCountry = async () => {
     try {
@@ -160,20 +168,20 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
   }
   
   // Form submission
-const submit = (e) => {
-  e.preventDefault();
+  const submit = (e) => {
+    e.preventDefault();
 
-  if (!enabled) {
-    setMessage("You must acknowledge the information before submitting.");
-    return;
-  }
+    if (!enabled) {
+      setMessage("You must acknowledge the information before submitting.");
+      return;
+    }
 
-  if (userInput !== captchaText) {
-    setMessage("Incorrect CAPTCHA. Please try again.");
-    return;
-  }
+    if (userInput !== captchaText) {
+      setMessage("Incorrect CAPTCHA. Please try again.");
+      return;
+    }
 
-  setIsLoading(true);
+    setIsLoading(true);
   
     post('/submitInvoice', {
         preserveScroll: true,
@@ -192,7 +200,56 @@ const submit = (e) => {
     })
   }
  
+  const closeSearch = () => {
+      setSearchType(null);
+      setIdType(null);
+      setTINValue(null);
+      setTaxpayerName(null);
+      setOpenSearchTIN(false);
+      setSearchResult(null);
+  }
 
+  const returnSearch = () => {
+      setSearchType(null);
+      setIdType(null);
+      setTaxpayerName(null);
+      setTINValue(null);
+  }
+
+  const search = async () => {
+      setLoadingSearchTIN(true);
+
+      try {
+          const response = await axios.post('/searchTIN', {
+              searchType: searchType,
+              taxpayerName: taxpayerName,
+              idType: idType,
+              TINValue: TINValue,
+              merchant_id: merchant_id,
+          })
+
+          console.log('response: ', response);
+          setSearchResult(response.data.tin);
+          setSearchType(null);
+          setIdType(null);
+          setTaxpayerName(null);
+          setTINValue(null);
+
+      } catch (error) {
+          console.error('Error searching:', error);
+      } finally {
+          setLoadingSearchTIN(false);
+      }
+  }
+
+  const copyTin = () => {
+      navigator.clipboard.writeText(searchResult);
+      toast.success('Copied TIN to clipboard', {
+          title: 'Copied TIN to clipboard',
+          duration: 3000,
+          variant: 'variant3',
+      });
+  }
 
   return (
     <GuestLayout>
@@ -268,6 +325,16 @@ const submit = (e) => {
                     }
                   </div>
               </div>
+            </div>
+            <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-1">
+                    <InputLabel htmlFor="date_issued" value="Search TIN" className="text-vulcan-500" />
+                </div>
+                <div className="flex ">
+                    <Button size="md" onClick={() => setOpenSearchTIN(!openSearchTIN)} className="w-full flex justify-center">
+                        Search TIN
+                    </Button>
+                </div>
             </div>
           </div >
         </div>
@@ -357,6 +424,105 @@ const submit = (e) => {
         </div>
       </div>
       
+      <Modal
+          show={openSearchTIN}
+          onClose={closeSearch}
+          header="Search TIN"
+          maxWidth="md"
+          footer={
+              <div className="flex justify-end gap-5 ">
+                  {
+                      searchType === null ? (
+                          <Button variant="redOutline" size="md" onClick={closeSearch}>Close</Button>
+                      ) : (
+                          <>
+                              <Button variant="redOutline" size="md" onClick={returnSearch}>Return</Button>
+                              <Button size="md" disabled={loadingSearchTIN} onClick={search}>Search</Button>
+                          </>
+                      )
+                  }
+                  
+                  
+              </div>
+          }
+      >
+          {
+              (searchType === null && searchResult === null) && (
+                  <div className="w-full flex items-center gap-5">
+                      <div className="border border-vulcan-50 bg-white p-3 w-full flex flex-col gap-2 items-center justify-center cursor-pointer hover:bg-vulcan-50 rounded-lg" onClick={() => setSearchType('taxpayerName')}>
+                          <SearchIcon />
+                          <span className="text-sm font-bold">Search by Taxpayer Name</span>
+                          
+                      </div>
+                      <div className="border border-vulcan-50 bg-white p-3 w-full flex flex-col gap-2 items-center justify-center cursor-pointer hover:bg-vulcan-50 rounded-lg" onClick={() => setSearchType('idType')}>
+                          <SearchIdIcon className='w-10 h-10' />
+                          <span className="text-sm font-bold">Search by ID Type</span>
+                      </div>
+                  </div>
+              )
+          }
+          {
+              searchType === 'taxpayerName' && (
+                  <div className="w-full flex flex-col gap-2">
+                      <div className="flex flex-col gap-1">
+                          <InputLabel value="Taxpayer Name" />
+                          <TextInput 
+                              id="search_tin"
+                              type="text"
+                              name="search_tin"
+                              value={taxpayerName || ''}
+                              className="w-full box-border h-11"
+                              autoComplete="username"
+                              isFocused={true}
+                              onChange={(e) => setTaxpayerName(e.target.value)}
+                              placeholder="ABC XYZ"
+                          />
+                      </div>
+                  </div>
+              )
+          }
+          {
+              searchType === 'idType' && (
+                  <div className="w-full flex flex-col gap-2">
+                      <Dropdown 
+                          value={idType}
+                          onChange={(e) => setIdType(e.value)}
+                          options={[
+                              { label: 'NRIC', value: 'NRIC' },
+                              { label: 'Passport', value: 'PASSPORT' },
+                              { label: 'BRN', value: 'BRN' },
+                              { label: 'ARMY ID', value: 'ARMY' }
+                          ]}
+                          placeholder="Select ID Type"
+                          className="w-full box-border h-11"
+                      />
+                      <div className="flex flex-col gap-1">
+                          <InputLabel value="BRN / NRIC / Passport number / Army number" />
+                          <TextInput 
+                              id="search_tin"
+                              type="text"
+                              name="search_tin"
+                              value={TINValue || ''}
+                              className="w-full box-border h-11"
+                              autoComplete="username"
+                              isFocused={true}
+                              onChange={(e) => setTINValue(e.target.value)}
+                              placeholder="Search by TIN No."
+                              disabled={idType === null}
+                          />
+                      </div>
+                  </div>
+              )
+          }
+          {
+            searchResult && (
+              <div className="w-full flex flex-col gap-8 justify-center items-center">
+                <span className="text-vulcan-900 font-bold text-lg">{searchResult}</span>
+                <Button size="md" className="w-full flex justify-center" onClick={copyTin}>Copy TIN</Button>
+              </div>
+            )
+          }
+      </Modal>
     </GuestLayout>
   )
 }

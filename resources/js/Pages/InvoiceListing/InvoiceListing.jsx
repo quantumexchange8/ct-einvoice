@@ -16,6 +16,7 @@ import { Menu } from "primereact/menu";
 import toast from "react-hot-toast";
 import Modal from "@/Components/Modal";
 import QRCode from "react-qrcode-logo";
+import TextInput from "@/Components/TextInput";
 
 export default function InvoiceListing() {
     
@@ -36,7 +37,8 @@ export default function InvoiceListing() {
         try {
             const response = await axios.get("/getInvoiceListing", {
                 params: {
-                    status: selectedStatus
+                    status: selectedStatus,
+                    search: searchTerm,
                 },
             });
 
@@ -51,7 +53,7 @@ export default function InvoiceListing() {
 
     useEffect(() => {
         fetchInvoices();
-    }, [selectedStatus]);
+    }, [selectedStatus, searchTerm]);
 
     const statusBodyTemplate = (rowData) => {
         return (
@@ -116,6 +118,16 @@ export default function InvoiceListing() {
                         </div>
                     )
                 }
+                {
+                    rowData.status === 'consolidated' && (
+                        <div className="flex items-center font-manrope not-italic font-bold tracking-[1.32px] uppercase leading-[18px] text-[11px] gap-2 py-1 px-2 border border-vulcan-300" >
+                            <div className="w-1.5 h-1.5 rounded-full bg-[#34C759]"></div>
+                            <div>
+                               Consolidated
+                            </div>
+                        </div>
+                    )
+                }
             </div>
         );
     };
@@ -130,7 +142,7 @@ export default function InvoiceListing() {
     };
 
     const handleTabChange = (index) => {
-        const statuses = ["all", "pending", "Submitted", "Valid", "Invalid"];
+        const statuses = ["all", "pending", "Submitted", "Valid", "Invalid", "consolidated"];
         setSelectedStatus(statuses[index]);
         setLoading(true);
     };
@@ -278,11 +290,11 @@ export default function InvoiceListing() {
                             </button> */}
                         </div>
                     </div>
-                    <div className="flex w-full">
+                    <div className="flex w-full justify-between items-center">
                         {/* Tabs for Invoice Status */}
-                        <TabGroup selectedIndex={["all", "pending", "Submitted", "Valid", "Invalid"].indexOf(selectedStatus)} onChange={handleTabChange}>
+                        <TabGroup selectedIndex={["all", "pending", "Submitted", "Valid", "Invalid", "consolidated"].indexOf(selectedStatus)} onChange={handleTabChange}>
                             <TabList className="flex gap-[2px] p-[3px] items-center justify-center bg-vulcan-100 rounded-sm">
-                                {["All", "Pending", "Submitted", "Valid", "Invalid"].map((label, index) => (
+                                {["All", "Pending", "Submitted", "Valid", "Invalid", "Consolidated"].map((label, index) => (
                                     <Tab
                                         key={index}
                                         className={({ selected }) =>
@@ -298,6 +310,15 @@ export default function InvoiceListing() {
                                 ))}
                             </TabList>
                         </TabGroup>
+
+                        <div>
+                            <TextInput 
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                placeholder="Search Invoice No"
+                                className="w-[300px] p-2 border border-vulcan-200 rounded-md box-border h-11"
+                            />
+                        </div>
                     </div>
                     {/* <div className="flex w-full items-center gap-4">
                         <div className="flex items-center justify-between w-full">

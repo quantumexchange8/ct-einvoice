@@ -62,6 +62,7 @@ class InvoiceController extends Controller
             // find existing einvoice
             $ExistInvoice = Invoice::where('merchant_id', $merchant_id)
                     ->where('invoice_no', $invoice_no)
+                    ->with('invoice_error')
                     ->first();
 
             // Existing invoice

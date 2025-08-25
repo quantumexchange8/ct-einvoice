@@ -28,6 +28,7 @@ Route::get('/downloadInvoice/{id}/download', [InvoiceController::class, 'downloa
     Route::get('/getMSICcode', [GlobalController::class, 'getMSICcode'])->name('getMSICcode');
     Route::get('/getCountries', [GlobalController::class, 'getCountries'])->name('getCountries');
     Route::get('/getStates', [GlobalController::class, 'getStates'])->name('getStates');
+    Route::post('/searchTIN', [GlobalController::class, 'searchTIN'])->name('searchTIN');
 
 Route::middleware('auth')->group(function () {
 

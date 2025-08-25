@@ -15,14 +15,23 @@ class InvoiceListingController extends Controller
     public function getInvoiceListing(Request $request)
     {
 
-        if ($request->status === 'all') {
-            $invoices = Invoice::with(['merchant', 'merchant.msic', 'invoice_lines'])->latest()->get();
-        } else {
-            $invoices = Invoice::where('status', $request->status)
-                ->with(['merchant'])
-                ->latest()
-                ->get();
+        $query = Invoice::with(['merchant', 'merchant.msic', 'invoice_lines']);
+
+        // Filter by status
+        if ($request->status !== 'all') {
+            $query->where('status', $request->status);
         }
+
+        // Filter by search
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('invoice_no', 'like', "%{$search}%");
+            });
+        }
+
+        $invoices = $query->latest()->get();
 
         return response()->json($invoices);
     }

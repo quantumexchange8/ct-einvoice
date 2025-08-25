@@ -12,11 +12,12 @@ import Business from "./Partials/Business";
 import { formatDateDMY } from "@/Composables";
 import Button from "@/Components/Button";
 import { Calendar } from "primereact/calendar";
-import { ClearInputIcon } from "@/Components/Outline";
+import { ClearInputIcon, SearchIcon, SearchIdIcon } from "@/Components/Outline";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import Checkbox from "@/Components/Checkbox";
 import { InputNumber } from "primereact/inputnumber";
 import toast from "react-hot-toast";
+import Modal from "@/Components/Modal";
 
 export default function Einvoice() {
 
@@ -32,7 +33,13 @@ export default function Einvoice() {
     const [getStates, setGetStates] = useState([]);
     const [selectedid_type, setSelectedid_type] = useState(null);
     const [activeTab, setActiveTab] = useState("Personal");
-    const [enabled, setEnabled] = useState(false)
+    const [enabled, setEnabled] = useState(false);
+    const [openSearchTIN, setOpenSearchTIN] = useState(false);
+    const [searchType, setSearchType] = useState(null);
+    const [taxpayerName, setTaxpayerName] = useState(null);
+    const [idType, setIdType] = useState(null);
+    const [TINValue, setTINValue] = useState(null);
+    const [loadingSearchTIN, setLoadingSearchTIN] = useState(false);
 
     const fetchCountry = async () => {
         try {
@@ -189,6 +196,43 @@ export default function Einvoice() {
         })
     }
 
+    const closeSearch = () => {
+        setSearchType(null);
+        setIdType(null);
+        setTINValue(null);
+        setTaxpayerName(null);
+        setOpenSearchTIN(false);
+    }
+
+    const returnSearch = () => {
+        setSearchType(null);
+        setIdType(null);
+        setTaxpayerName(null);
+        setTINValue(null);
+    }
+
+    const search = async () => {
+        // setLoadingSearchTIN(true);
+        // console.log('clicked')
+
+        // try {
+        //     const response = await axios.post('/searchTIN', {
+        //         searchType: searchType,
+        //         taxpayerName: taxpayerName,
+        //         idType: idType,
+        //         TINValue: TINValue,
+        //         merchant_id: TINValue,
+        //     })
+
+        //     console.log(response);
+
+        // } catch (error) {
+        //     console.error('Error searching:', error);
+        // } finally {
+        //     setLoadingSearchTIN(false);
+        // }
+    }
+
     return (
         <GuestLayout>
             <Head title="E-Invoice" />
@@ -249,7 +293,16 @@ export default function Einvoice() {
                                 }
                             </div>
                         </div>
-                        <div></div>
+                        <div className="flex flex-col gap-1">
+                            <div className="flex items-center gap-1">
+                                <InputLabel htmlFor="date_issued" value="Search TIN" className="text-vulcan-500" />
+                            </div>
+                            <div className="flex ">
+                                <Button size="md" onClick={() => setOpenSearchTIN(!openSearchTIN)} className="w-full flex justify-center">
+                                    Search TIN
+                                </Button>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -352,6 +405,98 @@ export default function Einvoice() {
                     </div>
                 </div>
             </div>
+
+            <Modal
+                show={openSearchTIN}
+                onClose={closeSearch}
+                header="Search TIN"
+                maxWidth="md"
+                footer={
+                    <div className="flex justify-end gap-5 ">
+                        {
+                            searchType === null ? (
+                                <Button variant="redOutline" size="md" onClick={closeSearch}>Close</Button>
+                            ) : (
+                                <>
+                                    <Button variant="redOutline" size="md" onClick={returnSearch}>Return</Button>
+                                    <Button size="md" onClick={search}>Search</Button>
+                                </>
+                            )
+                        }
+                        
+                        
+                    </div>
+                }
+            >
+                {
+                    searchType === null && (
+                        <div className="w-full flex items-center gap-5">
+                            <div className="border border-vulcan-50 bg-white p-3 w-full flex flex-col gap-2 items-center justify-center cursor-pointer hover:bg-vulcan-50 rounded-lg" onClick={() => setSearchType('taxpayerName')}>
+                                <SearchIcon />
+                                <span className="text-sm font-bold">Search by Taxpayer Name</span>
+                                
+                            </div>
+                            <div className="border border-vulcan-50 bg-white p-3 w-full flex flex-col gap-2 items-center justify-center cursor-pointer hover:bg-vulcan-50 rounded-lg" onClick={() => setSearchType('idType')}>
+                                <SearchIdIcon className='w-10 h-10' />
+                                <span className="text-sm font-bold">Search by ID Type</span>
+                            </div>
+                        </div>
+                    )
+                }
+                {
+                    searchType === 'taxpayerName' && (
+                        <div className="w-full flex flex-col gap-2">
+                            <div className="flex flex-col gap-1">
+                                <InputLabel value="Taxpayer Name" />
+                                <TextInput 
+                                    id="search_tin"
+                                    type="text"
+                                    name="search_tin"
+                                    value={taxpayerName || ''}
+                                    className="w-full box-border h-11"
+                                    autoComplete="username"
+                                    isFocused={true}
+                                    onChange={(e) => setTaxpayerName(e.target.value)}
+                                    placeholder="ABC XYZ"
+                                />
+                            </div>
+                        </div>
+                    )
+                }
+                {
+                    searchType === 'idType' && (
+                        <div className="w-full flex flex-col gap-2">
+                            <Dropdown 
+                                value={idType}
+                                onChange={(e) => setIdType(e.value)}
+                                options={[
+                                    { label: 'NRIC', value: 'NRIC' },
+                                    { label: 'Passport', value: 'PASSPORT' },
+                                    { label: 'BRN', value: 'BRN' },
+                                    { label: 'ARMY ID', value: 'ARMY' }
+                                ]}
+                                placeholder="Select ID Type"
+                                className="w-full box-border h-11"
+                            />
+                            <div className="flex flex-col gap-1">
+                                <InputLabel value="BRN / NRIC / Passport number / Army number" />
+                                <TextInput 
+                                    id="search_tin"
+                                    type="text"
+                                    name="search_tin"
+                                    value={TINValue}
+                                    className="w-full box-border h-11"
+                                    autoComplete="username"
+                                    isFocused={true}
+                                    onChange={(e) => setTINValue(e.target.value)}
+                                    placeholder="Search by TIN No."
+                                    disabled={idType === null}
+                                />
+                            </div>
+                        </div>
+                    )
+                }
+            </Modal>
         </GuestLayout>
     )
 }
