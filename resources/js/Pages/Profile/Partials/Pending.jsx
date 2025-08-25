@@ -20,8 +20,6 @@ export default function Pending({ invoice }) {
         post(route('resubmit'));
     }
 
-    console.log('invoice.invoice_error', invoice.invoice_error)
-
     return (
         <GuestLayout class>
             <div className="flex flex-col w-full items-start justify-center self-stretch pb-[75px] bg-white"> 

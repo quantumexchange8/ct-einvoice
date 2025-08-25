@@ -263,8 +263,6 @@ export default function InvoiceListing() {
         )
     }
 
-    console.log('selectedInvoice', selectedInvoice);
-
     return (
         <AuthenticatedLayout>
             <div className="flex w-full py-5 pr-[23px] pl-6 flex-col items-start">

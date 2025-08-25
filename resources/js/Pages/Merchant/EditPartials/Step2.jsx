@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 
 export default function Step2({ data, setData }) {
-    console.log(data);
 
     const [classifications, setClassifications] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
