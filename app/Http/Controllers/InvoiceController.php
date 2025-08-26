@@ -6,6 +6,7 @@ use App\Http\Requests\InvoiceRequest;
 use App\Jobs\ProcessInvoiceSubmission;
 use App\Models\Country;
 use App\Models\Invoice;
+use App\Models\InvoiceLog;
 use App\Models\Merchant;
 use App\Models\MSICcode;
 use App\Models\PayoutConfig;
@@ -377,6 +378,14 @@ class InvoiceController extends Controller
                     'status' => $updateMerchantStatus->status()
                 ]);
             }
+
+            InvoiceLog::create([
+                'merchant_id' => $merchantId,
+                'invoice_no' => $request->invoice_no,
+                'invoice_type' => 'invoice',
+                'invoice_no_json' => $request->invoice_no,
+                'submit_date' => Carbon::now(),
+            ]);
         }
 
         return redirect()->back();

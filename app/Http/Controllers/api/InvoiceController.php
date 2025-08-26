@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Models\Invoice;
 use App\Models\InvoiceLineItem;
+use App\Models\InvoiceLog;
 use App\Models\Merchant;
 use App\Models\PayoutConfig;
 use Carbon\Carbon;
@@ -181,7 +182,7 @@ class InvoiceController extends Controller
             $findInvoice->save();
         }
 
-        Invoice::create([
+        InvoiceLog::create([
             'merchant_id' => $merchants->id,
             'invoice_type' => 'consolidated',
             'invoice_no_json' => $invoices,
