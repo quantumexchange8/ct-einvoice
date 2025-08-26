@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceLineItem;
 use App\Models\Merchant;
 use App\Models\PayoutConfig;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
@@ -179,6 +180,13 @@ class InvoiceController extends Controller
             $findInvoice->invoice_status = 'consolidated';
             $findInvoice->save();
         }
+
+        Invoice::create([
+            'merchant_id' => $merchants->id,
+            'invoice_type' => 'consolidated',
+            'invoice_no_json' => $invoices,
+            'submit_date' => Carbon::now(),
+        ]);
 
         return response()->json([
             'message' => 'Invoice consolidated',

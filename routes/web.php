@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/invoice-listing', [InvoiceListingController::class, 'invoiceListing'])->name('invoice-listing');
     Route::get('/getInvoiceListing', [InvoiceListingController::class, 'getInvoiceListing'])->name('getInvoiceListing');
+    Route::get('/getInvoiceStatus', [InvoiceListingController::class, 'getInvoiceStatus'])->name('getInvoiceStatus');
 
     
     Route::get('/getMerchants', [MerchantController::class, 'getMerchants'])->name('getMerchants');

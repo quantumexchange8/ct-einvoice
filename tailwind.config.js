@@ -107,6 +107,7 @@ export default {
             boxShadow: {
                 'card': '0px 1px 15.4px 0px rgba(26, 29, 33, 0.05)',
                 'button': '0px 4px 16.5px 0px rgba(25, 25, 25, 0.11), 0px 1px 8.9px 0px rgba(0, 0, 0, 0.16)',
+                'statistic': '1px 1px 1px 0 rgba(105, 105, 105, 0.25) inset'
             }
         },
         fontSize: {

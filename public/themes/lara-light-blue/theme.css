@@ -406,11 +406,12 @@
   padding: 0.5rem;
 }
 .p-datepicker table td > span {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   transition: box-shadow 0.2s;
   border: 1px solid transparent;
+  font-size: 14px;
 }
 .p-datepicker table td > span.p-highlight {
   color: #FFF;
@@ -835,6 +836,7 @@
   background: transparent;
   transition: box-shadow 0.2s;
   border-radius: 0;
+  font-size: 14px;
 }
 .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
   color: #333741;

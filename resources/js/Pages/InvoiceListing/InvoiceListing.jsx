@@ -17,6 +17,8 @@ import toast from "react-hot-toast";
 import Modal from "@/Components/Modal";
 import QRCode from "react-qrcode-logo";
 import TextInput from "@/Components/TextInput";
+import { Dropdown } from "primereact/dropdown";
+import { XCircleIcon } from "@heroicons/react/16/solid";
 
 export default function InvoiceListing() {
     
@@ -31,7 +33,10 @@ export default function InvoiceListing() {
     const [showPreview, setShowPreview] = useState(false);
     const [isPreviewOpen, setIsPreviewOpen] = useState(false); 
     const [configurations, setConfigurations] = useState(null);
-
+    const [merchantListing, setMerchantListing] = useState([]);
+    const [filterMerchant, setFilterMerchant] = useState(null);
+    const [filterDates, setFilterDates] = useState(null);
+    
     const fetchInvoices = async () => {
 
         try {
@@ -39,6 +44,8 @@ export default function InvoiceListing() {
                 params: {
                     status: selectedStatus,
                     search: searchTerm,
+                    merchant: filterMerchant,
+                    dates: filterDates,
                 },
             });
 
@@ -51,9 +58,27 @@ export default function InvoiceListing() {
         }
     };
 
+    const fetchMerchantListing = async () => {
+
+        try {
+            const response = await axios.get("/getMerchants");
+
+            setMerchantListing(response.data);
+
+        } catch (error) {
+            console.error("Error fetching merchant:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         fetchInvoices();
-    }, [selectedStatus, searchTerm]);
+    }, [selectedStatus, searchTerm, filterMerchant, filterDates]);
+
+    useEffect(() => {
+        fetchMerchantListing();
+    }, []);
 
     const statusBodyTemplate = (rowData) => {
         return (
@@ -288,34 +313,83 @@ export default function InvoiceListing() {
                             </button> */}
                         </div>
                     </div>
-                    <div className="flex w-full justify-between items-center">
+                    <div className="flex w-full items-center">
                         {/* Tabs for Invoice Status */}
-                        <TabGroup selectedIndex={["all", "pending", "Submitted", "Valid", "Invalid", "consolidated"].indexOf(selectedStatus)} onChange={handleTabChange}>
-                            <TabList className="flex gap-[2px] p-[3px] items-center justify-center bg-vulcan-100 rounded-sm">
-                                {["All", "Pending", "Submitted", "Valid", "Invalid", "Consolidated"].map((label, index) => (
-                                    <Tab
-                                        key={index}
-                                        className={({ selected }) =>
-                                            `flex px-3 py-[5px] text-xs rounded-sm ${
-                                                selected
-                                                    ? "bg-white font-bold text-black border-none shadow-sm outline-none" // No border on selected tab
-                                                    : "text-vulcan-950 font-normal hover:bg-gray-200"
-                                            }`
-                                        }
-                                    >
-                                        {label}
-                                    </Tab>
-                                ))}
-                            </TabList>
+                        <TabGroup className='overflow-auto' selectedIndex={["all", "pending", "Submitted", "Valid", "Invalid", "consolidated"].indexOf(selectedStatus)} onChange={handleTabChange}>
+                            <div className="w-full overflow-x-auto">
+                                <TabList className="flex gap-[2px] p-[3px] items-center justify-center bg-vulcan-50 rounded-sm min-w-max ">
+                                    {["All", "Pending", "Submitted", "Valid", "Invalid", "Consolidated"].map((label, index) => (
+                                        <Tab
+                                            key={index}
+                                            className={({ selected }) =>
+                                                `flex px-3 py-[5px] text-xs rounded-sm ${
+                                                    selected
+                                                        ? "bg-white font-bold text-black border-none shadow-sm outline-none" // No border on selected tab
+                                                        : "text-vulcan-950 font-normal hover:bg-gray-200"
+                                                }`
+                                            }
+                                        >
+                                            {label}
+                                        </Tab>
+                                    ))}
+                                </TabList>
+                            </div>
                         </TabGroup>
-
-                        <div>
+                    </div>
+                    <div className="flex flex-col md:flex-row items-center gap-3 ">
+                        <div className="w-full md:w-auto">
                             <TextInput 
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 placeholder="Search Invoice No"
                                 className="w-[300px] p-2 border border-vulcan-200 rounded-md box-border h-11"
                             />
+                        </div>
+                        <div className="relative w-full md:w-44">
+                            <Dropdown 
+                                value={filterMerchant}
+                                onChange={(e) => setFilterMerchant(e.value)}
+                                options={merchantListing.map((item) => (
+                                    { name: item.name, value: item.merchant_uid}
+                                ))}
+                                optionLabel="name"
+                                optionValue="value"
+                                placeholder="Select ID Type"
+                                className="w-full box-border h-11 text-sm"
+                            />
+                            {
+                                filterMerchant && (
+                                    <button 
+                                        type="button"
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+                                        onClick={() => setFilterMerchant(null)}
+                                    >
+                                        <XCircleIcon className="w-4 h-4" />
+                                    </button>
+                                )
+                            }
+                        </div>
+                        <div className="relative w-full md:w-60">
+                            <Calendar
+                                value={filterDates}
+                                onChange={(e) => setFilterDates(e.value)}
+                                selectionMode="range"
+                                readOnlyInput
+                                hideOnRangeSelection
+                                placeholder="Filter Dates"
+                                className="h-11 w-full box-border"
+                            />
+                            {
+                                filterDates && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setFilterDates(null)}
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+                                    >
+                                        <XCircleIcon className="w-4 h-4" />
+                                    </button>
+                                )
+                            }
                         </div>
                     </div>
                     {/* <div className="flex w-full items-center gap-4">

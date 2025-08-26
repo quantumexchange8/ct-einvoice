@@ -313,6 +313,35 @@ const SearchIdIcon = ({ className }) => {
     );
 }
 
+const DashSubmittedIcon = ({ className }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="22" viewBox="0 0 18 22" id="file">
+            <g id="Page-1" fill="none" fillRule="evenodd" stroke="none" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1">
+                <g id="Artboard" stroke="#0307ff" strokeWidth="2" transform="translate(-1442 -1629)">
+                <g id="file-text" transform="translate(1443 1630)">
+                    <path id="Shape" d="M10 0H2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6l-6-6z"></path>
+                    <path id="Shape" d="M10 0v6h6M12 11H4M12 15H4M6 7H4"></path>
+                </g>
+                </g>
+            </g>
+        </svg>
+    );
+}
+
+const DashSuccessIcon = ({ className }) => {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" className={className} width="256" height="256" id="success">
+            <linearGradient id="a" x1="127.999" x2="127.999" y1="67.564" y2="224.484" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#5ae050"></stop>
+                <stop offset="1" stop-color="#40d437"></stop>
+            </linearGradient>
+            <path fill="url(#a)" fill-rule="evenodd" d="M27.364 99.627c3.874-4.29 10.742-4.86 15.268-1.26l52.917 42.091c4.526 3.601 11.638 3.27 15.81-.732L213.38 41.82c4.171-4.002 10.887-3.891 14.92.254l24.74 25.404c4.036 4.139 3.931 10.809-.236 14.814L116.078 213.814c-4.166 4.008-11.336 4.417-15.932.911L3.873 141.291c-4.595-3.507-5.188-9.883-1.313-14.179l24.804-27.485z" clip-rule="evenodd"></path>
+            <path fill="#2C2C2C" fill-rule="evenodd" d="M252.804 77.914 116.078 209.437c-4.166 4.008-11.336 4.417-15.932.91L3.873 136.912C1.97 135.46.766 133.515.269 131.429c-.854 3.563.395 7.413 3.604 9.862l96.273 73.435c4.596 3.506 11.766 3.097 15.932-.911L252.804 82.292c2.69-2.586 3.679-6.283 2.959-9.692a10.363 10.363 0 0 1-2.959 5.314z" clip-rule="evenodd" opacity=".2"></path>
+        </svg>
+    );
+}
+
+
 
 
 export {
@@ -347,4 +376,6 @@ export {
     FailIcon,
     SearchIcon,
     SearchIdIcon,
+    DashSubmittedIcon,
+    DashSuccessIcon,
 }
