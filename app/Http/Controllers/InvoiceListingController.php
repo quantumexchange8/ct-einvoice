@@ -5,6 +5,7 @@ use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Configuration;
+use App\Models\InvoiceLog;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -63,20 +64,51 @@ class InvoiceListingController extends Controller
         return response()->json($invoices);
     }
 
-    public function getInvoiceStatus()
+    public function getInvoiceStatus(Request $request)
     {
+        $monthMap = [
+            'jan' => 1, 'feb' => 2, 'mar' => 3, 'april' => 4,
+            'may' => 5, 'jun' => 6, 'july' => 7, 'aug' => 8,
+            'sep' => 9, 'oct' => 10, 'nov' => 11, 'dec' => 12,
+        ];
+
+        $month = $monthMap[strtolower($request->selectedMonth)] ?? null;
+
+        if (!$month) {
+            return response()->json(['error' => 'Invalid month'], 422);
+        }
+
         $statuses = Invoice::select('invoice_status', DB::raw('count(*) as total'))
-            ->whereIn('invoice_status', ['pending', 'consolidated', 'Submitted', 'Valid', 'Invalid'])
+            ->whereMonth('updated_at', $month)
+            ->whereIn('invoice_status', ['pending', 'Submitted', 'Valid', 'Invalid'])
             ->groupBy('invoice_status')
             ->pluck('total', 'invoice_status');
 
+        $consolidate = InvoiceLog::whereMonth('updated_at', $month)->count();
+
         return response()->json([
             'pending'      => $statuses->get('pending', 0),
-            'consolidated' => $statuses->get('consolidated', 0),
+            'consolidated' => $consolidate,
             'submitted'    => $statuses->get('Submitted', 0),
             'valid'        => $statuses->get('Valid', 0),
             'invalid'      => $statuses->get('Invalid', 0),
         ]);
     }
+
+    public function getInvoiceChartData(Request $request)
+    {
+        $year = $request->selectedYear; // current year
+
+        // Fetch only invoices from the start of the year until today
+        $data = Invoice::selectRaw('MONTH(created_at) as month, status, COUNT(*) as total')
+            ->whereYear('created_at', $year)
+            ->whereIn('status', ['Valid', 'Invalid']) // only these statuses
+            ->groupBy('month', 'status')
+            ->orderBy('month')
+            ->get();
+
+        return response()->json($data);
+    }
+
     
 }
