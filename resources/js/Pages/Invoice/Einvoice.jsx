@@ -236,6 +236,15 @@ export default function Einvoice() {
         }
     }
 
+    const copyTin = () => {
+      navigator.clipboard.writeText(searchResult);
+      toast.success('Copied TIN to clipboard', {
+          title: 'Copied TIN to clipboard',
+          duration: 3000,
+          variant: 'variant3',
+      });
+  }
+  
     return (
         <GuestLayout>
             <Head title="E-Invoice" />

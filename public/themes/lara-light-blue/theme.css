@@ -839,6 +839,8 @@
   transition: box-shadow 0.2s;
   border-radius: 0;
   font-size: 14px;
+}
+.p-dropdown-panel .p-dropdown-items .p-dropdown-item .p-dropdown-item-label {
   max-width: 320px;
 }
 .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {

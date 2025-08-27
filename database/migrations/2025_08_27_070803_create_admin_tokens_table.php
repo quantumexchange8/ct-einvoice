@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('admin_tokens', function (Blueprint $table) {
             $table->id();
-            $table->string('token');
+            $table->longText('token');
             $table->dateTime('expired_at');
             $table->timestamps();
         });
