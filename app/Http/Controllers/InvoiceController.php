@@ -67,24 +67,29 @@ class InvoiceController extends Controller
                     ->first();
 
             // Existing invoice
-            if ($ExistInvoice->status === 'pending') {
+            if ($ExistInvoice) {
+                if ($ExistInvoice->status === 'pending') {
                 
-                return Inertia::render('Profile/Invoice', [
-                    'invoice_no' => $invoice_no,
-                    'merchant_id' => $merchant_id,
-                    'date_issued' => $date_issued,
-                    'amount' => $amount,
-                    'ExistInvoice' => $ExistInvoice,
-                ]);
+                    return Inertia::render('Profile/Invoice', [
+                        'invoice_no' => $invoice_no,
+                        'merchant_id' => $merchant_id,
+                        'date_issued' => $date_issued,
+                        'amount' => $amount,
+                        'ExistInvoice' => $ExistInvoice,
+                    ]);
+                } else {
+                    return Inertia::render('Profile/Partials/Pending', [
+                        'invoice_no' => $invoice_no,
+                        'merchant_id' => $merchant_id,
+                        'date_issued' => $date_issued,
+                        'amount' => $amount,
+                        'invoice' => $ExistInvoice,
+                    ]);
+                }
             } else {
-                return Inertia::render('Profile/Partials/Pending', [
-                    'invoice_no' => $invoice_no,
-                    'merchant_id' => $merchant_id,
-                    'date_issued' => $date_issued,
-                    'amount' => $amount,
-                    'invoice' => $ExistInvoice,
-                ]);
+                return Inertia::render('Invoice/Einvoice');
             }
+            
         }
     }
 
