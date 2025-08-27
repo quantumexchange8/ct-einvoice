@@ -102,7 +102,7 @@ class CheckSubmittedInvoice extends Command
                 'callback_type' => 'update-status'
             ];
 
-            $updateCallback = Http::post($payoutConfig->url . '/api/client-submitted-einvoice', $params);
+            $updateCallback = Http::post($payoutConfig->url . 'api/client-submitted-einvoice', $params);
             Log::info('update callback to merchant', [
                 'status' => $updateCallback->status()
             ]);
