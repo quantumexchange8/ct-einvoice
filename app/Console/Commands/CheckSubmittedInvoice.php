@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Invoice;
 use App\Models\InvoiceError;
 use App\Models\Merchant;
+use App\Models\PayoutConfig;
 use App\Models\Token;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -59,6 +60,7 @@ class CheckSubmittedInvoice extends Command
     {
         $checkToken = Token::where('merchant_id', $invoice->merchant_id)->latest()->first();
         $merchantDetail = Merchant::find($invoice->merchant_id);
+        $payoutConfig = PayoutConfig::where('merchant_id', $invoice->merchant_id)->first();
 
         $token = $this->getValidToken($merchantDetail, $checkToken);
 
@@ -86,6 +88,24 @@ class CheckSubmittedInvoice extends Command
             $invoice->remark = $submiturl['documentStatusReason'] ?? null;
             $invoice->invoice_datetime = isset($submiturl['dateTimeValidated'])? Carbon::parse($submiturl['dateTimeValidated'])->format('Y-m-d H:i:s'): null;
             $invoice->save();
+
+            $eCode = md5($invoice->invoice_no . $payoutConfig->merchant_id . $payoutConfig->secret_key);
+            $params = [
+                'eCode' => $eCode,
+                'invoice_no' => $invoice->invoice_no,
+                'submission_uuid' => $invoice->submission_uuid,
+                'invoice_uuid' => $invoice->invoice_uuid,
+                'longId' => $invoice->longId,
+                'status' => $invoice->invoice_status,
+                'invoice_datetime' => $invoice->invoice_datetime,
+                'submission_date' => $invoice->issue_date,
+                'callback_type' => 'update-status'
+            ];
+
+            $updateCallback = Http::post($payoutConfig->url . '/api/client-submitted-einvoice', $params);
+            Log::info('update callback to merchant', [
+                'status' => $updateCallback->status()
+            ]);
 
             if ($submiturl['status'] === 'Invalid') {
                 $invoiceId = $invoice->id; // FK reference to your invoices table
