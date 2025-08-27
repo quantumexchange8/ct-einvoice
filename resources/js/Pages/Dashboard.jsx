@@ -172,7 +172,7 @@ export default function Dashboard() {
                 {/* statistic */}
                 <div className='flex flex-col gap-3'>
                     <div className='flex items-center justify-between'>
-                        <span className='font-Lora text-xl font-bold'>{monthArr.find(m => m.value === selectedMonth)?.name} - Total Submission this</span>
+                        <span className='font-Lora text-xl font-bold'>Total Submission this - {monthArr.find(m => m.value === selectedMonth)?.name}</span>
                         <Dropdown 
                             value={selectedMonth}
                             onChange={(e) => setSelectedMonth(e.value)} 
@@ -232,7 +232,7 @@ export default function Dashboard() {
                 
                 <div className='flex flex-col gap-1'>
                     <div className='w-full flex items-center justify-between'>
-                        <span className='font-Lora text-xl font-bold'>{selectedYear} - E-Invoice Status</span>
+                        <span className='font-Lora text-xl font-bold'>E-Invoice Status - {selectedYear}</span>
                         <Dropdown 
                             value={selectedYear}
                             onChange={(e) => setSelectedYear(e.value)} 

@@ -383,7 +383,9 @@ class InvoiceController extends Controller
                 'merchant_id' => $merchantId,
                 'invoice_no' => $request->invoice_no,
                 'invoice_type' => 'invoice',
-                'invoice_no_json' => $request->invoice_no,
+                'invoice_no_json' => json_encode([
+                    'invoice_no' => $request->invoice_no,
+                ]),
                 'submit_date' => Carbon::now(),
             ]);
         }
