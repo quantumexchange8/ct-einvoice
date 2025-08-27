@@ -158,8 +158,8 @@ export default function InvoiceListing() {
     };
     
  
-  const [first, setFirst] = useState(0);
-  const [rows, setRows] = useState(10);
+    const [first, setFirst] = useState(0);
+    const [rows, setRows] = useState(10);
 
     const onPageChange = (event) => {
         setFirst(event.first);

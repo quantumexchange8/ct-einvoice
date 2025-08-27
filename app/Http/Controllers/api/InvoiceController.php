@@ -185,7 +185,9 @@ class InvoiceController extends Controller
         InvoiceLog::create([
             'merchant_id' => $merchants->id,
             'invoice_type' => 'consolidated',
-            'invoice_no_json' => $invoices,
+            'invoice_no_json' => json_encode([
+                'invoice_no' => $invoices,
+            ]),
             'submit_date' => Carbon::now(),
         ]);
 
