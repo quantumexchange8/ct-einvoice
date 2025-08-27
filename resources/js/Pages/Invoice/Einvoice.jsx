@@ -40,6 +40,7 @@ export default function Einvoice() {
     const [idType, setIdType] = useState(null);
     const [TINValue, setTINValue] = useState(null);
     const [loadingSearchTIN, setLoadingSearchTIN] = useState(false);
+    const [searchResult, setSearchResult] = useState(null);
 
     const fetchCountry = async () => {
         try {
@@ -212,25 +213,27 @@ export default function Einvoice() {
     }
 
     const search = async () => {
-        // setLoadingSearchTIN(true);
-        // console.log('clicked')
+        setLoadingSearchTIN(true);
 
-        // try {
-        //     const response = await axios.post('/searchTIN', {
-        //         searchType: searchType,
-        //         taxpayerName: taxpayerName,
-        //         idType: idType,
-        //         TINValue: TINValue,
-        //         merchant_id: TINValue,
-        //     })
+        try {
+            const response = await axios.post('/searchTIN', {
+                searchType: searchType,
+                taxpayerName: taxpayerName,
+                idType: idType,
+                TINValue: TINValue,
+            })
 
-        //     console.log(response);
+            setSearchResult(response.data);
+            setSearchType(null);
+            setIdType(null);
+            setTaxpayerName(null);
+            setTINValue(null);
 
-        // } catch (error) {
-        //     console.error('Error searching:', error);
-        // } finally {
-        //     setLoadingSearchTIN(false);
-        // }
+        } catch (error) {
+            console.error('Error searching:', error);
+        } finally {
+            setLoadingSearchTIN(false);
+        }
     }
 
     return (
@@ -419,7 +422,7 @@ export default function Einvoice() {
                             ) : (
                                 <>
                                     <Button variant="redOutline" size="md" onClick={returnSearch}>Return</Button>
-                                    <Button size="md" onClick={search}>Search</Button>
+                                    <Button size="md" disabled={loadingSearchTIN} onClick={search}>Search</Button>
                                 </>
                             )
                         }
@@ -429,8 +432,8 @@ export default function Einvoice() {
                 }
             >
                 {
-                    searchType === null && (
-                        <div className="w-full flex items-center gap-5">
+                    (searchType === null && searchResult === null) && (
+                        <div className="w-full flex flex-col md:flex-row items-center gap-5">
                             <div className="border border-vulcan-50 bg-white p-3 w-full flex flex-col gap-2 items-center justify-center cursor-pointer hover:bg-vulcan-50 rounded-lg" onClick={() => setSearchType('taxpayerName')}>
                                 <SearchIcon />
                                 <span className="text-sm font-bold">Search by Taxpayer Name</span>
@@ -484,7 +487,7 @@ export default function Einvoice() {
                                     id="search_tin"
                                     type="text"
                                     name="search_tin"
-                                    value={TINValue}
+                                    value={TINValue || ''}
                                     className="w-full box-border h-11"
                                     autoComplete="username"
                                     isFocused={true}
@@ -495,6 +498,14 @@ export default function Einvoice() {
                             </div>
                         </div>
                     )
+                }
+                {
+                searchResult && (
+                    <div className="w-full flex flex-col gap-8 justify-center items-center">
+                    <span className="text-vulcan-900 font-bold text-lg">{searchResult}</span>
+                    <Button size="md" className="w-full flex justify-center" onClick={copyTin}>Copy TIN</Button>
+                    </div>
+                )
                 }
             </Modal>
         </GuestLayout>

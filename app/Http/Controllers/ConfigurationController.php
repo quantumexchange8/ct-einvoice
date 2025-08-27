@@ -12,7 +12,11 @@ class ConfigurationController extends Controller
 {
     public function Configuration()
     {
-        return Inertia::render('Configuration/Configuration');
+        $adminDetails = Configuration::first();
+
+        return Inertia::render('Configuration/Configuration', [
+            'adminDetails' => $adminDetails,
+        ]);
     }
 
     public function getConfiguration()
@@ -31,22 +35,23 @@ class ConfigurationController extends Controller
   
         // dd($request->all());
         $validated = $request->validate([
-            'invoicePrefix' => 'nullable|string|max:255',
-            'invoice' => 'nullable|string|max:255',
-            'companyName' => 'required|string|max:255',
-            'tin' => 'nullable|string|max:255',
-            'registration' => 'nullable|string|max:255',
-            'MSIC' => 'nullable|string|max:255',
-            'phone' => 'nullable|string|max:255',
-            'email' => 'required|email',
+            'company_name' => 'required|string|max:255',
+            'tin' => 'required|string|max:255',
+            'registration' => 'required|string|max:255',
             'sst' => 'nullable|string|max:255',
+            'irbm_client_id' => 'required|string|max:255',
+            'irbm_client_key' => 'required|string|max:255',
+            'phone' => 'required',
+            'email' => 'required|email',
+            'MSIC' => 'required|string|max:255',
+            'defaultClassification' => 'required|string|max:255',
             'businessActivity' => 'nullable|string|max:255',
-            'address1' => 'nullable|string|max:255',
+            'address1' => 'required|string|max:255',
             'address2' => 'nullable|string|max:255',
-            'poscode' => 'nullable|string|max:255',
-            'area' => 'nullable|string|max:255',
-            'state' => 'nullable|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'area' => 'required|string|max:255',
+            'poscode' => 'required',
+            'state' => 'required',
+            'country' => 'required'
         ]);
        
 
@@ -54,41 +59,43 @@ class ConfigurationController extends Controller
 
         if ($configuration) {
             $configuration->update([
-                'invoicePrefix' =>  $request->invoicePrefix,
-                'invoice' =>  $request->invoice,
-                 'image' =>  $request->image,
-                'companyName' =>  $request->companyName,
-                'tin' =>  $request->tin,
-                'registration' =>  $request->registration,
-                'MSIC' =>  $request->MSIC,
-                'phone' =>  $request->phone,
-                'email' =>  $request->email,
-                'sst' =>  $request->sst,
-                'businessActivity' =>  $request->businessActivity,
-                'address1' =>  $request->address1,
-                'address2' =>  $request->address2,
-                'poscode' =>  $request->poscode,
-                'area' =>  $request->area,
-                'state' =>  $request->state,
+                'companyName' => $request->company_name,
+                'tin' => $request->tin,
+                'registration' => $request->registration,
+                'sst' => $request->sst,
+                'irbm_client_id' => $request->irbm_client_id,
+                'irbm_client_key' => $request->irbm_client_key,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'MSIC' => $request->MSIC,
+                'defaultClassification' => $request->defaultClassification,
+                'businessActivity' => $request->businessActivity,
+                'address1' => $request->address1,
+                'address2' => $request->address2,
+                'area' => $request->area,
+                'poscode' => $request->poscode,
+                'state' => $request->state,
+                'country' => $request->country
             ]);
         } else {
             $configuration = Configuration::create([
-                'invoicePrefix' =>  $request->invoicePrefix,
-                'invoice' =>  $request->invoice,
-                'image' =>  $request->image,
-                'companyName' =>  $request->companyName,
-                'tin' =>  $request->tin,
-                'registration' =>  $request->registration,
-                'MSIC' =>  $request->MSIC,
-                'phone' =>  $request->phone,
-                'email' =>  $request->email,
-                'sst' =>  $request->sst,
-                'businessActivity' =>  $request->businessActivity,
-                'address1' =>  $request->address1,
-                'address2' =>  $request->address2,
-                'poscode' =>  $request->poscode,
-                'area' =>  $request->area,
-                'state' =>  $request->state,
+                'companyName' => $request->company_name,
+                'tin' => $request->tin,
+                'registration' => $request->registration,
+                'sst' => $request->sst,
+                'irbm_client_id' => $request->irbm_client_id,
+                'irbm_client_key' => $request->irbm_client_key,
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'MSIC' => $request->MSIC,
+                'defaultClassification' => $request->defaultClassification,
+                'businessActivity' => $request->businessActivity,
+                'address1' => $request->address1,
+                'address2' => $request->address2,
+                'area' => $request->area,
+                'poscode' => $request->poscode,
+                'state' => $request->state,
+                'country' => $request->country
             ]);
 
             $runningNumber = RunningNumber::create([
@@ -99,16 +106,11 @@ class ConfigurationController extends Controller
             ]);
         }
     // Handle image upload using Spatie
-    if ($request->hasFile('image')) {
-        $configuration->clearMediaCollection('configuration_image'); // Remove old image
-        $configuration->addMedia($request->file('image'))->toMediaCollection('configuration_images');
-    }
+    // if ($request->hasFile('image')) {
+    //     $configuration->clearMediaCollection('configuration_image'); // Remove old image
+    //     $configuration->addMedia($request->file('image'))->toMediaCollection('configuration_images');
+    // }
 
-    return response()->json([
-        'message' => 'Configuration saved successfully!',
-        'data' => $configuration->load('media')
-    ], 200);
-
-        return response()->json(['message' => 'Configuration saved successfully!', 'data' => $configuration], 200);
+        return redirect()->back();
     }
 }

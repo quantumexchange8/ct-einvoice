@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Configuration;
 use App\Models\InvoiceLog;
+use App\Models\Merchant;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -78,13 +79,25 @@ class InvoiceListingController extends Controller
             return response()->json(['error' => 'Invalid month'], 422);
         }
 
-        $statuses = Invoice::select('invoice_status', DB::raw('count(*) as total'))
+        $query = Invoice::select('invoice_status', DB::raw('count(*) as total'))
             ->whereMonth('updated_at', $month)
-            ->whereIn('invoice_status', ['pending', 'Submitted', 'Valid', 'Invalid'])
-            ->groupBy('invoice_status')
+            ->whereIn('invoice_status', ['pending', 'Submitted', 'Valid', 'Invalid']);
+
+        $queryConsolidate = InvoiceLog::whereMonth('updated_at', $month);
+
+        // 🔑 Apply merchant filter if provided
+        if ($request->filled('filterMerchant')) {
+            $merchant = Merchant::where('merchant_uid', $request->filterMerchant)->first();
+            if ($merchant) {
+                $query->where('merchant_id', $merchant->id);
+                $queryConsolidate->where('merchant_id', $merchant->id);
+            }
+        }
+
+        $statuses = $query->groupBy('invoice_status')
             ->pluck('total', 'invoice_status');
 
-        $consolidate = InvoiceLog::whereMonth('updated_at', $month)->count();
+        $consolidate = $queryConsolidate->count();
 
         return response()->json([
             'pending'      => $statuses->get('pending', 0),

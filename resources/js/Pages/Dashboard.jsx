@@ -1,6 +1,7 @@
 import Button from '@/Components/Button';
 import { DashSubmittedIcon, PendingIcon, SuccessIcon } from '@/Components/Outline';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { XCircleIcon } from '@heroicons/react/16/solid';
 import { Head } from '@inertiajs/react';
 import { Chart } from 'primereact/chart';
 import { Dropdown } from 'primereact/dropdown';
@@ -32,6 +33,9 @@ export default function Dashboard() {
     const [chartData, setChartData] = useState({});
     const [chartOptions, setChartOptions] = useState({});
 
+    const [getMerchant, setGetMerchant] = useState([]);
+    const [filterMerchant, setFilterMerchant] = useState(null);
+
     const currentMonth = new Date().getMonth();
     const [selectedMonth, setSelectedMonth] = useState(monthArr[currentMonth].value);
 
@@ -55,7 +59,7 @@ export default function Dashboard() {
 
          try {
             const response = await axios.get("/getInvoiceStatus", {
-                params: {selectedMonth}
+                params: {selectedMonth, filterMerchant}
             });
 
             setInvoiceStatus(response.data);
@@ -84,13 +88,32 @@ export default function Dashboard() {
         }
     }
 
+    const fetchMerchant = async () => {
+        setLoading(true);
+
+         try {
+            const response = await axios.get("/getMerchants");
+
+            setGetMerchant(response.data);
+
+        } catch (error) {
+            console.error("Error fetching invoices:", error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
     useEffect(() => {
         fetchInvoiceStatus();
-    }, [selectedMonth]);
+    }, [selectedMonth, filterMerchant]);
 
     useEffect(() => {
         fetchInvoiceChart();
     }, [selectedYear]);
+
+    useEffect(() => {
+        fetchMerchant();
+    }, [])
 
 
     useEffect(() => {
@@ -172,14 +195,39 @@ export default function Dashboard() {
                 {/* statistic */}
                 <div className='flex flex-col gap-3'>
                     <div className='flex items-center justify-between'>
-                        <span className='font-Lora text-xl font-bold'>Total Submission this - {monthArr.find(m => m.value === selectedMonth)?.name}</span>
-                        <Dropdown 
-                            value={selectedMonth}
-                            onChange={(e) => setSelectedMonth(e.value)} 
-                            options={monthArr}
-                            optionLabel='name'
-                            optionValue='value'
-                        />
+                        <div className='font-Lora text-xl font-bold '>Total Submission this <span className=''>{monthArr.find(m => m.value === selectedMonth)?.name}</span></div>
+                        <div className='flex items-center gap-2'>
+                            <div className='relative'>
+                                <Dropdown 
+                                    value={filterMerchant}
+                                    onChange={(e) => setFilterMerchant(e.value)} 
+                                    options={getMerchant.map((item) => (
+                                        { name: item.name, value: item.merchant_uid}
+                                    ))}
+                                    optionLabel='name'
+                                    optionValue='value'
+                                    placeholder='Merchant'
+                                />
+                                {
+                                    filterMerchant && (
+                                        <button 
+                                            type="button"
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black"
+                                            onClick={() => setFilterMerchant(null)}
+                                        >
+                                            <XCircleIcon className="w-4 h-4" />
+                                        </button>
+                                    )
+                                }
+                            </div>
+                            <Dropdown 
+                                value={selectedMonth}
+                                onChange={(e) => setSelectedMonth(e.value)} 
+                                options={monthArr}
+                                optionLabel='name'
+                                optionValue='value'
+                            />
+                        </div>
                     </div>
                     <div className='w-full flex flex-col md:grid md:grid-cols-3 gap-4'>
                         <div className='p-4 flex items-center gap-4 border border-vulcan-200 bg-white shadow-card '>

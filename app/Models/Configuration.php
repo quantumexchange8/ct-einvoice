@@ -17,16 +17,19 @@ class Configuration extends Model implements HasMedia
         'companyName',
         'tin',
         'registration',
-        'MSIC',
+        'sst',
+        'irbm_client_id',
+        'irbm_client_key',
         'phone',
         'email',
-        'sst',
+        'MSIC',
+        'defaultClassification',
         'businessActivity',
         'address1',
         'address2',
-        'poscode',
         'area',
+        'poscode',
         'state',
-        
+        'country',
     ];
 }

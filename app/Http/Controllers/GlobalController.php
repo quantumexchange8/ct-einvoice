@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminToken;
 use App\Models\Classification;
+use App\Models\Configuration;
 use App\Models\Country;
 use App\Models\Merchant;
 use App\Models\MSICcode;
@@ -55,9 +57,8 @@ class GlobalController extends Controller
 
     public function searchTIN(Request $request)
     {
-        $checkToken = Token::where('merchant_id', $request->merchant_id)->latest()->first();
-        $merchantDetail = Merchant::find($request->merchant_id);
-        $token = $this->getValidToken($merchantDetail, $checkToken);
+        $checkToken = AdminToken::latest()->first();
+        $token = $this->getValidToken($checkToken);
         if (!$token) {
             return; // 或者返回错误
         }
@@ -115,8 +116,10 @@ class GlobalController extends Controller
         
     }
 
-    protected function getValidToken($merchantDetail, $checkToken)
+    protected function getValidToken($checkToken)
     {
+
+        $admin = Configuration::first();
 
         // 如果没有 token 或者 token 已过期，获取新 token
         if (!$checkToken || Carbon::now() >= $checkToken->expired_at) {
@@ -125,19 +128,16 @@ class GlobalController extends Controller
                 : 'https://preprod-api.myinvois.hasil.gov.my/connect/token';
 
             $response = Http::asForm()->post($accessTokenApi, [
-                'client_id' => $merchantDetail->irbm_client_id,
-                'client_secret' => $merchantDetail->irbm_client_key,
+                'client_id' => $admin->irbm_client_id,
+                'client_secret' => $admin->irbm_client_key,
                 'grant_type' => 'client_credentials',
                 'scope' => 'InvoicingAPI',
             ]);
 
             if ($response->successful()) {
-                // 删除旧的 token
-                Token::where('merchant_id', $merchantDetail->id)->delete();
 
                 // 创建新的 token
-                return Token::create([
-                    'merchant_id' => $merchantDetail->id,
+                return AdminToken::create([
                     'token' => $response['access_token'],
                     'expired_at' => Carbon::now()->addHour(),
                 ])->token;

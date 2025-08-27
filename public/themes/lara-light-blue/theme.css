@@ -813,6 +813,8 @@
 .p-dropdown-panel .p-dropdown-header .p-dropdown-filter {
   padding-right: 1.75rem;
   margin-right: -1.75rem;
+  background: white !important;
+  border-radius: 6px;
 }
 .p-dropdown-panel .p-dropdown-header .p-dropdown-filter-icon {
   right: 0.75rem;
@@ -837,6 +839,7 @@
   transition: box-shadow 0.2s;
   border-radius: 0;
   font-size: 14px;
+  max-width: 320px;
 }
 .p-dropdown-panel .p-dropdown-items .p-dropdown-item.p-highlight {
   color: #333741;
