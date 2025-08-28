@@ -207,6 +207,8 @@ export default function Dashboard() {
                                     optionLabel='name'
                                     optionValue='value'
                                     placeholder='Merchant'
+                                    className='custom-dropdown'
+                                    loading={isLoading}
                                 />
                                 {
                                     filterMerchant && (

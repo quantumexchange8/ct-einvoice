@@ -14,6 +14,8 @@ class ConfigurationController extends Controller
     {
         $adminDetails = Configuration::first();
 
+        $adminDetails->company_logo = $adminDetails->getFirstMediaUrl('company_logo');
+
         return Inertia::render('Configuration/Configuration', [
             'adminDetails' => $adminDetails,
         ]);
@@ -106,10 +108,10 @@ class ConfigurationController extends Controller
             ]);
         }
     // Handle image upload using Spatie
-    // if ($request->hasFile('image')) {
-    //     $configuration->clearMediaCollection('configuration_image'); // Remove old image
-    //     $configuration->addMedia($request->file('image'))->toMediaCollection('configuration_images');
-    // }
+    if ($request->hasFile('company_logo')) {
+        $configuration->clearMediaCollection('company_logo'); // Remove old image
+        $configuration->addMedia($request->file('company_logo'))->toMediaCollection('company_logo');
+    }
 
         return redirect()->back();
     }

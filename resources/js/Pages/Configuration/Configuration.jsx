@@ -10,6 +10,10 @@ import TextInput from "@/Components/TextInput";
 import InputError from "@/Components/InputError";
 import { Dropdown } from "primereact/dropdown";
 import toast from "react-hot-toast";
+import Button from "@/Components/Button";
+import { TrashIcon } from "@heroicons/react/16/solid";
+import { Image } from "primereact/image";
+import { ExportIcon } from "@/Components/Outline";
 
 export default function Configuration({ adminDetails }) {
     
@@ -88,6 +92,7 @@ export default function Configuration({ adminDetails }) {
         poscode: '',
         state: '',
         country: '',
+        company_logo: null,
     });
 
     useEffect(() => {
@@ -110,12 +115,23 @@ export default function Configuration({ adminDetails }) {
                 poscode: adminDetails.poscode,
                 state: adminDetails.state,
                 country: adminDetails.country,
+                company_logo: adminDetails.company_logo,
             })
+            
         }
     }, [adminDetails])
 
-    const onUpload = () => {
+    const onUpload = ({ files }) => {
+        if (files && files.length > 0) {
+        const file = files[0];
+        setImageFile(file);                 // for preview
+        setData("company_logo", file);      // store in Inertia form
+        }
+    };
 
+    const removeLogo = () => {
+        setImageFile(null);          // clear preview image
+        setData("company_logo", null); // clear form data
     }
     
     const save = (e) => {
@@ -151,31 +167,21 @@ export default function Configuration({ adminDetails }) {
                             Save Changes
                         </button>
                     </div>
-                    <div className="flex w-full justify-between items-center gap-4">
-                     
-                            {imageFile && (
-                                <img 
-                                    src={URL.createObjectURL(imageFile)} 
-                                    alt="Uploaded" 
-                                    className="flex w-full max-w-[208px] max-h-[80px] object-cover " 
-                                />
-                            )}
-                             <div className="flex border border-vulcan-950 rounded-md">
+                    <div className="flex w-full items-center gap-4">
+                        {imageFile || data.company_logo ? (
+                            <>
+                                <Image src={imageFile ? URL.createObjectURL(imageFile) : data.company_logo} alt="Uploaded" width="160px" preview />
+                                
+                                <Button variant="redOutline" size="sm" className="" onClick={removeLogo}><TrashIcon className="w-4 h-4" /></Button>
+                            </>
+                        ) : (
+                            <div className="flex border border-vulcan-950 rounded-md">
                                 <FileUpload
                                     mode="basic"
                                     chooseLabel={
-                                    <div className="flex items-center gap-2 text-gray-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                        <path
-                                            d="M14 10V10.8C14 11.9201 14 12.4802 13.782 12.908C13.5903 13.2843 13.2843 13.5903 12.908 13.782C12.4802 14 11.9201 14 10.8 14H5.2C4.07989 14 3.51984 14 3.09202 13.782C2.71569 13.5903 2.40973 13.2843 2.21799 12.908C2 12.4802 2 11.9201 2 10.8V10M11.3333 5.33333L8 2M8 2L4.66667 5.33333M8 2V10"
-                                            stroke="#61646C"
-                                            strokeWidth="1.2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                        />
-                                        </svg>
-                                        <span>Upload Photo</span>
-                                    </div>
+                                        <div className="flex items-center gap-2 text-gray-600">
+                                            <span>Upload Photo</span>
+                                        </div>
                                     }
                                     auto
                                     customUpload
@@ -183,15 +189,8 @@ export default function Configuration({ adminDetails }) {
                                     className="w-full"
                                 />
                             </div>
-
-                        <button className="ml-auto"> {/* Pushes the button to the right */}
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <path d="M4.4082 3.65058L4.86259 1H10.7696L11.224 3.65058" stroke="#161B26" strokeLinejoin="round"/>
-                                <path d="M1 3.65234H14.6316" stroke="#161B26" strokeLinecap="round"/>
-                                <path fillRule="evenodd" clipRule="evenodd" d="M12.7395 3.65234L11.9822 15.3906H3.65184L2.89453 3.65234H12.7395Z" stroke="#161B26" strokeLinecap="round" strokeLinejoin="round"/>
-                                <path d="M5.92188 12.3594H9.70842" stroke="#161B26" strokeLinecap="round"/>
-                            </svg>
-                        </button>
+                        )}
+                        
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="flex flex-col gap-1">
