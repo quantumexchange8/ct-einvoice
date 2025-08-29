@@ -14,9 +14,11 @@ return new class extends Migration
         Schema::create('payout_configs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('merchant_id');
+            $table->string('version');
             $table->string('env');
             $table->string('url');
             $table->string('secret_key');
+            $table->string('cert_path');
             $table->string('returnUrl');
             $table->string('callBackUrl');
             $table->softDeletes();

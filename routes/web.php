@@ -82,6 +82,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/payout-config', [PayoutConfigController::class, 'payoutConfig'])->name('payout-config');
     Route::get('/getPayout', [PayoutConfigController::class, 'getPayout'])->name('getPayout');
     Route::post('/store-payout', [PayoutConfigController::class, 'storePayout'])->name('store-payout');
+    Route::post('/update-payout', [PayoutConfigController::class, 'updatePayout'])->name('update-payout');
     
 });
 

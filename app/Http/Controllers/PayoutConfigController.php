@@ -32,9 +32,16 @@ class PayoutConfigController extends Controller
 
     public function storePayout(Request $request)
     {
-        
-        $secretKey = Str::random(40);
+        $request->validate([
+            'merchant' => 'required',
+            'env' => 'required',
+            'url' => 'required',
+            'version' => 'required',
+            'callback_url' => 'required',
+        ]);
 
+        $secretKey = Str::random(40);
+        
         $payout = PayoutConfig::create([
             'merchant_id' => $request->merchant['id'],
             'env' => $request->env,
@@ -43,6 +50,28 @@ class PayoutConfigController extends Controller
             'secret_key' => $secretKey,
         ]);
 
+        return redirect()->back();
+    }
+
+    public function updatePayout(Request $request)
+    {
+
+        $request->validate([
+            'url' => 'required',
+            'env' => 'required',
+            'version' => 'required',
+            'callback_url' => 'required',
+        ]);
+
+        $payout = PayoutConfig::find($request->id);
+
+        $payout->update([
+            'version' => $request->version,
+            'env' => $request->env,
+            'url' => $request->url,
+            'callBackUrl' => $request->callback_url,
+        ]);
+        
         return redirect()->back();
     }
 }

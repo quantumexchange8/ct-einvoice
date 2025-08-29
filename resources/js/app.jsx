@@ -1,5 +1,6 @@
 import '../css/app.css';
 import './bootstrap';
+import './i18n';
 
 import { PrimeReactProvider } from 'primereact/api';
 import { createInertiaApp } from '@inertiajs/react';

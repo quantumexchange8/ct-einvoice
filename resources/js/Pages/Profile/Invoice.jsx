@@ -18,6 +18,7 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react'
 import { InputNumber } from "primereact/inputnumber";
 import toast from "react-hot-toast";
 import Modal from "@/Components/Modal";
+import { useTranslation } from "react-i18next";
 
 export default function Invoice({invoice_no, merchant_id, date_issued, amount }) {
 
@@ -40,6 +41,7 @@ export default function Invoice({invoice_no, merchant_id, date_issued, amount })
   const [TINValue, setTINValue] = useState(null);
   const [loadingSearchTIN, setLoadingSearchTIN] = useState(false);
   const [searchResult, setSearchResult] = useState(null);
+  const { t, i18n } = useTranslation();
 
   const fetchCountry = async () => {
     try {
@@ -258,10 +260,10 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
 
           <div className="flex flex-col gap-1">
             <div className="text-vulcan-900 font-bold text-xl font-Lora">
-              Invoice/Receipt  <span className="text-vulcan-500">detail</span>
+              {t('invoice_receipt')} <span className="text-vulcan-500">{t('detail')}</span>
             </div>
             <div className="text-vulcan-900 text-xs">
-              Below are your invoice or receipt detail in summary.
+              {t('below_are_your_invoice')}
             </div>
           </div>
 
@@ -270,7 +272,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
             <div className="w-full flex gap-1 ">
               <div className="w-full font-manrope text-vulcan-500 text-xs font-medium flex-col items-start">
                 <div className="flex items-center gap-1">
-                  <InputLabel value="Invoice/Receipt No." className="text-vulcan-500" />
+                  <InputLabel value={t('invoice_receipt_no')} className="text-vulcan-500" />
                   <span className="text-error-800 gap-1">*</span>
                 </div>
                 <TextInput 
@@ -288,7 +290,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
             <div className="w-full flex gap-1">
               <div className="flex w-full text-vulcan-500 font-man text-xs font-medium flex-col items-start">
                   <div className="flex items-center gap-1">
-                      <InputLabel value="Total Amount" />
+                      <InputLabel value={t('total_amount')} />
                       <span className="text-error-800 gap-1">*</span>
                   </div>
                   <InputNumber 
@@ -306,7 +308,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
             <div className="w-full flex gap-1">
               <div  className="w-full text-vulcan-500 font-man text-xs font-medium flex-col items-start">
                   <div className="flex items-center gap-1">
-                      <InputLabel value="Date Issued" />
+                      <InputLabel value={t('date_issue')} />
                       <span className="text-error-800 gap-1">*</span>
                   </div>
                   <div className="relative">
@@ -325,13 +327,13 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
                   </div>
               </div>
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
                 <div className="flex items-center gap-1">
-                    <InputLabel htmlFor="date_issued" value="Search TIN" className="text-vulcan-500" />
+                    <InputLabel htmlFor="date_issued" value={t('search_tin')} className="text-vulcan-500" />
                 </div>
                 <div className="flex ">
                     <Button size="md" onClick={() => setOpenSearchTIN(!openSearchTIN)} className="w-full flex justify-center">
-                        Search TIN
+                        {t('search_tin')}
                     </Button>
                 </div>
             </div>
@@ -342,10 +344,10 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
           <div className="flex flex-col justify-center items-start gap-6">
             <div className="flex flex-col gap-1">
              <div className="text-vulcan-900 font-bold text-xl font-Lora">
-                Request e-Invoice  <span className="text-vulcan-500">now</span>
+                {t('request_einvoice_now')}  <span className="text-vulcan-500">{t('now')}</span>
               </div>
               <div className="text-vulcan-900 text-xs font-normal">
-                Please fill in the required personal or business detail.
+                {t('please_fill_in_the_required_personal')}.
               </div>
             </div>
 
@@ -356,12 +358,14 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
                   onChange={(index) => setData('type', index === 0 ? 'Personal' : 'Business')}
               >
                   <TabList className="flex items-center gap-1 p-[3px] rounded-[2px] bg-vulcan-100 max-w-[159px]">
-                      <Tab className="rounded-[2px] py-[5px] px-3 text-xs text-vulcan-700 focus:outline-none data-[selected]:font-bold data-[selected]:bg-white data-[hover]:bg-white/50 data-[selected]:data-[hover]:bg-white data-[focus]:outline-0 data-[focus]:outline-white">
-                          Personal
-                      </Tab>
-                      <Tab className="rounded-[2px] py-[5px] px-3 text-xs text-vulcan-700 focus:outline-none data-[selected]:font-bold data-[selected]:bg-white data-[hover]:bg-white/50 data-[selected]:data-[hover]:bg-white data-[focus]:outline-0 data-[focus]:outline-white">
-                          Business
-                      </Tab>
+                      <div className="flex w-full">
+                        <Tab className="w-full rounded-[2px] py-[5px] px-3 text-xs text-vulcan-700 focus:outline-none data-[selected]:font-bold data-[selected]:bg-white data-[hover]:bg-white/50 data-[selected]:data-[hover]:bg-white data-[focus]:outline-0 data-[focus]:outline-white">
+                            {t('personal')}
+                        </Tab>
+                        <Tab className="w-full rounded-[2px] py-[5px] px-3 text-xs text-vulcan-700 focus:outline-none data-[selected]:font-bold data-[selected]:bg-white data-[hover]:bg-white/50 data-[selected]:data-[hover]:bg-white data-[focus]:outline-0 data-[focus]:outline-white">
+                            {t('business')}
+                        </Tab>
+                      </div>
                   </TabList>
                   <TabPanels className="">
                       <TabPanel className="">
@@ -386,10 +390,9 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
                   </Checkbox>
 
                   <div className="text-vulcan-900 font-manrope text-xs font-medium">
-                    I acknowledge that all the information provided is accurate and
-                    complete. CURRENT TECH INDUSTRIES SDN. BHD. will not be held
-                    responsible for any failure of e-invoice requests submitted after the
-                    cut-off time due to incomplete or incorrect information.
+                    {t('i_acknowledge_that_all_the_info')}
+                    <span className="font-bold">CURRENT TECH INDUSTRIES SDN. BHD. </span>
+                    {t('will_not_be_held_responsible_for_any_failure')}
                   </div>
                 </div>
 
@@ -400,7 +403,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
                       type="text"
                       value={userInput}
                       onChange={(e) => handleInputChange(e.target.value)}
-                      placeholder="Type the number here"
+                      placeholder={t("type_the_number_here")}
                       className="py-3 px-4 max-w-[360px] w-full text-vulcan-950 text-sm font-medium leading-5 border border-gray-200 rounded-sm font-manrope"
                     />
                   </div>
@@ -413,7 +416,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
                       className="w-full flex justify-center"
                       disabled={processing || !enabled || userInput !== captchaText}
                   >
-                    Submit
+                    {t('submit')}
                   </Button>
                   
                 </div>
@@ -426,17 +429,17 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
       <Modal
           show={openSearchTIN}
           onClose={closeSearch}
-          header="Search TIN"
+          header={t('search_tin')}
           maxWidth="md"
           footer={
               <div className="flex justify-end gap-5 ">
                   {
                       searchType === null ? (
-                          <Button variant="redOutline" size="md" onClick={closeSearch}>Close</Button>
+                          <Button variant="redOutline" size="md" onClick={closeSearch}>{t('close')}</Button>
                       ) : (
                           <>
-                              <Button variant="redOutline" size="md" onClick={returnSearch}>Return</Button>
-                              <Button size="md" disabled={loadingSearchTIN} onClick={search}>Search</Button>
+                              <Button variant="redOutline" size="md" onClick={returnSearch}>{t('return')}</Button>
+                              <Button size="md" disabled={loadingSearchTIN} onClick={search}>{t('search')}</Button>
                           </>
                       )
                   }
@@ -450,12 +453,12 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
                   <div className="w-full flex flex-col md:flex-row items-center gap-5">
                       <div className="border border-vulcan-50 bg-white p-3 w-full flex flex-col gap-2 items-center justify-center cursor-pointer hover:bg-vulcan-50 rounded-lg" onClick={() => setSearchType('taxpayerName')}>
                           <SearchIcon />
-                          <span className="text-sm font-bold">Search by Taxpayer Name</span>
+                          <span className="text-sm font-bold">{t('search_by_taxpayer_name')}</span>
                           
                       </div>
                       <div className="border border-vulcan-50 bg-white p-3 w-full flex flex-col gap-2 items-center justify-center cursor-pointer hover:bg-vulcan-50 rounded-lg" onClick={() => setSearchType('idType')}>
                           <SearchIdIcon className='w-10 h-10' />
-                          <span className="text-sm font-bold">Search by ID Type</span>
+                          <span className="text-sm font-bold">{t('search_by_id')}</span>
                       </div>
                   </div>
               )
@@ -464,7 +467,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
               searchType === 'taxpayerName' && (
                   <div className="w-full flex flex-col gap-2">
                       <div className="flex flex-col gap-1">
-                          <InputLabel value="Taxpayer Name" />
+                          <InputLabel value={t('taxpayer_name')} />
                           <TextInput 
                               id="search_tin"
                               type="text"
@@ -492,7 +495,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
                               { label: 'BRN', value: 'BRN' },
                               { label: 'ARMY ID', value: 'ARMY' }
                           ]}
-                          placeholder="Select ID Type"
+                          placeholder={t('select_id_type')}
                           className="w-full box-border h-11"
                       />
                       <div className="flex flex-col gap-1">
@@ -506,7 +509,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
                               autoComplete="username"
                               isFocused={true}
                               onChange={(e) => setTINValue(e.target.value)}
-                              placeholder="Search by TIN No."
+                              placeholder="e.g. 00123414xxxx"
                               disabled={idType === null}
                           />
                       </div>
@@ -517,7 +520,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
             searchResult && (
               <div className="w-full flex flex-col gap-8 justify-center items-center">
                 <span className="text-vulcan-900 font-bold text-lg">{searchResult}</span>
-                <Button size="md" className="w-full flex justify-center" onClick={copyTin}>Copy TIN</Button>
+                <Button size="md" className="w-full flex justify-center" onClick={copyTin}>{t('copy')} TIN</Button>
               </div>
             )
           }

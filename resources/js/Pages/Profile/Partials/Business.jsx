@@ -3,12 +3,14 @@ import InputLabel from "@/Components/InputLabel";
 import TextInput from "@/Components/TextInput";
 import { Dropdown } from 'primereact/dropdown';
 import InputError from "@/Components/InputError";
+import { useTranslation } from "react-i18next";
 
 
 export default function Business({ data, setData, errors,processing, getStates, getCountries}) {
    
 
     const [enabled, setEnabled] = useState(false)
+    const { t, i18n } = useTranslation();
 
     const countryOptionTemplate = (option) => {
       return (
@@ -21,13 +23,13 @@ export default function Business({ data, setData, errors,processing, getStates, 
     return (
         <div className="flex flex-col gap-6">
             <div className="flex p-3 justify-center items-center rounded-sm border-information-100 bg-information-50 font-medium text-xs font-manrope text-information-700">
-              To facilitate the issuance of e-invoices, it is essential for us to gather comprehensive information in line with the guidelines set forth by the Inland Revenue Board of Malaysia (IRBM). We want to assure you that we dedicated to safeguarding your personal information and upholding your privacy.
+              {t('to_facilitate_the_issuance_of_einvoice')}
             </div>
             
             <div className="w-full grid grid-cols-2 grid-rows-7 items-start gap-4">
               <div className="w-full flex flex-col gap-1 ">
                   <div className="text-vulcan-900 text-xs font-medium flex items-center gap-1 w-full">
-                    <InputLabel value="Company Name" />
+                    <InputLabel value={t('company_name')} />
                     <span className="text-error-800 gap-1">*</span>
                   </div>
                   <TextInput 
@@ -43,7 +45,7 @@ export default function Business({ data, setData, errors,processing, getStates, 
               </div>
               <div className="w-full flex flex-col gap-1 ">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                  <InputLabel value="TIN No." />
+                  <InputLabel value={t('tin_no')} />
                   <span className="text-error-800 gap-1">*</span>
                 </div>
                 <TextInput 
@@ -59,7 +61,7 @@ export default function Business({ data, setData, errors,processing, getStates, 
               </div>
               <div className="w-full flex flex-col gap-1 ">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                  <InputLabel value="Business Registration No. " />
+                  <InputLabel value={t('brn')} />
                   <span className="text-error-800 gap-1">*</span>
                 </div>
                 <TextInput 
@@ -75,7 +77,7 @@ export default function Business({ data, setData, errors,processing, getStates, 
               </div>
               <div className="w-full flex flex-col gap-1 ">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                  <InputLabel value="SST No."/>
+                  <InputLabel value={t('sst_no')}/>
                   <span className="text-error-800 gap-1">*</span>
                 </div>
                 <TextInput 
@@ -84,14 +86,14 @@ export default function Business({ data, setData, errors,processing, getStates, 
                   value={data.sst_no}
                   onChange={(e) => setData('sst_no', e.target.value)}
                   type="text"
-                  placeholder=" Put ‘NA’ if none"
+                  placeholder={t('put_na_if_none')}
                   className="w-full box-border h-11"
                 />
                 <InputError message={errors.sst_no} className="mt-2"/>
               </div>
               <div className="w-full flex flex-col gap-1 ">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1 ">
-                  <InputLabel value="Email Address"/>
+                  <InputLabel value={t('email_address')}/>
                   <span className="text-error-800 gap-1">*</span>
                 </div>
                 <TextInput 
@@ -107,7 +109,7 @@ export default function Business({ data, setData, errors,processing, getStates, 
               </div>
               <div className="w-full flex flex-col gap-1">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                  <InputLabel value="Contact No." />
+                  <InputLabel value={t('contact_no')} />
                   <span className="text-error-800 gap-1">*</span>
                 </div>
                 <TextInput 
@@ -123,7 +125,7 @@ export default function Business({ data, setData, errors,processing, getStates, 
               </div>
               <div className="w-full flex flex-col gap-1">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                  <InputLabel value="Address Line 1" />
+                  <InputLabel value={t('address_line1')} />
                   <span className="text-error-800 gap-1">*</span>
                 </div>
                 <TextInput 
@@ -139,7 +141,7 @@ export default function Business({ data, setData, errors,processing, getStates, 
               </div>
               <div className="w-full flex flex-col gap-1">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                  <InputLabel value="Address Line 2" />
+                  <InputLabel value={t('address_line2')} />
                 </div>
                 <TextInput 
                   id="addressLine2"
@@ -147,13 +149,13 @@ export default function Business({ data, setData, errors,processing, getStates, 
                   value={data.addressLine2}
                   onChange={(e) => setData('addressLine2', e.target.value)}
                   type="text"
-                  placeholder="Optional"
+                  placeholder={t('optional')}
                   className="w-full box-border h-11"
                 />
               </div>
               <div className="w-full flex flex-col gap-1">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                  <InputLabel value="Address Line 3" />
+                  <InputLabel value={t('address_line3')} />
                 </div>
                 <TextInput 
                   id="addressLine3"
@@ -161,13 +163,13 @@ export default function Business({ data, setData, errors,processing, getStates, 
                   value={data.addressLine3}
                   onChange={(e) => setData('addressLine3', e.target.value)}
                   type="text"
-                  placeholder="Optional"
+                  placeholder={t('optional')}
                   className="w-full box-border h-11"
                 />
               </div>
               <div className="w-full flex flex-col gap-1">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                  <InputLabel value=" City" />
+                  <InputLabel value={t('city')} />
                   <span className="text-error-800 gap-1">*</span>
                 </div>
                 <TextInput 
@@ -183,7 +185,7 @@ export default function Business({ data, setData, errors,processing, getStates, 
               </div>
               <div className="w-full flex flex-col gap-1">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                  <InputLabel value=" Postcode" />
+                  <InputLabel value={t('postcode')} />
                   <span className="text-error-800 gap-1">*</span>
                 </div>
                 <TextInput 
@@ -199,7 +201,7 @@ export default function Business({ data, setData, errors,processing, getStates, 
               </div>
               <div className="w-full flex flex-col gap-1">
                   <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
-                    <InputLabel value="State" />
+                    <InputLabel value={t('state')} />
                     <span className="text-error-800">*</span>
                   </div>
                   <Dropdown
@@ -208,7 +210,7 @@ export default function Business({ data, setData, errors,processing, getStates, 
                     options={getStates}
                     editable
                     optionLabel="State"
-                    placeholder="Select"
+                    placeholder={t("select_option")}
                     className="w-full box-border h-11"
                     panelClassName="bg-white text-black border border-vulcan-900"
                   />
@@ -220,7 +222,7 @@ export default function Business({ data, setData, errors,processing, getStates, 
                 </div>
               <div className="w-full flex flex-col gap-1">
                   <div className="w-full text-vulcan-900 text-xs font-medium flex-col items-start">
-                    Country
+                    {t('country')}
                     <span className="text-error-800 gap-1">*</span>
                   </div>
                   <Dropdown

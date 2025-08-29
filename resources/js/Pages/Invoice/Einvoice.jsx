@@ -18,6 +18,7 @@ import Checkbox from "@/Components/Checkbox";
 import { InputNumber } from "primereact/inputnumber";
 import toast from "react-hot-toast";
 import Modal from "@/Components/Modal";
+import { useTranslation } from "react-i18next";
 
 export default function Einvoice() {
 
@@ -41,6 +42,7 @@ export default function Einvoice() {
     const [TINValue, setTINValue] = useState(null);
     const [loadingSearchTIN, setLoadingSearchTIN] = useState(false);
     const [searchResult, setSearchResult] = useState(null);
+    const { t, i18n } = useTranslation();
 
     const fetchCountry = async () => {
         try {
@@ -251,13 +253,13 @@ export default function Einvoice() {
             <div className="flex flex-col gap-5">
                 <div className="p-5 flex flex-col gap-6 bg-white rounded-sm shadow-card">
                     <div className="flex flex-col">
-                        <div className="text-vulcan-900 text-xl font-bold font-Lora">Invoice/Receipt <span className="text-vulcan-500">detail</span></div>
-                        <div className="text-vulcan-900 text-xs">Below are your invoice or receipt detail in summary.</div>
+                        <div className="text-vulcan-900 text-xl font-bold font-Lora">{t('invoice_receipt')} <span className="text-vulcan-500">{t('detail')}</span></div>
+                        <div className="text-vulcan-900 text-xs">{t('below_are_your_invoice')}.</div>
                     </div>
                     <div className="flex flex-col md:grid md:grid-cols-2 md:grid-rows-2 gap-3 md:gap-4 w-full">
                         <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-1">
-                                <InputLabel htmlFor="receipt_no" value="Invoice/Receipt No." className="text-vulcan-500" />
+                                <InputLabel htmlFor="receipt_no" value={t('invoice_receipt_no')}  className="text-vulcan-500" />
                                 <span className="text-error-800 text-xs ">*</span>
                             </div>
                             <TextInput 
@@ -274,7 +276,7 @@ export default function Einvoice() {
                         </div>
                         <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-1">
-                                <InputLabel htmlFor="amount" value="Total Amount" className="text-vulcan-500" />
+                                <InputLabel htmlFor="amount" value={t('total_amount')} className="text-vulcan-500" />
                                 <span className="text-error-800 text-xs ">*</span>
                             </div>
                             <InputNumber 
@@ -289,7 +291,7 @@ export default function Einvoice() {
                         </div>
                         <div className="flex flex-col gap-1">
                             <div className="flex items-center gap-1">
-                                <InputLabel htmlFor="date_issued" value="Date Issued" className="text-vulcan-500" />
+                                <InputLabel htmlFor="date_issued" value={t('date_issue')} className="text-vulcan-500" />
                                 <span className="text-error-800 text-xs ">*</span>
                             </div>
                             <div className="relative">
@@ -305,16 +307,6 @@ export default function Einvoice() {
                                 }
                             </div>
                         </div>
-                        <div className="flex flex-col gap-1">
-                            <div className="flex items-center gap-1">
-                                <InputLabel htmlFor="date_issued" value="Search TIN" className="text-vulcan-500" />
-                            </div>
-                            <div className="flex ">
-                                <Button size="md" onClick={() => setOpenSearchTIN(!openSearchTIN)} className="w-full flex justify-center">
-                                    Search TIN
-                                </Button>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 
@@ -325,32 +317,34 @@ export default function Einvoice() {
                                 {
                                     data.type === 'Personal' ? (
                                         <div>
-                                            Request e-Invoice  <span className="text-vulcan-500">now</span>
+                                            {t('request_einvoice_now')} <span className="text-vulcan-500">{t('now')}</span>
                                         </div>
                                     ) : (
                                         <div>
-                                            Create e-Invoice  <span className="text-vulcan-500">now</span>
+                                            {t('create_einvoice_now')}  <span className="text-vulcan-500">{t('now')}</span>
                                         </div>
                                     )
                                 }
                             </div>
                             <div className="text-vulcan-900 text-xs font-normal">
-                                Please fill in the required personal or business detail. {data.type}
+                               {t('please_fill_in_the_required_personal')}
                             </div>
                         </div>
-                        <div className="w-full">
+                        <div >
                             <TabGroup 
                                 className="flex flex-col gap-6"
                                 selectedIndex={data.type === 'Personal' ? 0 : 1}
                                 onChange={(index) => setData('type', index === 0 ? 'Personal' : 'Business')}
                             >
-                                <TabList className="flex items-center gap-1 p-[3px] rounded-[2px] bg-vulcan-100 max-w-[159px]">
-                                    <Tab className="rounded-[2px] py-[5px] px-3 text-xs text-vulcan-700 focus:outline-none data-[selected]:font-bold data-[selected]:bg-white data-[hover]:bg-white/50 data-[selected]:data-[hover]:bg-white data-[focus]:outline-0 data-[focus]:outline-white">
-                                        Personal
-                                    </Tab>
-                                    <Tab className="rounded-[2px] py-[5px] px-3 text-xs text-vulcan-700 focus:outline-none data-[selected]:font-bold data-[selected]:bg-white data-[hover]:bg-white/50 data-[selected]:data-[hover]:bg-white data-[focus]:outline-0 data-[focus]:outline-white">
-                                        Business
-                                    </Tab>
+                                <TabList className="max-w-40 flex items-center gap-1 p-[3px] rounded-[2px] bg-vulcan-100">
+                                    <div className="flex w-full">
+                                        <Tab className="w-full rounded-[2px] py-[5px] px-3 text-xs text-vulcan-700 focus:outline-none data-[selected]:font-bold data-[selected]:bg-white data-[hover]:bg-white/50 data-[selected]:data-[hover]:bg-white data-[focus]:outline-0 data-[focus]:outline-white">
+                                            {t('personal')}
+                                        </Tab>
+                                        <Tab className="w-full rounded-[2px] py-[5px] px-3 text-xs text-vulcan-700 focus:outline-none data-[selected]:font-bold data-[selected]:bg-white data-[hover]:bg-white/50 data-[selected]:data-[hover]:bg-white data-[focus]:outline-0 data-[focus]:outline-white">
+                                            {t('business')}
+                                        </Tab>
+                                    </div>
                                 </TabList>
                                 <TabPanels className="">
                                     <TabPanel className="">
@@ -381,10 +375,9 @@ export default function Einvoice() {
                                 </Checkbox>
 
                                 <div className="text-vulcan-900 font-manrope text-xs font-medium">
-                                    I acknowledge that all the information provided is accurate and
-                                    complete. <span className="font-bold">CURRENT TECH INDUSTRIES SDN. BHD</span>. will not be held
-                                    responsible for any failure of e-invoice requests submitted after the
-                                    cut-off time due to incomplete or incorrect information.
+                                    {t('i_acknowledge_that_all_the_info')}
+                                    <span className="font-bold">CURRENT TECH INDUSTRIES SDN. BHD. </span>
+                                    {t('will_not_be_held_responsible_for_any_failure')}
                                 </div>
                             </div>
 
@@ -395,7 +388,7 @@ export default function Einvoice() {
                                     type="text"
                                     value={userInput}
                                     onChange={(e) => handleInputChange(e.target.value)}
-                                    placeholder="Type the number here"
+                                    placeholder={t("type_the_number_here")}
                                     className="py-3 px-4 max-w-[360px] w-full text-vulcan-950 text-sm font-medium leading-5 border border-gray-200 rounded-sm font-manrope"
                                     />
                                 </div>
@@ -410,7 +403,7 @@ export default function Einvoice() {
                                     className="w-full flex justify-center"
                                     disabled={processing || !enabled || userInput !== captchaText}
                                 >
-                                    Submit
+                                    {t('submit')}
                                 </Button>
                             </div>
                         </div>    

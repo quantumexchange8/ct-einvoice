@@ -13,6 +13,8 @@ class PayoutConfig extends Model
         'url',
         'callBackUrl',
         'secret_key',
+        'version',
+        'cert_path',
     ];
     
     public function merchant(): \Illuminate\Database\Eloquent\Relations\BelongsTo

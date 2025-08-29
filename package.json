@@ -24,11 +24,15 @@
         "@heroicons/react": "^2.2.0",
         "chart.js": "^4.5.0",
         "date-fns": "^4.1.0",
+        "i18next": "^25.4.2",
+        "i18next-browser-languagedetector": "^8.2.0",
+        "i18next-http-backend": "^3.0.2",
         "primeicons": "^7.0.0",
         "primereact": "^10.9.2",
         "puppeteer": "^24.16.2",
         "react-countup": "^6.5.3",
         "react-hot-toast": "^2.5.2",
+        "react-i18next": "^15.7.2",
         "react-qrcode-logo": "^4.0.0",
         "react-to-print": "^3.0.5"
     }
