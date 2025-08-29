@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('item_name');
             $table->string('item_qty');
             $table->decimal('item_price', 13, 2)->default(0);
+            $table->integer('tax_rate')->default(0);
+            $table->decimal('tax_amount', 13, 2)->default(0);
+            $table->decimal('subtotal', 13, 2)->default(0);
             $table->unsignedBigInteger('classification_id');
             $table->timestamps();
         });
