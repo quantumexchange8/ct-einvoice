@@ -118,9 +118,9 @@
                     <td colspan="4" class="right bold">Subtotal:</td>
                     <td class="right bold">RM {{ number_format($invoice->amount, 2) }}</td>
                     <td>-</td>
-                    <td></td>
-                    <td class="right bold">RM {{ number_format($invoice->sst_amount, 2) }}</td>
-                    <td class="right bold">RM {{ number_format($invoice->amount + $invoice->sst_amount, 2) }}</td>
+                    <td>-</td>
+                    <td class="right bold">RM {{ number_format($invoice->sst_amount + $invoice->service_tax, 2) }}</td>
+                    <td class="right bold">RM {{ number_format($invoice->amount + $invoice->sst_amount + $invoice->service_tax, 2) }}</td>
                 </tr>
                 <tr>
                     <td colspan="8" class="right bold">Total excluding tax:</td>
@@ -128,15 +128,15 @@
                 </tr>
                 <tr>
                     <td colspan="8" class="right bold">Tax Amount:</td>
-                    <td class="right bold">RM {{ number_format($invoice->sst_amount, 2) }}</td>
+                    <td class="right bold">RM {{ number_format($invoice->sst_amount + $invoice->service_tax, 2) }}</td>
                 </tr>
                 <tr>
                     <td colspan="8" class="right bold">Total Including tax:</td>
-                    <td class="right bold">RM {{ number_format($invoice->amount + $invoice->sst_amount, 2) }}</td>
+                    <td class="right bold">RM {{ number_format($invoice->amount + $invoice->sst_amount + $invoice->service_tax, 2) }}</td>
                 </tr>
                 <tr>
                     <td colspan="8" class="right bold">Total Amount:</td>
-                    <td class="right bold">RM {{ number_format($invoice->amount + $invoice->sst_amount, 2) }}</td>
+                    <td class="right bold">RM {{ number_format($invoice->amount + $invoice->sst_amount + $invoice->service_tax, 2) }}</td>
                 </tr>
             </tfoot>
         </table>

@@ -118,7 +118,7 @@ export default function Pending({ invoice }) {
                                 <div className="flex items-start gap-2">
                                     <CoinIcon />
                                     <div className="text-vulcan-950 font-manrope text-sm font-medium">
-                                        RM {formatAmount(invoice.amount)}
+                                        RM {formatAmount(invoice.total_amount)}
                                     </div>
                                     <div className="flex items-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
