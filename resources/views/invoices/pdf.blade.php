@@ -132,11 +132,11 @@
                     <td class="right bold">RM {{ number_format($invoice->amount, 2) }}</td>
                 </tr>
                 <tr>
-                    <td colspan="8" class="right bold">Service Charge ({{ $serviceTaxPercent }}%):</td>
+                    <td colspan="8" class="right bold">Service Charge:</td>
                     <td class="right bold">RM {{ number_format($invoice->service_tax, 2) }}</td>
                 </tr>
                 <tr>
-                    <td colspan="8" class="right bold">SST ({{ $sstPercentage }}%):</td>
+                    <td colspan="8" class="right bold">SST:</td>
                     <td class="right bold">RM {{ number_format($invoice->sst_amount, 2) }}</td>
                 </tr>
                 <tr>
