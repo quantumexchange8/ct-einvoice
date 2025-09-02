@@ -233,11 +233,7 @@ export default function Personal({ data, setData, errors, getStates, getCountrie
                   className="w-full box-border h-11"
                   panelClassName="bg-white text-black border border-vulcan-900"
                 />
-                {errors.state && (
-                  <p className="text-error-700 text-sm font-medium mt-2">
-                    {errors.state}
-                  </p>
-                )}
+                <InputError message={errors.state} className="mt-2"/>
               </div>
               <div className="w-full flex flex-col gap-1">
                 <div className="w-full text-vulcan-900 text-xs font-medium flex items-center gap-1">
@@ -253,9 +249,8 @@ export default function Personal({ data, setData, errors, getStates, getCountrie
                   editable
                   placeholder="Malaysia"
                   className="w-full box-border h-11"
-                    
                 />
-                <InputError message={errors.Country} className="mt-2"/>
+                <InputError message={errors.country} className="mt-2"/>
               </div>
             </div>
             

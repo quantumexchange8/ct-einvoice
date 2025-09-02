@@ -52,5 +52,6 @@
     "invalid": "无效的",
     "we_encountered_an_issue": "我们在提交电子发票时遇到了问题。请检查您提供的详细信息，然后重新尝试提交。",
     "request_again": "再次请求",
-    "download_einvoice": "下载电子发票"
+    "download_einvoice": "下载电子发票",
+    "refresh": "跟新"
 }

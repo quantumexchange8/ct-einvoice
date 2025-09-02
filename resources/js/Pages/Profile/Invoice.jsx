@@ -99,6 +99,13 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
   type: 'Personal',
 });
 
+  useEffect(() => {
+    if (data.type === 'Personal') {
+      setData('sst_no', 'NA')
+    } else {
+      setData('sst_no', '')
+    }
+  }, [data.type])
 
   // Function to generate a random CAPTCHA string
   const generateCaptchaText = () => {
@@ -245,6 +252,8 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
 
   const copyTin = () => {
       navigator.clipboard.writeText(searchResult);
+      setData('tin_no', searchResult);
+      
       toast.success('Copied TIN to clipboard', {
           title: 'Copied TIN to clipboard',
           duration: 3000,
@@ -396,7 +405,7 @@ const { data, setData, post, processing, errors, reset, progress } = useForm({
                   </div>
                 </div>
 
-                <div className="flex w-full flex-col gap-4">{}
+                <div className="flex w-full flex-col gap-4">
                   <canvas ref={canvasRef} className="w-[268px] h-[116px] border border-gray-300"></canvas>
                   <div>
                     <input

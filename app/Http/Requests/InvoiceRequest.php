@@ -58,5 +58,29 @@ class InvoiceRequest extends FormRequest
 
     }
 
+    public function messages(): array
+    {
+        return[
+            'full_name.required' => __('validation.full_name_is_required'),
+            'tin_no.required' => __('validation.tin_number_is_required'),
+            'id_no.required' => __('validation.id_number_is_required'),
+            'sst_no.required' => __('validation.sst_number_is_required'),
+            'email.required' => __('validation.email_is_required'),
+            'email.email' => __('validation.enter_a_valid_email_address'),
+            'contact.required' => __('validation.contact_number_is_required'),
+            'contact.regex' => __('validation.contact_number_must_be_between'),
+            'addressLine1.required' => __('validation.address_line_is_required'),
+            'city.required' => __('validation.city_is_required'),
+            'postcode.required' => __('validation.postcode_is_required'),
+            'postcode.digits' => __('validation.postcode_must_be_exactly'),
+            'state.required' => __('validation.state_is_required'),
+            'country.required' => __('validation.country_is_required'),
+            'id_type.required' => __('validation.please_select_an_id_type'),
+            'business_registration.required' => __('validation.brn_is_required'),
+            'type.required' => __('validation.invoice_type_is_required'),
+            'type.in' => __('validation.invoice_type_must_be_personal_business'),
+        ];
+    }
+
     
 }

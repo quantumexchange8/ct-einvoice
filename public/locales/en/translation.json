@@ -51,5 +51,6 @@
     "invalid": "Invalid",
     "we_encountered_an_issue": "We encountered an issue with your e-invoice submission. Please review the details you provided and try submitting again.",
     "request_again": "Request again",
-    "download_einvoice": "Download e-Invoice"
+    "download_einvoice": "Download e-Invoice",
+    "refresh": "Refresh"
 }

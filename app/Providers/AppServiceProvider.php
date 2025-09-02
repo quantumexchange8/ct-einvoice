@@ -21,11 +21,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Vite::prefetch(concurrency: 3);
 
         if (App::environment('production') || App::environment('staging')) {
             resolve(\Illuminate\Routing\UrlGenerator::class)->forceScheme('https');
             $this->app['request']->server->set('HTTPS', true);
         }
+        
+        Vite::prefetch(concurrency: 3);
     }
 }

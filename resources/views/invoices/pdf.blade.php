@@ -107,32 +107,37 @@
                         <td class="right">RM {{ number_format($item->item_price, 2) }}</td>
                         <td class="right">RM {{ number_format($item->item_price * $item->item_qty, 2) }}</td>
                         <td>-</td>
-                        <td>RM {{ number_format($item->tax_rate, 2) }}</td>
-                        <td class="right">RM {{ number_format($item->tax_amount, 2) }}</td>
+                        <td>RM {{ number_format(0, 2) }}</td>
+                        <td class="right">RM {{ number_format(0, 2) }}</td>
                         <td class="right">RM {{ number_format($item->subtotal, 2) }}</td>
                     </tr>
                 @endforeach
             </tbody>
             <tfoot>
+                @php
+                    $serviceTaxPercent = $invoice->amount > 0 
+                        ? round(($invoice->service_tax / $invoice->amount) * 100)
+                        : 0;
+
+                    $sstPercentage = $invoice->amount > 0 
+                        ? round(($invoice->sst_amount / $invoice->amount) * 100)
+                        : 0;
+                @endphp
                 <tr>
                     <td colspan="4" class="right bold">Subtotal:</td>
                     <td class="right bold">RM {{ number_format($invoice->amount, 2) }}</td>
                     <td>-</td>
                     <td>-</td>
-                    <td class="right bold">RM {{ number_format($invoice->sst_amount + $invoice->service_tax, 2) }}</td>
-                    <td class="right bold">RM {{ number_format($invoice->amount + $invoice->sst_amount + $invoice->service_tax, 2) }}</td>
-                </tr>
-                <tr>
-                    <td colspan="8" class="right bold">Total excluding tax:</td>
+                    <td class="right bold">RM {{ number_format(0, 2) }}</td>
                     <td class="right bold">RM {{ number_format($invoice->amount, 2) }}</td>
                 </tr>
                 <tr>
-                    <td colspan="8" class="right bold">Tax Amount:</td>
-                    <td class="right bold">RM {{ number_format($invoice->sst_amount + $invoice->service_tax, 2) }}</td>
+                    <td colspan="8" class="right bold">Service Charge ({{ $serviceTaxPercent }}%):</td>
+                    <td class="right bold">RM {{ number_format($invoice->service_tax, 2) }}</td>
                 </tr>
                 <tr>
-                    <td colspan="8" class="right bold">Total Including tax:</td>
-                    <td class="right bold">RM {{ number_format($invoice->amount + $invoice->sst_amount + $invoice->service_tax, 2) }}</td>
+                    <td colspan="8" class="right bold">SST ({{ $sstPercentage }}%):</td>
+                    <td class="right bold">RM {{ number_format($invoice->sst_amount, 2) }}</td>
                 </tr>
                 <tr>
                     <td colspan="8" class="right bold">Total Amount:</td>

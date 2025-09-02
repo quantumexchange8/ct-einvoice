@@ -4,6 +4,7 @@ use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\GlobalController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceListingController;
+use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\PayoutConfigController;
 use App\Http\Controllers\ProfileController;
@@ -12,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', [InvoiceController::class, 'einvoice'])->name('einvoice');
+
+Route::get('localization/{locale}',[LocalizationController::class, 'setLang']);
+
 
 Route::get('/invoice', [InvoiceController::class, 'invoice'])->name('invoice');
 Route::post('/submitInvoice', [InvoiceController::class, 'submitInvoice'])->name('submitInvoice');

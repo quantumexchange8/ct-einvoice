@@ -9,6 +9,9 @@ export default function Topbar() {
 
     const changeLanguage = (lng) => {
         i18n.changeLanguage(lng); // 使用 'en' 或 'cn'
+
+        // Tell Laravel to persist the choice
+        fetch(`/localization/${lng}`);
     };
 
     const menuRight = useRef(null);
